@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "486717687749",
+    "project_id": "winetopia-app",
+    "storage_bucket": "winetopia-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:486717687749:android:557627b7e5d0d39aa52dac",
+        "android_client_info": {
+          "package_name": "com.example.winetopia"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCbsjqm6b24QxOMd-qvTCwwAKDE9Rl8EAY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
