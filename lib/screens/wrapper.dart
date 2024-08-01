@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'home_test.dart'; // Import the home screen
-import 'nfc_reader_screen.dart'; // Import the new screen
+import 'new_screen.dart'; // Import the new screen
 
 //screen wrapper class contains the screens
 class Wrapper extends StatelessWidget {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'nfc_reader_screen.dart';
+import 'new_screen.dart';
 
 //test homescreen contains placeholder home screen
 class HomeScreen extends StatelessWidget {
@@ -15,7 +15,7 @@ class HomeScreen extends StatelessWidget {
             // Navigate to the new screen when the button is pressed
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => NfcReaderScreen()),
+              MaterialPageRoute(builder: (context) => NewScreen()),
             );
           },
           child: Text('Go to New Screen'),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 //nfc reader screen returns app scaffold for the NFC reader
-class NfcReaderScreen extends StatelessWidget {
+class NewScreen extends StatelessWidget {
   @override
   //placeholder view
   Widget build(BuildContext context) {
@@ -10,7 +10,7 @@ class NfcReaderScreen extends StatelessWidget {
         title: Text('Profile'),
       ),
       body: Center(
-        child: Text('NFC manager test screen'),
+        child: Text('test screen'),
       ),
     );
   }
