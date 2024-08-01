@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
+import 'home_test.dart'; // Import the home screen
+import 'nfc_reader_screen.dart'; // Import the new screen
 
-class MyWidget extends StatefulWidget {
-  const MyWidget({super.key});
-
-  @override
-  State<MyWidget> createState() => _MyWidgetState();
-}
-
-class _MyWidgetState extends State<MyWidget> {
+//screen wrapper class contains the screens
+class Wrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    //return homescreen by default
+    return HomeScreen();
   }
 }
