@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-//nfc reader screen returns app scaffold for the NFC reader
+//test screen
 class NewScreen extends StatelessWidget {
   @override
   //placeholder view
