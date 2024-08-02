@@ -1,16 +1,19 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:winetopia/services/auth.dart';
 
-class SignIn extends StatefulWidget {
-  const SignIn({super.key});
+class Register extends StatefulWidget {
+  const Register({super.key});
 
   @override
-  State<SignIn> createState() => _SignInState();
+  State<Register> createState() => _RegisterState();
 }
 
-class _SignInState extends State<SignIn> {
+class _RegisterState extends State<Register> {
 
-  final AuthService _auth = AuthService(); //get an instance of the AuthService class (auth.dart)
+  //get an instance of the AuthService class (auth.dart)
+  final AuthService _auth = AuthService(); 
 
   //text field state
   String email = '';
@@ -23,7 +26,7 @@ class _SignInState extends State<SignIn> {
       appBar: AppBar(
         backgroundColor: Colors.purple[800],
         elevation: 0.0,
-        title: Text('Sign in', style: TextStyle(color: Colors.white),),
+        title: Text('Sign up', style: TextStyle(color: Colors.white),),
       ),
       body: Container(
         padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
@@ -55,35 +58,17 @@ class _SignInState extends State<SignIn> {
                 ),
                 onPressed: () async{
                   print("email:" + email);
-                  print("password" + password);
+                  print("password: " + password);
                 }, 
                 child: Text(
-                  'Sign in',
+                  'Register',
                   style: TextStyle(color: Colors.white)
                 ),
-              ),
-              
-              SizedBox(height: 20.0,),
-              //for sign in as a guess, might remove this button latter on
-              ElevatedButton(
-                child: Text('Sign in as guess'),
-                onPressed: () async {
-                  dynamic result = await _auth.signInAnon(); //using dynamic type because it could be user of firebase type or null (see auth.dart)
-                  if(result == null)
-                  {
-                    print('error signning in');
-                  }
-                  else
-                  {
-                    print('signed in successfully');
-                    print('user id: ' + result.uid);
-                  }
-                },
               ),
             ],
           ),
         ),
       ),
-    );
+    );;
   }
 }
