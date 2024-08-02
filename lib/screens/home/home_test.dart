@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'new_screen.dart';
+import '../new_screen.dart';
 
 //test homescreen contains placeholder home screen
 class HomeScreen extends StatelessWidget {
