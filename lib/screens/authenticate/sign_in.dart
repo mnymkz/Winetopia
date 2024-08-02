@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:winetopia/services/auth.dart';
 
 class SignIn extends StatefulWidget {
-  const SignIn({super.key});
+  final Function toggleView;
+  const SignIn({required this.toggleView});
 
   @override
   State<SignIn> createState() => _SignInState();
@@ -24,6 +26,16 @@ class _SignInState extends State<SignIn> {
         backgroundColor: Colors.purple[800],
         elevation: 0.0,
         title: Text('Sign in', style: TextStyle(color: Colors.white),),
+        actions: <Widget>[
+          TextButton.icon(
+            label: Text('Register', style: TextStyle(color: Colors.white),),
+            icon: Icon(Icons.person, color: Colors.white,),
+            onPressed: (){
+              //widget keyword refer to the widget itself which is Register
+              widget.toggleView();
+            }, 
+          ),
+        ],
       ),
       body: Container(
         padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
