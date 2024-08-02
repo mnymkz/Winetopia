@@ -57,7 +57,7 @@ class _RegisterState extends State<Register> {
                   backgroundColor: Colors.black
                 ),
                 onPressed: () async{
-                  print("email:" + email);
+                  print("email: " + email);
                   print("password: " + password);
                 }, 
                 child: Text(

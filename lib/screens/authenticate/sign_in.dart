@@ -54,8 +54,8 @@ class _SignInState extends State<SignIn> {
                   backgroundColor: Colors.black
                 ),
                 onPressed: () async{
-                  print("email:" + email);
-                  print("password" + password);
+                  print("email: " + email);
+                  print("password: " + password);
                 }, 
                 child: Text(
                   'Sign in',
