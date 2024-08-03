@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:winetopia/services/auth.dart';
+import 'package:winetopia/shared/constants.dart';
 
 class SignIn extends StatefulWidget {
   final Function toggleView;
@@ -49,6 +50,7 @@ class _SignInState extends State<SignIn> {
             children: <Widget>[
               SizedBox(height: 20.0,),
               TextFormField(
+                decoration: textImportDecoration.copyWith(hintText: 'Email'),
                 validator:(val) => val!.isEmpty ? 'Enter an email' : null,
                 //every time the text field in the form have a change, this function is triggered
                 onChanged: (val){
@@ -59,6 +61,7 @@ class _SignInState extends State<SignIn> {
               ),
               SizedBox(height: 20.0,),
               TextFormField(
+                decoration: textImportDecoration.copyWith(hintText: 'Password'),
                 validator:(val) => val!.isEmpty ? 'Enter a password' : null,
                 obscureText: true, //hiding the text (for password)
                 onChanged: (val){
@@ -74,7 +77,7 @@ class _SignInState extends State<SignIn> {
                 children: <Widget>[
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black
+                      //backgroundColor: Colors.black
                     ),
                     onPressed: () async{
                       if(_formKey.currentState!.validate()){
@@ -88,7 +91,7 @@ class _SignInState extends State<SignIn> {
                     }, 
                     child: Text(
                       'Sign in',
-                      style: TextStyle(color: Colors.white)
+                      //style: TextStyle(color: Colors.white)
                     ),
                   ),
 

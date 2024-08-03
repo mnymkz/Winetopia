@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:winetopia/services/auth.dart';
+import 'package:winetopia/shared/constants.dart';
 
 class Register extends StatefulWidget {
   
@@ -53,6 +54,7 @@ class _RegisterState extends State<Register> {
             children: <Widget>[
               SizedBox(height: 20.0,),
               TextFormField(
+                decoration: textImportDecoration.copyWith(hintText: 'Email'), //details in shared/constants.dart
                 validator:(val) => val!.isEmpty ? 'Enter an email' : null,
                 //every time the text field in the form have a change, this function is triggered
                 onChanged: (val){
@@ -63,6 +65,7 @@ class _RegisterState extends State<Register> {
               ),
               SizedBox(height: 20.0,),
               TextFormField(
+                decoration: textImportDecoration.copyWith(hintText: 'Password'),
                 obscureText: true, //hiding the text (for password)
                 validator:(val) => val!.length < 6 ? 'Password need to have more than 6 characters' : null,
                 onChanged: (val){
@@ -74,7 +77,7 @@ class _RegisterState extends State<Register> {
               SizedBox(height: 20.0,),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black
+                  //backgroundColor: Colors.black
                 ),
                 onPressed: () async{
                   if(_formKey.currentState!.validate()){
@@ -88,7 +91,7 @@ class _RegisterState extends State<Register> {
                 }, 
                 child: Text(
                   'Register',
-                  style: TextStyle(color: Colors.white)
+                  //style: TextStyle(color: Colors.white)
                 ),
               ),
               SizedBox(height: 20.0,),
