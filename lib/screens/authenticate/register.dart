@@ -87,9 +87,19 @@ class _RegisterState extends State<Register> {
                       loading = true;
                     });
                     dynamic result = await _auth.resigterWithEmailAndPassword(email, password);
-                    if(result == 'email-already-in-use'){
+                    if(result == null){
+                      //handling error from firebase response
+                      //for more error type, plz visit: https://firebase.google.com/docs/auth/admin/errors
                       setState(() {
-                        error = 'Email already in use';
+                        if(_auth.firebaseErrorCode == 'invalid-email'){
+                          error = 'Invalid email';
+                        }
+                        else if(_auth.firebaseErrorCode == 'email-already-in-use'){
+                          error = 'This email is already in use';
+                        }
+                        else{
+                          error = 'Sign up fail! Please try again latter!';
+                        }
                         loading = false;
                       });
                     }
