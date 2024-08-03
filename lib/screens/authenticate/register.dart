@@ -79,9 +79,9 @@ class _RegisterState extends State<Register> {
                 onPressed: () async{
                   if(_formKey.currentState!.validate()){
                     dynamic result = await _auth.resigterWithEmailAndPassword(email, password);
-                    if(result == null){
+                    if(result == 'email-already-in-use'){
                       setState(() {
-                        error = 'Please supply a valid email!';
+                        error = 'Email already in use';
                       });
                     }
                   }

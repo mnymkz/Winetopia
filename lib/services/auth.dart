@@ -36,6 +36,16 @@ class AuthService {
   }
 
   //sign in with email and password
+  Future signInWithEmailAndPassword(String email, String password) async{
+    try {
+      UserCredential result = await _auth.signInWithEmailAndPassword(email: email, password: password);
+      User? user = result.user;
+      return _userFromFirebaseUser(user);//return the Winetopia user create by Firebase user intance
+    } on FirebaseAuthException catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
 
   //register with email and password
   Future resigterWithEmailAndPassword(String email, String password) async{
@@ -43,9 +53,9 @@ class AuthService {
       UserCredential result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       User? user = result.user;
       return _userFromFirebaseUser(user);//return the Winetopia user create by Firebase user intance
-    } catch (e) {
-      print(e.toString());
-      return null;
+    } on FirebaseAuthException catch (e) {
+      print(e.code);
+      return e.code.toString();
     }
   }
 
