@@ -3,10 +3,10 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:winetopia/services/auth.dart';
 import 'package:winetopia/shared/constants.dart';
+import 'package:winetopia/shared/loading.dart';
 
 class Register extends StatefulWidget {
   
-
   final Function toggleView;
   const Register({required this.toggleView});
 
@@ -22,6 +22,8 @@ class _RegisterState extends State<Register> {
   //this variable will keep tract the state of the form
   final _formKey = GlobalKey<FormState>();
 
+  bool loading = false;
+
   //text field state
   String email = '';
   String password = '';
@@ -29,7 +31,7 @@ class _RegisterState extends State<Register> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return loading ? Loading() : Scaffold(
       backgroundColor: Colors.purple[50],
       appBar: AppBar(
         backgroundColor: Colors.purple[800],
@@ -81,10 +83,14 @@ class _RegisterState extends State<Register> {
                 ),
                 onPressed: () async{
                   if(_formKey.currentState!.validate()){
+                    setState(() {
+                      loading = true;
+                    });
                     dynamic result = await _auth.resigterWithEmailAndPassword(email, password);
                     if(result == 'email-already-in-use'){
                       setState(() {
                         error = 'Email already in use';
+                        loading = false;
                       });
                     }
                   }

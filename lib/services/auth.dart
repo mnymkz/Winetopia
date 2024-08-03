@@ -7,7 +7,8 @@ class AuthService {
   // the '_<variable name>' means this variable is private
 
   //get the firebase authentication instance
-  final FirebaseAuth _auth = FirebaseAuth.instance; 
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  String firebaseErrorMessage = '';
   
   //create user object base on FirebaseUser (models/user.dart)
   //WinetopiaUser is an instance that store all the information we need from the FirebaseUser instance
@@ -54,8 +55,8 @@ class AuthService {
       User? user = result.user;
       return _userFromFirebaseUser(user);//return the Winetopia user create by Firebase user intance
     } on FirebaseAuthException catch (e) {
-      print(e.code);
-      return e.code.toString();
+      print(e.code.toString());
+      return e.code.toString();//potential logic conflict with the warpper, might need to change back to return null
     }
   }
 
