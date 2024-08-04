@@ -9,10 +9,12 @@ class DataBaseService{
   //collection reference
   final CollectionReference attendee = FirebaseFirestore.instance.collection('attendee');
 
-  Future updateUserData(String fname, String lname, int tokenAmount) async{
+  Future updateUserData(String email, String fname, String lname, String phone, int tokenAmount) async{
     return await attendee.doc(uid).set({
+      'email' : email,
       'fname' : fname,
       'lname' : lname,
+      'phone' : phone,
       'tokenAmount' : tokenAmount,
     });
   }

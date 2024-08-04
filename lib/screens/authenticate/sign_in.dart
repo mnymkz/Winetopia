@@ -105,7 +105,7 @@ class _SignInState extends State<SignIn> {
 
                   //for sign in as a guess, might remove this button latter on
                   ElevatedButton(
-                    child: Text('Sign in as guess'),
+                    child: Text('Sign in as guest'),
                     onPressed: () async {
                       dynamic result = await _auth.signInAnon(); //using dynamic type because it could be user of firebase type or null (see auth.dart)
                       if(result == null)
