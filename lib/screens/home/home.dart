@@ -35,19 +35,19 @@ class HomeScreen extends StatelessWidget {
             ),
           ],
         ),
-        // body: Center(
-        //   child: ElevatedButton(
-        //     onPressed: () {
-        //       // Navigate to the new screen when the button is pressed
-        //       Navigator.push(
-        //         context,
-        //         MaterialPageRoute(builder: (context) => NewScreen()),
-        //       );
-        //     },
-        //     child: Text('Go to New Screen'),
-        //   ),
-        // ),
-        body: Attendee(),
+        body: Center(
+          child: ElevatedButton(
+            onPressed: () {
+              // Navigate to the new screen when the button is pressed
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => NewScreen()),
+              );
+            },
+            child: Text('Go to New Screen'),
+          ),
+        ),
+        //body: Attendee(),
       ),
     );
   }
