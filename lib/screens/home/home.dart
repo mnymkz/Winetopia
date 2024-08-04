@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:nfc_manager/nfc_manager.dart';
+import 'package:winetopia/models/nfc_state.dart';
 import 'package:winetopia/screens/home/nfc_read_button.dart';
+import 'package:winetopia/controllers/nfc_read_controller.dart';
+import 'package:winetopia/screens/home/nfc_read_result_widget.dart';
 import 'package:winetopia/services/auth.dart';
 import '../new_screen.dart';
 
@@ -14,12 +18,19 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final AuthService _auth = AuthService();
-  bool _isReading = false;
+  Future<NfcTag?> _scannedTag = Future.value(null);
+  NfcState _nfcState = NfcState.idle;
 
-  /// Toggles the NFC reading state.
-  void nfcButtonPressed() {
+  /// Initiates the NFC reading process and updates the NFC state based on the result.
+  void nfcButtonPressed() async {
     setState(() {
-      _isReading = !_isReading;
+      _nfcState = NfcState.scanning;
+    });
+
+    final NfcState result =
+        await NfcReadController.getNfcData(_handleError, _handleDiscovered);
+    setState(() {
+      _nfcState = result;
     });
   }
 
@@ -54,16 +65,21 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             // Display text based on NFC reading state
             Center(
-              child: Text(
-                  _isReading ? 'Scanning...' : 'Tap to pay for a wine sample'),
+              child: Text(_nfcState.feedbackMessage),
             ),
             const SizedBox(height: 20),
 
             // NFC Read Button
             GestureDetector(
                 onTap: nfcButtonPressed,
-                child: NfcReadButton(isReading: _isReading)),
+                child: NfcReadButton(nfcState: _nfcState)),
             const SizedBox(height: 20),
+
+            // NFC Read Result (to be deleted later)
+            NfcReadResultWidget(
+              scannedTag: _scannedTag,
+              nfcState: _nfcState,
+            ),
 
             // Button to navigate to a new screen
             Center(
@@ -81,5 +97,21 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
+  /// Handles errors during the NFC session and updates the state accordingly.
+  void _handleError(dynamic error) {
+    setState(() {
+      _nfcState = NfcState.error;
+      _scannedTag = Future.error(error);
+    });
+  }
+
+  /// Handles NFC tag discovery and updates the state with the discovered tag.
+  void _handleDiscovered(NfcTag tag) {
+    setState(() {
+      _nfcState = NfcState.success;
+      _scannedTag = Future.value(tag);
+    });
   }
 }
