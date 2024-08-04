@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:winetopia/models/winetopia_user.dart';
+import 'package:winetopia/services/database.dart';
 
 class AuthService {
   // the '_<variable name>' means this variable is private
@@ -53,6 +54,10 @@ class AuthService {
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       User? user = result.user;
+
+      //create a new document for the user with the uid
+      await DataBaseService(uid: user!.uid).updateUserData('tester', 'fromFlutter', 10);
+
       return _userFromFirebaseUser(user);//return the Winetopia user create by Firebase user intance
     } on FirebaseAuthException catch (e) {
       print(e.toString());
