@@ -17,4 +17,8 @@ class DataBaseService{
     });
   }
 
+  //get attendee stream
+  Stream<QuerySnapshot> get attendees{
+    return attendee.snapshots();
+  }
 }
