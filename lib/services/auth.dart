@@ -50,13 +50,13 @@ class AuthService {
   }
 
   //register with email and password
-  Future resigterWithEmailAndPassword(String email, String password) async{
+  Future resigterWithEmailAndPassword(String email, String password, String fname, String lname, String phone) async{
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       User? user = result.user;
 
       //create a new document for the user with the uid
-      await DataBaseService(uid: user!.uid).updateUserData('tester', 'fromFlutter', 10);
+      await DataBaseService(uid: user!.uid).updateUserData(email, fname, lname, phone, 0);
 
       return _userFromFirebaseUser(user);//return the Winetopia user create by Firebase user intance
     } on FirebaseAuthException catch (e) {
