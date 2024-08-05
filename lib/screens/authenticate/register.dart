@@ -28,7 +28,6 @@ class _RegisterState extends State<Register> {
   //text field state
   String email = '';
   String password = '';
-  String confirmPassword = '';
   String fname = '';
   String lname = '';
   String phone = '';
@@ -144,14 +143,14 @@ class _RegisterState extends State<Register> {
                       //handling error from firebase response
                       //for more error type, plz visit: https://firebase.google.com/docs/auth/admin/errors
                       setState(() {
-                        if(_auth.firebaseErrorCode == 'invalid-email'){
+                        if(_auth.firebaseErrorCode == 'invalid-email') {
                           error = 'Invalid email';
                         }
-                        else if(_auth.firebaseErrorCode == 'email-already-in-use'){
+                        else if(_auth.firebaseErrorCode == 'email-already-in-use') {
                           error = 'This email is already in use';
                         }
-                        else{
-                          error = 'Sign up fail! Please try again latter!';
+                        else {
+                          error = 'Sign up fail! Please try again later!';
                         }
                         loading = false;
                       });

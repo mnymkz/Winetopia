@@ -59,6 +59,7 @@ class AuthService {
       await DataBaseService(uid: user!.uid).updateUserData(email, fname, lname, phone, 0);
 
       return _userFromFirebaseUser(user);//return the Winetopia user create by Firebase user intance
+      
     } on FirebaseAuthException catch (e) {
       print(e.toString());
       firebaseErrorCode = e.code.toString();
