@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:winetopia/services/auth.dart';
 import 'package:winetopia/shared/constants.dart';
 import 'package:winetopia/shared/loading.dart';
@@ -27,6 +28,9 @@ class _RegisterState extends State<Register> {
   //text field state
   String email = '';
   String password = '';
+  String fname = '';
+  String lname = '';
+  String phone = '';
   String error = '';
 
   @override
@@ -58,7 +62,7 @@ class _RegisterState extends State<Register> {
               SizedBox(height: 20.0,),
               TextFormField(
                 decoration: textImportDecoration.copyWith(hintText: 'Email'), //details in shared/constants.dart
-                validator:(val) => val!.isEmpty ? 'Enter an email' : null,
+                validator:(val) => val!.isEmpty ? 'Please enter an Email' : null,
                 //every time the text field in the form have a change, this function is triggered
                 onChanged: (val){
                   setState(() {
@@ -68,9 +72,43 @@ class _RegisterState extends State<Register> {
               ),
               SizedBox(height: 20.0,),
               TextFormField(
+                decoration: textImportDecoration.copyWith(hintText: 'First name'),
+                validator:(val) => val!.isEmpty ? 'Please enter your First Name' : null,
+                onChanged: (val){
+                  setState(() {
+                    fname = val;
+                  });
+                },
+              ),
+              SizedBox(height: 20.0,),
+              TextFormField(
+                decoration: textImportDecoration.copyWith(hintText: 'Last name'),
+                validator:(val) => val!.isEmpty ? 'Please enter your Last Name' : null,
+                onChanged: (val){
+                  setState(() {
+                    lname = val;
+                  });
+                },
+              ),
+              SizedBox(height: 20.0,),
+              TextFormField(
+                decoration: textImportDecoration.copyWith(hintText: 'Phone number'),
+                keyboardType: TextInputType.phone,
+                inputFormatters: <TextInputFormatter>[
+                  FilteringTextInputFormatter.digitsOnly
+                ],
+                validator:(val) => val!.isEmpty ? 'Please enter a Phone number' : null,
+                onChanged: (val){
+                  setState(() {
+                    phone = val;
+                  });
+                },
+              ),
+              SizedBox(height: 20.0,),
+              TextFormField(
                 decoration: textImportDecoration.copyWith(hintText: 'Password'),
                 obscureText: true, //hiding the text (for password)
-                validator:(val) => val!.length < 6 ? 'Password need to have more than 6 characters' : null,
+                validator:(val) => val!.length < 6 ? 'Your Password needs to be atleast 6 characters' : null,
                 onChanged: (val){
                   setState(() {
                     password = val;
@@ -87,7 +125,7 @@ class _RegisterState extends State<Register> {
                     setState(() {
                       loading = true;
                     });
-                    dynamic result = await _auth.resigterWithEmailAndPassword(email, password);
+                    dynamic result = await _auth.resigterWithEmailAndPassword(email, password, fname, lname, phone);
                     if(result == null){
                       //handling error from firebase response
                       //for more error type, plz visit: https://firebase.google.com/docs/auth/admin/errors
