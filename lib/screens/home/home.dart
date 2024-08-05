@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:winetopia/models/nfc_state.dart';
 import 'package:winetopia/screens/home/nfc_read_button.dart';
-import 'package:winetopia/controllers/nfc_read_controller.dart';
 import 'package:winetopia/screens/home/nfc_read_result_widget.dart';
+import 'package:winetopia/controllers/nfc_read_controller.dart';
 import 'package:winetopia/services/auth.dart';
 import '../new_screen.dart';
 import 'package:winetopia/services/database.dart';
@@ -46,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Scaffold(
           backgroundColor: Colors.purple[50],
           appBar: AppBar(
-            title: Text(
+            title: const Text(
               'Winetopia - Home',
               style: TextStyle(color: Colors.white),
             ),
@@ -54,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
             elevation: 0.0,
             actions: <Widget>[
               TextButton.icon(
-                icon: Icon(
+                icon: const Icon(
                   Icons.person,
                   color: Colors.white,
                 ),
