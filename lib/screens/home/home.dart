@@ -10,6 +10,7 @@ import '../new_screen.dart';
 import 'package:winetopia/services/database.dart';
 import 'package:provider/provider.dart';
 import 'package:winetopia/screens/home/attendee.dart';
+import 'package:winetopia/services/database.dart';
 
 /// HomeScreen widget serves as the main screen of the app where users
 /// can pay for wine samples.
@@ -24,6 +25,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final AuthService _auth = AuthService();
   Future<NfcTag?> _scannedTag = Future.value(null);
   NfcState _nfcState = NfcState.idle;
+  DataBaseService dataBaseService =
+      DataBaseService(uid: ''); //TODO - fetch user ID
 
   /// Initiates the NFC reading process and updates the NFC state based on the result.
   void nfcButtonPressed() async {
@@ -85,6 +88,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 NfcReadResultWidget(
                   scannedTag: _scannedTag,
                   nfcState: _nfcState,
+                  dataBaseService: dataBaseService,
                 ),
 
                 // Button to navigate to a new screen
