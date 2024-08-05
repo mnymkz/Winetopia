@@ -28,6 +28,7 @@ class _RegisterState extends State<Register> {
   //text field state
   String email = '';
   String password = '';
+  String confirmPassword = '';
   String fname = '';
   String lname = '';
   String phone = '';
@@ -113,6 +114,19 @@ class _RegisterState extends State<Register> {
                   setState(() {
                     password = val;
                   });
+                },
+              ),
+              SizedBox(height: 20.0,),
+              TextFormField(
+                decoration: textImportDecoration.copyWith(hintText: 'Confirm Password'),
+                obscureText: true, //hiding the text (for password)
+                validator: (val) {
+                  if (val!.isEmpty) {
+                    return 'Please confirm your password';
+                  } else if (val != password) {
+                    return 'Passwords do not match';
+                  }
+                  return null;
                 },
               ),
               SizedBox(height: 20.0,),
