@@ -25,8 +25,6 @@ class _HomeScreenState extends State<HomeScreen> {
   final AuthService _auth = AuthService();
   Future<NfcTag?> _scannedTag = Future.value(null);
   NfcState _nfcState = NfcState.idle;
-  DataBaseService dataBaseService =
-      DataBaseService(uid: ''); //TODO - fetch user ID
 
   /// Initiates the NFC reading process and updates the NFC state based on the result.
   void nfcButtonPressed() async {
@@ -85,10 +83,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 20),
 
                 // NFC Read Result (to be deleted later)
+                //TODO - database connection
                 NfcReadResultWidget(
                   scannedTag: _scannedTag,
                   nfcState: _nfcState,
-                  dataBaseService: dataBaseService,
                 ),
 
                 // Button to navigate to a new screen

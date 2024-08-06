@@ -15,15 +15,13 @@ class NfcReadResultWidget extends StatelessWidget {
   /// The current NFC state.
   final NfcState nfcState;
 
-  /// linking to firebase database
-  final DataBaseService dataBaseService;
+  /// TODO - link database to app
 
   /// Creates an [NfcReadResultWidget] with the provided [scannedTag] and [nfcState].
   const NfcReadResultWidget({
     super.key,
     required this.scannedTag,
     required this.nfcState,
-    required this.dataBaseService,
   });
 
   @override
@@ -81,7 +79,8 @@ class NfcReadResultWidget extends StatelessWidget {
             try {
               //parse int from data
               final tokenCost = int.parse(tokenCostString);
-              dataBaseService.deductTokens(tokenCost);
+              //TODO - call dedeuct tokens function from database
+              print(tokenCost);
               print('Transaction successful');
               //TODO - handle successful transaction (lead to a new screen)
             } catch (e) {
