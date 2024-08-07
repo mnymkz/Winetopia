@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:winetopia/models/ndef_record_info.dart';
 import 'package:winetopia/models/nfc_state.dart';
+import 'package:winetopia/services/auth.dart';
 import 'package:winetopia/services/database.dart';
 
 /// A widget that displays NFC read results using a [FutureBuilder].
@@ -9,20 +10,16 @@ import 'package:winetopia/services/database.dart';
 /// This widget would be replaced with the resulting confirmation message or
 /// receipt of payment.
 class NfcReadResultWidget extends StatelessWidget {
-  /// A future that resolves to the scanned NFC tag.
-  final Future<NfcTag?> scannedTag;
-
-  /// The current NFC state.
-  final NfcState nfcState;
-
-  /// TODO - link database to app
+  final Future<NfcTag?> scannedTag; // the scanned tag
+  final NfcState nfcState; // the nfc state
+  final AuthService auth; // the auth service
 
   /// Creates an [NfcReadResultWidget] with the provided [scannedTag] and [nfcState].
-  const NfcReadResultWidget({
-    super.key,
-    required this.scannedTag,
-    required this.nfcState,
-  });
+  const NfcReadResultWidget(
+      {super.key,
+      required this.scannedTag,
+      required this.nfcState,
+      required this.auth});
 
   @override
   Widget build(BuildContext context) {
@@ -80,6 +77,10 @@ class NfcReadResultWidget extends StatelessWidget {
               //parse int from data
               final tokenCost = int.parse(tokenCostString);
               //TODO - call dedeuct tokens function from database
+              auth.setUserId(); //set the user id
+              dynamic uid = auth.userID; //get the user id from database file
+              DataBaseService(uid: uid)
+                  .deductTokens(tokenCost); //call deduct tokens method
               print(tokenCost);
               print('Transaction successful');
               //TODO - handle successful transaction (lead to a new screen)

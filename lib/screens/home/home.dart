@@ -85,9 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 // NFC Read Result (to be deleted later)
                 //TODO - database connection
                 NfcReadResultWidget(
-                  scannedTag: _scannedTag,
-                  nfcState: _nfcState,
-                ),
+                    scannedTag: _scannedTag, nfcState: _nfcState, auth: _auth),
 
                 // Button to navigate to a new screen
                 Center(
