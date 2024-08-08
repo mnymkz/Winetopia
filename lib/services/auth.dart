@@ -94,7 +94,7 @@ class AuthService {
     try {
       // delete the current user's firestore database document
       await DataBaseService(uid: _auth.currentUser!.uid).deleteUserData();
-      
+
       // delete the current user's firebase authentication account
       await _auth.currentUser!.delete();
       

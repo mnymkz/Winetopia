@@ -183,7 +183,7 @@ class _NewScreenState extends State<NewScreen> {
                                 });
                                 dynamic result = await _auth.deleteAccount();
                                 if (result == null) {
-                                  Navigator.of(context).pop(); // Go back to the previous screen after deletion
+                                  Navigator.of(context).pop(); // go back to the previous screen after deletion
                                 } else {
                                   setState(() {
                                     loading = false;
