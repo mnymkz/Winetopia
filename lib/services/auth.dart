@@ -94,16 +94,17 @@ class AuthService {
     try {
       // delete the current user's firestore database document
       await DataBaseService(uid: _auth.currentUser!.uid).deleteUserData();
-
+      
       // delete the current user's firebase authentication account
       await _auth.currentUser!.delete();
       
-      return null; // Account deleted successfully
+      // account deleted successfully
+      return null; 
 
     } on FirebaseAuthException catch (e) {
       print(e.toString());
       firebaseErrorCode = e.code.toString();
-      return e.code; // Return the error code if there's an issue
+      return e.code; // return the error code if an issue occurs
     }
   }
 
