@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:winetopia/models/winetopia_user.dart';
 
 class DataBaseService {
   final String uid;
@@ -6,8 +7,7 @@ class DataBaseService {
   DataBaseService({required this.uid});
 
   //collection reference
-  final CollectionReference attendeeCollection =
-      FirebaseFirestore.instance.collection('attendee');
+  final CollectionReference attendeeCollection = FirebaseFirestore.instance.collection('attendee');
 
   //update userData
   Future updateUserData(String email, String fname, String lname, String phone,
@@ -21,9 +21,20 @@ class DataBaseService {
     });
   }
 
+  //userData from snapshot
+  UserData _userDataFromSnapshot(DocumentSnapshot snapshot){
+    return UserData(
+      uid: uid,
+      email: snapshot.get('email'),
+      fname: snapshot.get('fname'),
+      lname: snapshot.get('lname'),
+      phone: snapshot.get('phone'),
+      tokenAmount: snapshot.get('tokenAmount')
+    );
+  }
   //get attendee stream
-  Stream<QuerySnapshot> get attendees {
-    return attendeeCollection.snapshots();
+  Stream<UserData> get userData {
+    return attendeeCollection.doc(uid).snapshots().map(_userDataFromSnapshot);
   }
 
   /*

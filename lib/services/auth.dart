@@ -23,16 +23,13 @@ class AuthService {
     //authStateChanges() is to notify about changes to the user's sign-in state
     //mapping the User instance from firebase into a WinetopiaUser instance
     //this function listen to the stream and return a Winetopia instance when there is change
-    return _auth
-        .authStateChanges()
-        .map((User? user) => _userFromFirebaseUser(user));
+    return _auth.authStateChanges().map((User? user) => _userFromFirebaseUser(user));
   }
 
   //sign in anon
   Future signInAnon() async {
     try {
-      UserCredential result = await _auth
-          .signInAnonymously(); //wait for the _auth to sign in then return an UserCredential object
+      UserCredential result = await _auth.signInAnonymously(); //wait for the _auth to sign in then return an UserCredential object
       User? user = result.user;
       return _userFromFirebaseUser(user);
     } catch (e) {
@@ -47,8 +44,7 @@ class AuthService {
       UserCredential result = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
       User? user = result.user;
-      return _userFromFirebaseUser(
-          user); //return the Winetopia user create by Firebase user intance
+      return _userFromFirebaseUser(user); //return the Winetopia user create by Firebase user intance
     } on FirebaseAuthException catch (e) {
       print(e.toString());
       return null;
@@ -56,19 +52,27 @@ class AuthService {
   }
 
   //register with email and password
-  Future resigterWithEmailAndPassword(String email, String password,
-      String fname, String lname, String phone) async {
+  Future resigterWithEmailAndPassword(String email, String password, String fname, String lname, String phone) async {
     try {
-      UserCredential result = await _auth.createUserWithEmailAndPassword(
-          email: email, password: password);
+      UserCredential result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       User? user = result.user;
 
       //create a new document for the user with the uid
       await DataBaseService(uid: user!.uid)
           .updateUserData(email, fname, lname, phone, 0);
 
-      return _userFromFirebaseUser(
-          user); //return the Winetopia user create by Firebase user intance
+      return _userFromFirebaseUser(user); //return the Winetopia user create by Firebase user intance
+    } on FirebaseAuthException catch (e) {
+      print(e.toString());
+      firebaseErrorCode = e.code.toString();
+      return null;
+    }
+  }
+
+  //update user profile
+  Future updateEmail() async{
+    try {
+      _auth.currentUser!.updatePassword('');
     } on FirebaseAuthException catch (e) {
       print(e.toString());
       firebaseErrorCode = e.code.toString();
