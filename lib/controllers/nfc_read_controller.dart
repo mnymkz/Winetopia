@@ -26,7 +26,7 @@ class NfcReadController {
           },
           onDiscovered: (NfcTag tag) async {
             try {
-              final nfcState = await _handleTagDiscovered(tag);
+              final nfcState = await _processTag(tag);
               onDiscovered(tag);
               completer.complete(nfcState);
             } catch (e) {
@@ -48,43 +48,41 @@ class NfcReadController {
     }
   }
 
-  /// Handles the discovered NFC tag and performs the token deduction.
-  Future<NfcState> _handleTagDiscovered(NfcTag tag) async {
+  /// Process the NFC tag to extract NDEF message and handle token cost information.
+  Future<NfcState> _processTag(NfcTag tag) async {
     var tech = Ndef.from(tag);
     if (tech is Ndef) {
       final cachedMessage = tech.cachedMessage;
 
       if (cachedMessage != null) {
-        // Loop through NFC tag records
-        for (var i = 0; i < cachedMessage.records.length; i++) {
-          final record = cachedMessage.records[i];
-
-          // Define how information is stored on the tag (for now, the first record will have tCost)
+        for (var record in cachedMessage.records) {
           final payload = String.fromCharCodes(record.payload);
           final parts = payload.split(':');
+
           if (parts.length == 2) {
             final tokenCostString = parts[1];
-            try {
-              // Parse int from data
-              final tokenCost = int.parse(tokenCostString);
-              // Deduct tokens from user account
-              auth.setUserId(); // Set the user ID
-              dynamic uid = auth.userID; // Get the user ID from database file
-              await DataBaseService(uid: uid)
-                  .deductTokens(tokenCost); // Call deduct tokens method
-              return NfcState.success; // Return success state
-            } catch (e) {
-              if (e is InsufficientTokensException) {
-                return NfcState
-                    .insufficientTokens; // Return insufficient tokens state
-              } else {
-                throw Exception('Invalid token format or deduction error: $e');
-              }
-            }
+            return await _handleTokenCost(int.parse(tokenCostString));
           }
         }
       }
     }
     return NfcState.error; // Return error state if no valid NDEF data is found
+  }
+
+  /// Handles the deduction of tokens from the user's account.
+  Future<NfcState> _handleTokenCost(int tokenCost) async {
+    try {
+      auth.setUserId(); // Set the user ID
+      dynamic uid = auth.userID; // Get the user ID from database file
+      await DataBaseService(uid: uid)
+          .deductTokens(tokenCost); // Call deduct tokens method
+      return NfcState.success; // Return success state
+    } catch (e) {
+      if (e is InsufficientTokensException) {
+        return NfcState.insufficientTokens; // Return insufficient tokens state
+      } else {
+        throw Exception('Invalid token format or deduction error: $e');
+      }
+    }
   }
 }
