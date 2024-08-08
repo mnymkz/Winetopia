@@ -37,6 +37,14 @@ class DataBaseService {
     return attendeeCollection.doc(uid).snapshots().map(_userDataFromSnapshot);
   }
 
+  Future<void> deleteUserData() async {
+    try {
+      await attendeeCollection.doc(uid).delete(); // deletes the document corresponding to current uid
+    } catch (e) {
+      print('Error deleting user data: $e');
+    }
+  }
+
   /*
    * deductTokens function deducts tokens from the user's account 
    * 
