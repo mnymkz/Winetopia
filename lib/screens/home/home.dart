@@ -21,19 +21,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<NfcTag?> _scannedTag = Future.value(null);
   NfcState _nfcState = NfcState.idle;
 
-  /// Initiates the NFC reading process and updates the NFC state based on the result.
-  void nfcButtonPressed() async {
-    setState(() {
-      _nfcState = NfcState.scanning;
-    });
-
-    final NfcState result =
-        await NfcReadController.getNfcData(_handleError, _handleDiscovered);
-    setState(() {
-      _nfcState = result;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,7 +38,8 @@ class _HomeScreenState extends State<HomeScreen> {
               Icons.person,
               color: Colors.white,
             ),
-            label: Text('sign out', style: TextStyle(color: Colors.white)),
+            label:
+                const Text('sign out', style: TextStyle(color: Colors.white)),
             onPressed: () async {
               await _auth.signOut();
             },
@@ -75,7 +63,6 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 20),
 
             // NFC Read Result (to be deleted later)
-            //TODO - database connection
             NfcReadResultWidget(
                 scannedTag: _scannedTag, nfcState: _nfcState, auth: _auth),
 
@@ -95,6 +82,21 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
+  /// Initiates the NFC reading process and updates the NFC state based on the result.
+  void nfcButtonPressed() async {
+    setState(() {
+      _nfcState = NfcState.scanning;
+    });
+
+    final nfcReadController = NfcReadController(_auth);
+    final NfcState result =
+        await nfcReadController.getNfcData(_handleError, _handleDiscovered);
+
+    setState(() {
+      _nfcState = result;
+    });
   }
 
   /// Handles errors during the NFC session and updates the state accordingly.

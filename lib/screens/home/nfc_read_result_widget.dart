@@ -62,33 +62,10 @@ class NfcReadResultWidget extends StatelessWidget {
       final cachedMessage = tech.cachedMessage;
 
       if (cachedMessage != null) {
-        //loop through NFC tag records
+        // Loop through NFC tag records
         for (var i = 0; i < cachedMessage.records.length; i++) {
           final record = cachedMessage.records[i];
           final info = NdefRecordInfo.fromNdef(record);
-
-          //TODO - define how information is stored on the tag (for now, the first record will have tCost)
-          //get token cost
-          final payload = String.fromCharCodes(record.payload);
-          final parts = payload.split(':');
-          if (parts.length == 2) {
-            final tokenCostString = parts[1];
-            try {
-              //parse int from data
-              final tokenCost = int.parse(tokenCostString);
-              //TODO - call dedeuct tokens function from database
-              auth.setUserId(); //set the user id
-              dynamic uid = auth.userID; //get the user id from database file
-              DataBaseService(uid: uid)
-                  .deductTokens(tokenCost); //call deduct tokens method
-              print(tokenCost);
-              print('Transaction successful');
-              //TODO - handle successful transaction (lead to a new screen)
-            } catch (e) {
-              print('Invalid token format: $e');
-              //TODO - handle transaction error (display to user)
-            }
-          }
 
           //Display Ntag information
           ndefWidgets.add(
