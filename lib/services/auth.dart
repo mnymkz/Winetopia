@@ -10,10 +10,11 @@ class AuthService {
   //get the firebase authentication instance
   final FirebaseAuth _auth = FirebaseAuth.instance;
   String firebaseErrorCode = '';
-  
+  String? userID = '';
+
   //create user object base on FirebaseUser (models/user.dart)
   //WinetopiaUser is an instance that store all the information we need from the FirebaseUser instance
-  WinetopiaUser? _userFromFirebaseUser(User? user){
+  WinetopiaUser? _userFromFirebaseUser(User? user) {
     return user != null ? WinetopiaUser(uid: user.uid) : null;
   }
 
@@ -26,7 +27,7 @@ class AuthService {
   }
 
   //sign in anon
-  Future signInAnon() async{
+  Future signInAnon() async {
     try {
       UserCredential result = await _auth.signInAnonymously(); //wait for the _auth to sign in then return an UserCredential object
       User? user = result.user;
@@ -38,11 +39,12 @@ class AuthService {
   }
 
   //sign in with email and password
-  Future signInWithEmailAndPassword(String email, String password) async{
+  Future signInWithEmailAndPassword(String email, String password) async {
     try {
-      UserCredential result = await _auth.signInWithEmailAndPassword(email: email, password: password);
+      UserCredential result = await _auth.signInWithEmailAndPassword(
+          email: email, password: password);
       User? user = result.user;
-      return _userFromFirebaseUser(user);//return the Winetopia user create by Firebase user intance
+      return _userFromFirebaseUser(user); //return the Winetopia user create by Firebase user intance
     } on FirebaseAuthException catch (e) {
       print(e.toString());
       return null;
@@ -50,15 +52,27 @@ class AuthService {
   }
 
   //register with email and password
-  Future resigterWithEmailAndPassword(String email, String password, String fname, String lname, String phone) async{
+  Future resigterWithEmailAndPassword(String email, String password, String fname, String lname, String phone) async {
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       User? user = result.user;
 
       //create a new document for the user with the uid
-      await DataBaseService(uid: user!.uid).updateUserData(email, fname, lname, phone, 0);
+      await DataBaseService(uid: user!.uid)
+          .updateUserData(email, fname, lname, phone, 0);
 
-      return _userFromFirebaseUser(user);//return the Winetopia user create by Firebase user intance
+      return _userFromFirebaseUser(user); //return the Winetopia user create by Firebase user intance
+    } on FirebaseAuthException catch (e) {
+      print(e.toString());
+      firebaseErrorCode = e.code.toString();
+      return null;
+    }
+  }
+
+  //update user profile
+  Future updateEmail() async{
+    try {
+      _auth.currentUser!.updatePassword('');
     } on FirebaseAuthException catch (e) {
       print(e.toString());
       firebaseErrorCode = e.code.toString();
@@ -67,12 +81,19 @@ class AuthService {
   }
 
   //sign out
-  Future signOut() async{
+  Future signOut() async {
     try {
       return await _auth.signOut();
     } catch (e) {
       print(e.toString());
       return null;
     }
+  }
+
+  // Method to get the current user's uid
+  // call function before accessing the user id
+  void setUserId() {
+    User? user = _auth.currentUser;
+    userID = user?.uid;
   }
 }
