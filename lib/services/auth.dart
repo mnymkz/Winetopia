@@ -90,6 +90,17 @@ class AuthService {
     }
   }
 
+  Future deleteAccount() async {
+    try {
+      await _auth.currentUser!.delete();
+      return null; // Account deleted successfully
+    } on FirebaseAuthException catch (e) {
+      print(e.toString());
+      firebaseErrorCode = e.code.toString();
+      return e.code; // Return the error code if there's an issue
+    }
+  }
+
   // Method to get the current user's uid
   // call function before accessing the user id
   void setUserId() {
@@ -97,3 +108,5 @@ class AuthService {
     userID = user?.uid;
   }
 }
+
+

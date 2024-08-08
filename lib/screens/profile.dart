@@ -151,6 +151,51 @@ class _NewScreenState extends State<NewScreen> {
                         //style: TextStyle(color: Colors.white)
                       ),
                     ),
+
+                    SizedBox(height: 20.0),
+                          ElevatedButton(
+                            onPressed: () async {
+                              bool? confirmed = await showDialog<bool>(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: Text('Confirm Deletion'),
+                                  content: Text('Are you sure you want to delete your account? This action cannot be undone.'),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      child: Text('Cancel'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop(false);
+                                      },
+                                    ),
+                                    TextButton(
+                                      child: Text('Delete'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop(true);
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              );
+
+                              if (confirmed == true) {
+                                setState(() {
+                                  loading = true;
+                                });
+                                dynamic result = await _auth.deleteAccount();
+                                if (result == null) {
+                                  Navigator.of(context).pop(); // Go back to the previous screen after deletion
+                                } else {
+                                  setState(() {
+                                    loading = false;
+                                    error = 'Failed to delete the account: $result';
+                                  });
+                                }
+                              }
+                            },
+                            style: ElevatedButton.styleFrom( //add colours soon maybe hmm idk!!!
+                            ),
+                            child: Text('Delete Account'),
+                          ),
                     SizedBox(height: 20.0,),
                     Text(
                       error,
