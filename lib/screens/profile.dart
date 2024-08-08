@@ -59,6 +59,8 @@ class _NewScreenState extends State<NewScreen> {
                   children: <Widget>[
                     SizedBox(height: 20.0,),
                     Text('Token Balance: ${userData?.tokenAmount}', style: TextStyle(fontSize: 20),),
+                    SizedBox(height: 30.0,),
+                    Text('Email: ${userData?.email}'),
                     // SizedBox(height: 20.0,),
                     // TextFormField(
                     //   decoration: textImportDecoration.copyWith(hintText: 'Email: ${userData?.email}'), 

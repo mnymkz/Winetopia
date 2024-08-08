@@ -88,7 +88,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     MaterialPageRoute(builder: (context) => NewScreen()),
                   );
                 },
-                child: const Text('Go to New Screen'),
+                child: const Text('My Profile'),
               ),
             ),
           ],
