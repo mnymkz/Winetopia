@@ -7,7 +7,8 @@ class DataBaseService {
   DataBaseService({required this.uid});
 
   //collection reference
-  final CollectionReference attendeeCollection = FirebaseFirestore.instance.collection('attendee');
+  final CollectionReference attendeeCollection =
+      FirebaseFirestore.instance.collection('attendee');
 
   //update userData
   Future updateUserData(String email, String fname, String lname, String phone,
@@ -22,16 +23,16 @@ class DataBaseService {
   }
 
   //userData from snapshot
-  UserData _userDataFromSnapshot(DocumentSnapshot snapshot){
+  UserData _userDataFromSnapshot(DocumentSnapshot snapshot) {
     return UserData(
-      uid: uid,
-      email: snapshot.get('email'),
-      fname: snapshot.get('fname'),
-      lname: snapshot.get('lname'),
-      phone: snapshot.get('phone'),
-      tokenAmount: snapshot.get('tokenAmount')
-    );
+        uid: uid,
+        email: snapshot.get('email'),
+        fname: snapshot.get('fname'),
+        lname: snapshot.get('lname'),
+        phone: snapshot.get('phone'),
+        tokenAmount: snapshot.get('tokenAmount'));
   }
+
   //get attendee stream
   Stream<UserData> get userData {
     return attendeeCollection.doc(uid).snapshots().map(_userDataFromSnapshot);
@@ -55,13 +56,26 @@ class DataBaseService {
             'tokenAmount': currentTokenAmount - numTokens,
           });
         } else {
-          throw Exception('Not enough tokens');
+          throw InsufficientTokensException('Not enough tokens');
         }
       } else {
         throw Exception('User not found');
       }
     } catch (e) {
-      print('Error updating token amount: $e');
+      if (e is InsufficientTokensException) {
+        throw e; // Re-throw the custom exception
+      } else {
+        print('Error updating token amount: $e');
+        throw Exception('Error updating token amount: $e');
+      }
     }
   }
+}
+
+class InsufficientTokensException implements Exception {
+  final String message;
+  InsufficientTokensException(this.message);
+
+  @override
+  String toString() => message;
 }

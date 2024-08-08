@@ -50,9 +50,15 @@ class _HomeScreenState extends State<HomeScreen> {
         child: ListView(
           shrinkWrap: true,
           children: [
-            // Display text based on NFC reading state
+            // Primary feedback message
             Center(
-              child: Text(_nfcState.feedbackMessage),
+              child: Text(
+                _nfcState.primaryMessage,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 24,
+                ),
+              ),
             ),
             const SizedBox(height: 20),
 
@@ -60,6 +66,19 @@ class _HomeScreenState extends State<HomeScreen> {
             GestureDetector(
                 onTap: nfcButtonPressed,
                 child: NfcReadButton(nfcState: _nfcState)),
+            const SizedBox(height: 20),
+
+            // Secondary feedback message only shows if it is not empty
+            if (_nfcState.secondaryMessage.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Text(
+                  _nfcState.secondaryMessage,
+                  style: const TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
+              ),
             const SizedBox(height: 20),
 
             // NFC Read Result (to be deleted later)

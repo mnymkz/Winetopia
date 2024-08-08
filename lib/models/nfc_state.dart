@@ -1,13 +1,17 @@
 /// Defines the possible states for NFC operations and their associated feedback messages.
 enum NfcState {
-  idle('Tap to pay for a wine sample'),
-  scanning('Scanning...'),
-  success('Success'),
-  error('Error occurred during NFC session'),
-  notAvailable('Please turn on your device\'s NFC reading');
+  idle('Tap to pay for a wine sample', ''),
+  scanning('Scanning...', ''),
+  success('Purchase successful!', 'Tap again to buy another wine sample.'),
+  insufficientTokens(
+      'Oops', 'Looks like you don\'t have enough tokens for this wine sample'),
+  error('An error occurred while scanning.', 'Press the button to try again.'),
+  notAvailable('NFC unavailable or turned off',
+      'Please turn on your device\'s NFC settings or check if it is available.');
 
-  final String feedbackMessage; // Message to display based on the NFC state.
+  final String primaryMessage; // Primary feedback message.
+  final String secondaryMessage; // Secondary feedback message.
 
-  /// Creates an instance of the [NfcState] with the provided [feedbackMessage].
-  const NfcState(this.feedbackMessage);
+  /// Creates an instance of the [NfcState] with the provided messages.
+  const NfcState(this.primaryMessage, this.secondaryMessage);
 }

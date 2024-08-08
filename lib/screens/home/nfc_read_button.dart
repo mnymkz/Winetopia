@@ -31,6 +31,7 @@ class NfcReadButton extends StatelessWidget {
         break;
       case NfcState.error:
       case NfcState.notAvailable:
+      case NfcState.insufficientTokens:
         icon = Icons.close;
         iconColor = Colors.red;
         backgroundColor = Colors.white;

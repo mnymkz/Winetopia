@@ -19,7 +19,6 @@ class NfcReadController {
 
       try {
         await NfcManager.instance.startSession(
-          invalidateAfterFirstRead: true,
           onError: (error) async {
             onError(error);
             NfcManager.instance.stopSession();
@@ -73,14 +72,14 @@ class NfcReadController {
               dynamic uid = auth.userID; // Get the user ID from database file
               await DataBaseService(uid: uid)
                   .deductTokens(tokenCost); // Call deduct tokens method
-              print(tokenCost);
-              print('Transaction successful');
-              //TODO - handle successful transaction (lead to a new screen)
               return NfcState.success; // Return success state
             } catch (e) {
-              print('Invalid token format: $e');
-              throw Exception('Invalid token format or deduction error: $e');
-              //TODO - handle transaction error (display to user)
+              if (e is InsufficientTokensException) {
+                return NfcState
+                    .insufficientTokens; // Return insufficient tokens state
+              } else {
+                throw Exception('Invalid token format or deduction error: $e');
+              }
             }
           }
         }
