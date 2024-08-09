@@ -3,7 +3,6 @@ import 'package:nfc_manager/nfc_manager.dart';
 import 'package:winetopia/models/ndef_record_info.dart';
 import 'package:winetopia/models/nfc_state.dart';
 import 'package:winetopia/services/auth.dart';
-import 'package:winetopia/services/database.dart';
 
 /// A widget that displays NFC read results using a [FutureBuilder].
 ///
@@ -37,8 +36,28 @@ class NfcReadResultWidget extends StatelessWidget {
           } else {
             if (nfcState == NfcState.error ||
                 nfcState == NfcState.notAvailable) {
-              return const Center(
-                child: Text('No data'),
+              return Center(
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  color: Colors.purple,
+                  child: const ListTile(
+                    title: Text(
+                      'Tag data (temporary)',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20),
+                    ),
+                    subtitle: Text(
+                      'No NDEF data found',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
               );
             } else {
               return const SizedBox.shrink();
@@ -62,33 +81,10 @@ class NfcReadResultWidget extends StatelessWidget {
       final cachedMessage = tech.cachedMessage;
 
       if (cachedMessage != null) {
-        //loop through NFC tag records
+        // Loop through NFC tag records
         for (var i = 0; i < cachedMessage.records.length; i++) {
           final record = cachedMessage.records[i];
           final info = NdefRecordInfo.fromNdef(record);
-
-          //TODO - define how information is stored on the tag (for now, the first record will have tCost)
-          //get token cost
-          final payload = String.fromCharCodes(record.payload);
-          final parts = payload.split(':');
-          if (parts.length == 2) {
-            final tokenCostString = parts[1];
-            try {
-              //parse int from data
-              final tokenCost = int.parse(tokenCostString);
-              //TODO - call dedeuct tokens function from database
-              auth.setUserId(); //set the user id
-              dynamic uid = auth.userID; //get the user id from database file
-              DataBaseService(uid: uid)
-                  .deductTokens(tokenCost); //call deduct tokens method
-              print(tokenCost);
-              print('Transaction successful');
-              //TODO - handle successful transaction (lead to a new screen)
-            } catch (e) {
-              print('Invalid token format: $e');
-              //TODO - handle transaction error (display to user)
-            }
-          }
 
           //Display Ntag information
           ndefWidgets.add(
@@ -98,14 +94,18 @@ class NfcReadResultWidget extends StatelessWidget {
               ),
               color: Colors.purple,
               child: ListTile(
-                title: const Text('This wine sample costs:',
-                    style: TextStyle(color: Colors.white)),
-                subtitle: Text(
-                  info.title,
-                  style: const TextStyle(
+                title: const Text(
+                  'Tag data (temporary)',
+                  style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                       fontSize: 20),
+                ),
+                subtitle: Text(
+                  info.title,
+                  style: const TextStyle(
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
