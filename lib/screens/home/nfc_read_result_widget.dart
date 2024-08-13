@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:winetopia/models/ndef_record_info.dart';
 import 'package:winetopia/models/nfc_state.dart';
-import 'package:winetopia/services/auth.dart';
 
 /// A widget that displays NFC read results using a [FutureBuilder].
 ///
@@ -11,14 +10,13 @@ import 'package:winetopia/services/auth.dart';
 class NfcReadResultWidget extends StatelessWidget {
   final Future<NfcTag?> scannedTag; // the scanned tag
   final NfcState nfcState; // the nfc state
-  final AuthService auth; // the auth service
 
   /// Creates an [NfcReadResultWidget] with the provided [scannedTag] and [nfcState].
-  const NfcReadResultWidget(
-      {super.key,
-      required this.scannedTag,
-      required this.nfcState,
-      required this.auth});
+  const NfcReadResultWidget({
+    super.key,
+    required this.scannedTag,
+    required this.nfcState,
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -82,8 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 20),
 
             // NFC Read Result (to be deleted later)
-            NfcReadResultWidget(
-                scannedTag: _scannedTag, nfcState: _nfcState, auth: _auth),
+            NfcReadResultWidget(scannedTag: _scannedTag, nfcState: _nfcState),
 
             // Button to navigate to a new screen
             Center(
