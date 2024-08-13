@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:winetopia/models/wine_sample.dart';
 
-class WinePurchaseInfoWidget extends StatelessWidget {
+class WineInfoWidget extends StatelessWidget {
   final WineSample? wine;
 
-  const WinePurchaseInfoWidget({Key? key, required this.wine})
-      : super(key: key);
+  const WineInfoWidget({super.key, required this.wine});
 
   @override
   Widget build(BuildContext context) {

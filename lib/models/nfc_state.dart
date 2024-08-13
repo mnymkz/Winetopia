@@ -1,3 +1,18 @@
+import 'package:flutter/foundation.dart';
+
+class NfcStateModel extends ChangeNotifier {
+  NfcState _state = NfcState.idle; // Initial state is idle
+
+  NfcState get state => _state;
+
+  void updateState(NfcState newState) {
+    if (_state != newState) {
+      _state = newState;
+      notifyListeners();
+    }
+  }
+}
+
 /// Defines the possible states for NFC operations and their associated feedback messages.
 enum NfcState {
   idle('Tap to pay for a wine sample', ''),
