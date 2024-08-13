@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:winetopia/models/wine_sample.dart';
 import 'package:winetopia/models/winetopia_user.dart';
 
 class DataBaseService {
@@ -6,11 +7,13 @@ class DataBaseService {
 
   DataBaseService({required this.uid});
 
-  //collection reference
+  // Collection references
   final CollectionReference attendeeCollection =
       FirebaseFirestore.instance.collection('attendee');
+  final CollectionReference wineCollection =
+      FirebaseFirestore.instance.collection('wine');
 
-  //update userData
+  // Update userData
   Future updateUserData(String email, String fname, String lname, String phone,
       int tokenAmount) async {
     return await attendeeCollection.doc(uid).set({
@@ -22,7 +25,7 @@ class DataBaseService {
     });
   }
 
-  //userData from snapshot
+  // UserData from snapshot
   UserData _userDataFromSnapshot(DocumentSnapshot snapshot) {
     return UserData(
         uid: uid,
@@ -33,7 +36,7 @@ class DataBaseService {
         tokenAmount: snapshot.get('tokenAmount'));
   }
 
-  //get attendee stream
+  // Get attendee stream
   Stream<UserData> get userData {
     return attendeeCollection.doc(uid).snapshots().map(_userDataFromSnapshot);
   }
@@ -69,6 +72,57 @@ class DataBaseService {
         throw Exception('Error updating token amount: $e');
       }
     }
+  }
+
+  // Check if wine exists in the wine collection
+  Future<bool> validateWine(String wineDocId) async {
+    DocumentSnapshot docSnapshot = await wineCollection.doc(wineDocId).get();
+    return docSnapshot.exists;
+  }
+
+  // Add a wine reference to the user's purchased wines list
+  Future<void> addPurchasedWine(String wineDocId) async {
+    DocumentReference userDoc = attendeeCollection.doc(uid);
+
+    // Add the wineDocId to an array of purchased wine references
+    return await userDoc.update({
+      'purchasedWines': FieldValue.arrayUnion([wineDocId]),
+    });
+  }
+
+  // Fetch full wine information using the docId
+  Future<WineSample?> getWineInfo(String wineDocId) async {
+    DocumentSnapshot docSnapshot = await wineCollection.doc(wineDocId).get();
+    if (docSnapshot.exists) {
+      return WineSample.fromFirestore(docSnapshot);
+    } else {
+      return null; // Handle case where wine is not found
+    }
+  }
+
+  // Get the list of purchased wine docIds for the attendee
+  Future<List<String>> getPurchasedWineIds() async {
+    DocumentSnapshot userDoc = await attendeeCollection.doc(uid).get();
+    if (userDoc.exists) {
+      List<dynamic> purchasedWines = userDoc.get('purchasedWines') ?? [];
+      return List<String>.from(purchasedWines);
+    } else {
+      return []; // Handle case where user document is not found
+    }
+  }
+
+  // Get the list of purchased wines for the attendee
+  Future<List<WineSample>> getPurchasedWines() async {
+    List<String> wineIds = await getPurchasedWineIds();
+    List<WineSample> wines = [];
+
+    for (String wineId in wineIds) {
+      WineSample? wine = await getWineInfo(wineId);
+      if (wine != null) {
+        wines.add(wine);
+      }
+    }
+    return wines;
   }
 }
 
