@@ -57,31 +57,40 @@ class NfcReadController {
       if (cachedMessage != null) {
         for (var record in cachedMessage.records) {
           final payload = String.fromCharCodes(record.payload);
-          final parts = payload.split(':');
+          final wineDocId = payload.trim(); // Payload is the wine docId
 
-          if (parts.length == 2) {
-            final tokenCostString = parts[1];
-            return await _handleTokenCost(int.parse(tokenCostString));
-          }
+          // Validate the wine docId and handle the purchase
+          return await _handleWinePurchase(wineDocId);
         }
       }
     }
     return NfcState.error; // Return error state if no valid NDEF data is found
   }
 
-  /// Handles the deduction of tokens from the user's account.
-  Future<NfcState> _handleTokenCost(int tokenCost) async {
+  Future<NfcState> _handleWinePurchase(String wineDocId) async {
     try {
       auth.setUserId(); // Set the user ID
-      dynamic uid = auth.userID; // Get the user ID from database file
-      await DataBaseService(uid: uid)
-          .deductTokens(tokenCost); // Call deduct tokens method
-      return NfcState.success; // Return success state
+      dynamic uid = auth.userID; // Get the user ID from the database file
+
+      // Get the wine information from Firestore
+      final wineSample = await DataBaseService(uid: uid).getWineInfo(wineDocId);
+
+      if (wineSample != null) {
+        // Deduct wine's tPrice from the user's token amount
+        await DataBaseService(uid: uid).deductTokens(wineSample.tPrice);
+
+        // Add the wine's docId to the attendee's purchased wines list
+        await DataBaseService(uid: uid).addPurchasedWine(wineDocId);
+
+        return NfcState.success; // Return success state
+      } else {
+        return NfcState.error; // Return error if wine is not found
+      }
     } catch (e) {
       if (e is InsufficientTokensException) {
         return NfcState.insufficientTokens; // Return insufficient tokens state
       } else {
-        throw Exception('Invalid token format or deduction error: $e');
+        throw Exception('Error processing wine purchase: $e');
       }
     }
   }
