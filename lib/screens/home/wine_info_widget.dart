@@ -34,10 +34,10 @@ class WineInfoWidget extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        subtitle: Text(
+/*         subtitle: Text(
           'Exhibitor: ${wine!.exhibitorId}',
           style: const TextStyle(fontSize: 16),
-        ),
+        ), */
       ),
     ));
   }
