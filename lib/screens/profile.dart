@@ -25,7 +25,7 @@ class _NewScreenState extends State<NewScreen> {
   bool loading = false;
 
   //text field state
-  //String email = '';
+  String email = '';
   String password = '';
   String fname = '';
   String lname = '';
@@ -59,19 +59,19 @@ class _NewScreenState extends State<NewScreen> {
                   children: <Widget>[
                     SizedBox(height: 20.0,),
                     Text('Token Balance: ${userData?.tokenAmount}', style: TextStyle(fontSize: 20),),
-                    SizedBox(height: 30.0,),
-                    Text('Email: ${userData?.email}'),
-                    // SizedBox(height: 20.0,),
-                    // TextFormField(
-                    //   decoration: textImportDecoration.copyWith(hintText: 'Email: ${userData?.email}'), 
-                    //   validator:(val) => val!.isEmpty ? 'Please enter an Email' : null,
-                    //   //every time the text field in the form have a change, this function is triggered
-                    //   onChanged: (val){
-                    //     setState(() {
-                    //       email = val;
-                    //     });
-                    //   },
-                    // ),
+
+                    SizedBox(height: 20.0,),
+                    TextFormField(
+                      decoration: textImportDecoration.copyWith(hintText: 'Email: ${userData?.email}'), 
+                      //validator:(val) => val!.isEmpty ? 'Please enter an Email' : null,
+                      //every time the text field in the form have a change, this function is triggered
+                      onChanged: (val){
+                        setState(() {
+                          email = val;
+                        });
+                      },
+                    ),
+
                     SizedBox(height: 20.0,),
                     TextFormField(
                       decoration: textImportDecoration.copyWith(hintText: 'First name: ${userData?.fname}'),
@@ -106,18 +106,19 @@ class _NewScreenState extends State<NewScreen> {
                         });
                       },
                     ),
-                    // Changing password feature will be develope in the future
-                    // SizedBox(height: 20.0,),
-                    // TextFormField(
-                    //   decoration: textImportDecoration.copyWith(hintText: 'New Password'),
-                    //   obscureText: true, //hiding the text (for password)
-                    //   validator:(val) => val!.length < 6 ? 'Your Password needs to be atleast 6 characters' : null,
-                    //   onChanged: (val){
-                    //     setState(() {
-                    //       password = val;
-                    //     });
-                    //   },
-                    // ),
+                    
+                    SizedBox(height: 20.0,),
+                    TextFormField(
+                      decoration: textImportDecoration.copyWith(hintText: 'New Password'),
+                      obscureText: true, //hiding the text (for password)
+                      validator:(val) => (val!.length < 6 && val.isNotEmpty)? 'Your Password needs to be atleast 6 characters' : null,
+                      onChanged: (val){
+                        setState(() {
+                          password = val;
+                        });
+                      },
+                    ),
+
                     SizedBox(height: 20.0,),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
@@ -128,19 +129,81 @@ class _NewScreenState extends State<NewScreen> {
                           setState(() {
                             loading = true;
                           });
-                          if(fname == '')
-                          {
-                            fname = userData!.fname;
+
+                          if(password != ''){
+                            dynamic result_password = await _auth.updatePassword(password);
+                            if(result_password == null){
+                              setState(() {
+                                if(_auth.firebaseErrorCode == 'requires-recent-login'){
+                                  error = 'Changging password requires recent authentication. Please log in again!';
+                                }
+                              });
+                            }
+                            password = '';
                           }
-                          if(lname == '')
-                          {
-                            lname = userData!.lname;
+
+                          if(email != ''){
+                            print('email: ' + email);
+                            //updating email for authentication
+                            dynamic result_email_auth = await _auth.updateEmail(email);
+                            //handling error from firebase auth is not working!
+                            if(result_email_auth == null){
+                              //handling error from firebase response
+                              //for more error type, plz visit: https://firebase.google.com/docs/auth/admin/errors
+                              setState(() {
+                                print(_auth.firebaseErrorCode.toString());
+                                if(_auth.firebaseErrorCode == 'user-token-expried'){
+                                  error = 'Changging Email requires recent authentication. Please log in again!';
+                                }
+                                if(_auth.firebaseErrorCode == 'invalid-email'){
+                                  error = 'Invalid email';
+                                }
+                                else if(_auth.firebaseErrorCode == 'email-already-in-use'){
+                                  error = 'This email is already in use';
+                                }
+                                else{
+                                  error = 'Update fail! Please try again latter!';
+                                }
+                              });
+                            }
+                            //updating email in firebase
+                            dynamic result_email = await DataBaseService(uid: user!.uid).updateEmail(email);
+                            email = '';
                           }
-                          if(phone == '')
-                          {
-                            phone = userData!.phone;
+
+                          if(fname != ''){
+                            dynamic result = await DataBaseService(uid: user!.uid).updateFirstName(fname);
+                            fname = '';
                           }
-                          dynamic result = await DataBaseService(uid: user!.uid).updateUserData(userData!.email, fname, lname, phone, userData!.tokenAmount);
+
+                          if(lname != ''){
+                            dynamic result = await DataBaseService(uid: user!.uid).updateLastName(lname);
+                            lname = '';
+                          }
+
+                          if(phone != ''){
+                            dynamic result = await DataBaseService(uid: user!.uid).updatePhone(phone);
+                            phone = '';
+                          }
+
+                          // if(email == '')
+                          // {
+                          //   email = userData!.email;
+                          // }
+                          // if(fname == '')
+                          // {
+                          //   fname = userData!.fname;
+                          // }
+                          // if(lname == '')
+                          // {
+                          //   lname = userData!.lname;
+                          // }
+                          // if(phone == '')
+                          // {
+                          //   phone = userData!.phone;
+                          // }
+
+                          // dynamic result = await DataBaseService(uid: user!.uid).updateProfile(email, fname, lname, phone);
                           setState(() {
                             loading = false;
                           });
@@ -167,7 +230,7 @@ class _NewScreenState extends State<NewScreen> {
               title: Text('Profile'),
             ),
             body: Center(
-              child: Text('test screen'),
+              child: Text('Something happend with firebase!'),
             ),
           );
         }
