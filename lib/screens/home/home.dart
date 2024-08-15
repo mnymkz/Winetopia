@@ -47,10 +47,8 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       body: Center(
-        child: Consumer<NfcStateModel>(
-          builder: (context, nfcStateModel, child) {
-            final nfcState = nfcStateModel.state;
-
+        child: Consumer<NfcState>(
+          builder: (context, nfcState, child) {
             return ListView(
               shrinkWrap: true,
               children: [
@@ -68,7 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 // NFC Read Button
                 GestureDetector(
-                  onTap: () => _nfcButtonPressed(context, nfcStateModel),
+                  onTap: () => _nfcButtonPressed(context),
                   child: NfcReadButton(nfcState: nfcState),
                 ),
                 const SizedBox(height: 20),
@@ -86,10 +84,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 const SizedBox(height: 20),
 
-                // Wine Info Widget, showing information about the purchased wine
+                // Wine Info Widget - shows information about the recently purchased wine
                 if (_wineSample != null) WineInfoWidget(wine: _wineSample),
-
-                // Button to navigate to a new screen
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
@@ -109,14 +105,14 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  /// Initiates the NFC reading process and updates the NFC state based on the result.
-  void _nfcButtonPressed(
-      BuildContext context, NfcStateModel nfcStateModel) async {
-    nfcStateModel.updateState(NfcState.scanning);
+  /// Initiates the NFC reading process and updates the NFC state based on the result
+  void _nfcButtonPressed(BuildContext context) async {
+    final nfcStateStream = Provider.of<NfcStateStream>(context, listen: false);
+    nfcStateStream.updateState(NfcState.scanning);
 
     final nfcReadController = NfcReadController(
       auth: _auth,
-      nfcState: nfcStateModel,
+      nfcStateStream: nfcStateStream,
       onWineSamplePurchased: (wineSample) {
         setState(() {
           _wineSample = wineSample;

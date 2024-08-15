@@ -1,4 +1,22 @@
 import 'package:flutter/foundation.dart';
+import 'dart:async';
+
+class NfcStateStream {
+  final _controller = StreamController<NfcState>.broadcast();
+
+  // Getter for the stream
+  Stream<NfcState> get stream => _controller.stream;
+
+  // Function to add new state to the stream
+  void updateState(NfcState newState) {
+    _controller.add(newState);
+  }
+
+  // Dispose the controller when no longer needed
+  void dispose() {
+    _controller.close();
+  }
+}
 
 class NfcStateModel extends ChangeNotifier {
   NfcState _state = NfcState.idle; // Initial state is idle
