@@ -87,6 +87,28 @@ class DataBaseService {
     }
   }
 
+  // Add tokens to the exhibitor's balance
+  Future<void> updateExhibitorBalance(
+      String exhibitorDocId, int numTokens) async {
+    try {
+      DocumentReference exhibitorDoc = exhibitorCollection.doc(exhibitorDocId);
+      DocumentSnapshot docSnapshot = await exhibitorDoc.get();
+
+      if (docSnapshot.exists) {
+        int currentBalance = docSnapshot.get('bal') ?? 0;
+
+        await exhibitorDoc.update({
+          'bal': currentBalance + numTokens,
+        });
+      } else {
+        throw Exception('Exhibitor not found');
+      }
+    } catch (e) {
+      print('Error updating exhibitor balance: $e');
+      throw Exception('Error updating exhibitor balance: $e');
+    }
+  }
+
   // Check if wine exists in the wine collection
   Future<bool> validateWine(String wineDocId) async {
     DocumentSnapshot docSnapshot = await wineCollection.doc(wineDocId).get();

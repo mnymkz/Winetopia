@@ -89,6 +89,9 @@ class NfcReadController {
         // Add the wine's docId to the attendee's purchased wines list
         await DataBaseService(uid: uid).addPurchasedWine(wineDocId);
 
+        // Add the wine's tPrice to the exhibitor's balance
+        await DataBaseService(uid: uid).updateExhibitorBalance(
+            wineSample.exhibitor.docId, wineSample.tPrice);
         return wineSample; // Return success state
       } else {
         return null; // Return error if wine is not found
