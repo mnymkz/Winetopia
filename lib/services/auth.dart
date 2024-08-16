@@ -11,6 +11,7 @@ class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   String firebaseErrorCode = '';
   String? userID = '';
+  String? userEmail = '';
 
   //create user object base on FirebaseUser (models/user.dart)
   //WinetopiaUser is an instance that store all the information we need from the FirebaseUser instance
@@ -73,10 +74,11 @@ class AuthService {
   Future updatePassword(String newPassword) async{
     try {
       await _auth.currentUser!.updatePassword(newPassword);
+      return true;
     } on FirebaseAuthException catch (e) {
       print(e.toString());
       firebaseErrorCode = e.code.toString();
-      return null;
+      return false;
     }
   }
 
@@ -84,10 +86,11 @@ class AuthService {
   Future updateEmail(String newEmail) async{
     try{
       await _auth.currentUser!.verifyBeforeUpdateEmail(newEmail);
-    } on FirebaseAuthException catch (e){
+      return true;
+    }on FirebaseAuthException catch (e){
       print(e.toString());
       firebaseErrorCode = e.code.toString();
-      return null;
+      return false;
     }
   }
 
@@ -106,5 +109,10 @@ class AuthService {
   void setUserId() {
     User? user = _auth.currentUser;
     userID = user?.uid;
+  }
+
+  String? getUserEmail(){
+    User? user = _auth.currentUser;
+    return user?.email;
   }
 }

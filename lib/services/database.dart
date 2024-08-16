@@ -33,7 +33,7 @@ class DataBaseService {
     });
   }
 
-  Future updateEmail(String email) async{
+  Future updateEmail(String? email) async{
     return await attendeeCollection.doc(uid).update({
       'email': email
     });

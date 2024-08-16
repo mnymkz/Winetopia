@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:winetopia/models/winetopia_user.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:winetopia/screens/authenticate/authenticate.dart';
+import 'package:winetopia/screens/authenticate/sign_in.dart';
 import 'package:winetopia/services/auth.dart';
 import 'package:winetopia/services/database.dart';
 import 'package:winetopia/shared/constants.dart';
@@ -12,6 +14,7 @@ import 'package:flutter/services.dart';
 class NewScreen extends StatefulWidget {
   @override
   State<NewScreen> createState() => _NewScreenState();
+  
 }
 
 class _NewScreenState extends State<NewScreen> {
@@ -34,13 +37,44 @@ class _NewScreenState extends State<NewScreen> {
 
   @override
   //placeholder view
-  Widget build(BuildContext context) {
+    Widget build(BuildContext context) {
+      Future<void> _showMyDialog() async {
+      return showDialog<void>(
+        context: context,
+        barrierDismissible: false, // user must tap button!
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Verify Your Email'),
+            content: const SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  Text('An email has been sent to you with instruction to verify your new email address. If you change your mind, just ignore this email.'),
+                  SizedBox(height: 10,),
+                  Text('Please sign in again after verify to show your new email!'),
+                  SizedBox(height: 10,),
+                  Text('Contact Winetopia-app team at <our info> for further assistance')
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('OK!'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
     
     final user = Provider.of<WinetopiaUser?>(context);
 
     return StreamBuilder<UserData>(
       stream: DataBaseService(uid: user!.uid).userData,
       builder: (context, snapshot) {
+        DataBaseService(uid: user!.uid).updateEmail(_auth.getUserEmail());
         if(snapshot.hasData){
           UserData? userData = snapshot.data;
           return loading ? Loading() : Scaffold(
@@ -58,8 +92,23 @@ class _NewScreenState extends State<NewScreen> {
                 child: Column(
                   children: <Widget>[
                     SizedBox(height: 20.0,),
-                    Text('Token Balance: ${userData?.tokenAmount}', style: TextStyle(fontSize: 20),),
 
+                    Row(
+                      children: <Widget>[
+                        SizedBox(width: 70.0,),
+                        Text('Token Balance: ${userData?.tokenAmount}', style: TextStyle(fontSize: 20),),
+
+                        // SizedBox(width: 30,),
+                        // IconButton(
+                        //   onPressed: () async{
+                        //     print(await _auth.getUserEmail());
+                        //     dynamic result_email = await DataBaseService(uid: user!.uid).updateEmail(await _auth.getUserEmail());
+                        //   }, 
+                        //   icon: Icon(Icons.replay_rounded)
+                        // )
+                      ],
+                    ),
+                  
                     SizedBox(height: 20.0,),
                     TextFormField(
                       decoration: textImportDecoration.copyWith(hintText: 'Email: ${userData?.email}'), 
@@ -146,28 +195,31 @@ class _NewScreenState extends State<NewScreen> {
                             print('email: ' + email);
                             //updating email for authentication
                             dynamic result_email_auth = await _auth.updateEmail(email);
+                            print(result_email_auth);
                             //handling error from firebase auth is not working!
-                            if(result_email_auth == null){
+                            if(result_email_auth == false){
                               //handling error from firebase response
                               //for more error type, plz visit: https://firebase.google.com/docs/auth/admin/errors
-                              setState(() {
-                                print(_auth.firebaseErrorCode.toString());
-                                if(_auth.firebaseErrorCode == 'user-token-expried'){
+                              setState((){
+                                if(_auth.firebaseErrorCode == 'user-token-expired'){
                                   error = 'Changging Email requires recent authentication. Please log in again!';
                                 }
-                                if(_auth.firebaseErrorCode == 'invalid-email'){
-                                  error = 'Invalid email';
+                                else if(_auth.firebaseErrorCode == 'requires-recent-login'){
+                                  error = 'Changging Email requires recent authentication. Please log in again!';
                                 }
-                                else if(_auth.firebaseErrorCode == 'email-already-in-use'){
-                                  error = 'This email is already in use';
+                                else if(_auth.firebaseErrorCode == 'unknown'){
+                                  error = 'Invalid email';
                                 }
                                 else{
                                   error = 'Update fail! Please try again latter!';
                                 }
+                                
                               });
                             }
-                            //updating email in firebase
-                            dynamic result_email = await DataBaseService(uid: user!.uid).updateEmail(email);
+                            else{
+                              _showMyDialog();
+                            }
+
                             email = '';
                           }
 
@@ -185,26 +237,8 @@ class _NewScreenState extends State<NewScreen> {
                             dynamic result = await DataBaseService(uid: user!.uid).updatePhone(phone);
                             phone = '';
                           }
-
-                          // if(email == '')
-                          // {
-                          //   email = userData!.email;
-                          // }
-                          // if(fname == '')
-                          // {
-                          //   fname = userData!.fname;
-                          // }
-                          // if(lname == '')
-                          // {
-                          //   lname = userData!.lname;
-                          // }
-                          // if(phone == '')
-                          // {
-                          //   phone = userData!.phone;
-                          // }
-
-                          // dynamic result = await DataBaseService(uid: user!.uid).updateProfile(email, fname, lname, phone);
-                          setState(() {
+                          
+                          setState((){
                             loading = false;
                           });
                         }
