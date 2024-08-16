@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:winetopia/models/wine_sample.dart';
 
@@ -13,32 +15,66 @@ class WineInfoWidget extends StatelessWidget {
     }
 
     return Center(
-        child: Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      color: Colors.purple,
-      child: ListTile(
-        contentPadding: const EdgeInsets.all(16.0),
-        leading: CircleAvatar(
-          backgroundColor: Colors.purple[200],
-          child: Text(
-            '${wine!.tPrice}',
-            style: const TextStyle(color: Colors.white),
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+        decoration: BoxDecoration(
+          color: Colors.transparent, // Make the background color transparent
+          borderRadius: BorderRadius.circular(20.0),
+          border: Border.all(
+            color: Colors.purple, // Border color
+            width: 2.0, // Border width
           ),
         ),
-        title: Text(
-          wine!.name,
-          style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
+        child: ListTile(
+          contentPadding: const EdgeInsets.all(8.0),
+          leading: Container(
+            padding: const EdgeInsets.all(5.0),
+            decoration: BoxDecoration(
+              color:
+                  Colors.purple[500], // Background color for the leading widget
+              borderRadius: BorderRadius.circular(10.0), // Rounded corners
+            ),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                // Use constraints.maxHeight to size the icon
+                final double iconSize = min(constraints.maxHeight * 0.6, 40.0);
+                final double textSize = min(constraints.maxHeight * 0.25, 20.0);
+
+                return Column(
+                  mainAxisAlignment:
+                      MainAxisAlignment.center, // Center content vertically
+                  children: [
+                    Icon(
+                      Icons.wine_bar,
+                      color: Colors.white,
+                      size: iconSize,
+                    ),
+                    Text(
+                      '${wine!.tPrice} tokens',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: textSize,
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+          title: Text(
+            wine!.name,
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          subtitle: Text(
+            wine!.exhibitor.name,
+            style: const TextStyle(fontSize: 16),
           ),
         ),
-/*         subtitle: Text(
-          'Exhibitor: ${wine!.exhibitorId}',
-          style: const TextStyle(fontSize: 16),
-        ), */
       ),
-    ));
+    );
   }
 }

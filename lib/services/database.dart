@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:winetopia/models/exhibitor.dart';
 import 'package:winetopia/models/wine_sample.dart';
 import 'package:winetopia/models/winetopia_user.dart';
 
@@ -12,6 +13,8 @@ class DataBaseService {
       FirebaseFirestore.instance.collection('attendee');
   final CollectionReference wineCollection =
       FirebaseFirestore.instance.collection('wine');
+  final CollectionReference exhibitorCollection =
+      FirebaseFirestore.instance.collection('exhibitor');
 
   // Update userData
   Future updateUserData(String email, String fname, String lname, String phone,
@@ -46,7 +49,7 @@ class DataBaseService {
    * 
    * @param numToken the number of tokens to dedeuct from the user's account
    */
-  Future<void> deductTokens(int numTokens) async {
+  Future<void> deductTokensFromAttendee(int numTokens) async {
     try {
       DocumentReference userDoc = attendeeCollection.doc(uid);
       DocumentSnapshot docSnapshot = await userDoc.get();
@@ -74,6 +77,16 @@ class DataBaseService {
     }
   }
 
+  Future<Exhibitor?> getExhibitorInfo(String exhibitorDocId) async {
+    DocumentSnapshot docSnapshot =
+        await exhibitorCollection.doc(exhibitorDocId).get();
+    if (docSnapshot.exists) {
+      return Exhibitor.fromFirestore(docSnapshot);
+    } else {
+      return null; // Handle case where exhibitor is not found
+    }
+  }
+
   // Check if wine exists in the wine collection
   Future<bool> validateWine(String wineDocId) async {
     DocumentSnapshot docSnapshot = await wineCollection.doc(wineDocId).get();
@@ -90,13 +103,22 @@ class DataBaseService {
     });
   }
 
-  // Fetch full wine information using the docId
   Future<WineSample?> getWineInfo(String wineDocId) async {
-    DocumentSnapshot docSnapshot = await wineCollection.doc(wineDocId).get();
-    if (docSnapshot.exists) {
-      return WineSample.fromFirestore(docSnapshot);
-    } else {
-      return null; // Handle case where wine is not found
+    try {
+      DocumentSnapshot wineDoc = await wineCollection.doc(wineDocId).get();
+      if (wineDoc.exists) {
+        // Handle if `exhibitorId` is a DocumentReference
+        DocumentReference exhibitorRef =
+            wineDoc.get('exhibitorId') as DocumentReference;
+        Exhibitor? exhibitor = await getExhibitorInfo(exhibitorRef.id);
+        if (exhibitor != null) {
+          return WineSample.fromFirestore(wineDoc, exhibitor);
+        }
+      }
+      return null; // Handle case where wine is not found or exhibitor is null
+    } catch (e) {
+      print('Error fetching wine sample with exhibitor: $e');
+      throw Exception('Error fetching wine sample with exhibitor: $e');
     }
   }
 

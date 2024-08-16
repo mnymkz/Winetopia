@@ -83,7 +83,8 @@ class NfcReadController {
 
       if (wineSample != null) {
         // Deduct wine's tPrice from the user's token amount
-        await DataBaseService(uid: uid).deductTokens(wineSample.tPrice);
+        await DataBaseService(uid: uid)
+            .deductTokensFromAttendee(wineSample.tPrice);
 
         // Add the wine's docId to the attendee's purchased wines list
         await DataBaseService(uid: uid).addPurchasedWine(wineDocId);
