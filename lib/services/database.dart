@@ -44,6 +44,35 @@ class DataBaseService {
     return attendeeCollection.doc(uid).snapshots().map(_userDataFromSnapshot);
   }
 
+  /// Handle the wine purchase process.
+  Future<WineSample?> purchaseWine(String wineDocId) async {
+    try {
+      final wineSample = await getWineInfo(wineDocId);
+      if (wineSample == null) {
+        throw Exception('Wine not found');
+      }
+
+      // Deduct tokens from attendee
+      await deductTokensFromAttendee(wineSample.tPrice);
+
+      // Add the wine's docId to the attendee's purchased wines list
+      await addPurchasedWine(wineDocId);
+
+      // Update the exhibitor's balance
+      await updateExhibitorBalance(
+          wineSample.exhibitor.docId, wineSample.tPrice);
+
+      return wineSample; // Return success state
+    } catch (e) {
+      if (e is InsufficientTokensException) {
+        rethrow; // Propagate the custom exception
+      } else {
+        print('Error processing wine purchase: $e');
+        throw Exception('Error processing wine purchase: $e');
+      }
+    }
+  }
+
   /*
    * deductTokens function deducts tokens from the user's account 
    * 

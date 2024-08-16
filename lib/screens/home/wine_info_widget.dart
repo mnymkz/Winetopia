@@ -51,7 +51,7 @@ class WineInfoWidget extends StatelessWidget {
                       size: iconSize,
                     ),
                     Text(
-                      '${wine!.tPrice} tokens',
+                      '${wine!.tPrice} ${wine!.tPrice > 1 ? 'tokens' : 'token'}',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: textSize,
