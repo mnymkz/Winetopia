@@ -7,6 +7,7 @@ import 'package:winetopia/services/database.dart';
 import 'package:winetopia/shared/constants.dart';
 import 'package:winetopia/shared/loading.dart';
 import 'package:flutter/services.dart';
+import 'package:winetopia/screens/authenticate/authenticate.dart';
 
 //test screen
 class NewScreen extends StatefulWidget {
@@ -183,7 +184,10 @@ class _NewScreenState extends State<NewScreen> {
                                 });
                                 dynamic result = await _auth.deleteAccount();
                                 if (result == null) {
-                                  Navigator.of(context).pop(); // go back to the previous screen after deletion
+                                   Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => Authenticate()),
+                                  );// go to authenticate screen
                                 } else {
                                   setState(() {
                                     loading = false;
