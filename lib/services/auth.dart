@@ -58,7 +58,7 @@ class AuthService {
       //create a new document for the user with the uid
       await DataBaseService(uid: user!.uid).updateUserData(email, fname, lname, phone, 0);
 
-      return _userFromFirebaseUser(user);//return the Winetopia user create by Firebase user intance
+      return _userFromFirebaseUser(user); //return the Winetopia user create by Firebase user intance
       
     } on FirebaseAuthException catch (e) {
       print(e.toString());
