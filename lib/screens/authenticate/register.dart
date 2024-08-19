@@ -116,6 +116,19 @@ class _RegisterState extends State<Register> {
                 },
               ),
               SizedBox(height: 20.0,),
+              TextFormField(
+                decoration: textImportDecoration.copyWith(hintText: 'Confirm Password'),
+                obscureText: true, //hiding the text (for password)
+                validator: (val) {
+                  if (val!.isEmpty) {
+                    return 'Please confirm your password';
+                  } else if (val != password) {
+                    return 'Passwords do not match';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 20.0,),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   //backgroundColor: Colors.black
@@ -130,14 +143,14 @@ class _RegisterState extends State<Register> {
                       //handling error from firebase response
                       //for more error type, plz visit: https://firebase.google.com/docs/auth/admin/errors
                       setState(() {
-                        if(_auth.firebaseErrorCode == 'invalid-email'){
+                        if(_auth.firebaseErrorCode == 'invalid-email') {
                           error = 'Invalid email';
                         }
-                        else if(_auth.firebaseErrorCode == 'email-already-in-use'){
+                        else if(_auth.firebaseErrorCode == 'email-already-in-use') {
                           error = 'This email is already in use';
                         }
-                        else{
-                          error = 'Sign up fail! Please try again latter!';
+                        else {
+                          error = 'Sign up fail! Please try again later!';
                         }
                         loading = false;
                       });
