@@ -4,6 +4,7 @@ import 'package:winetopia/models/nfc_state.dart';
 import 'package:winetopia/screens/home/nfc_read_button.dart';
 import 'package:winetopia/screens/home/nfc_read_result_widget.dart';
 import 'package:winetopia/controllers/nfc_read_controller.dart';
+import 'package:winetopia/screens/purchase/purchase_tokens.dart';
 import 'package:winetopia/services/auth.dart';
 import '../profile.dart';
 
@@ -84,6 +85,21 @@ class _HomeScreenState extends State<HomeScreen> {
             // NFC Read Result (to be deleted later)
             NfcReadResultWidget(
                 scannedTag: _scannedTag, nfcState: _nfcState, auth: _auth),
+
+            // Button to navigate to Purchase Tokens screen
+            /* THIS IS A PLACEHOLDER. WILL MOVE THIS FEATURE TO THE NAVBAR IN THE FUTURE. */
+            Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => PurchaseTokensScreen()),
+                  );
+                },
+                child: const Text('Purchase Tokens'),
+              ),
+            ),
 
             // Button to navigate to a new screen
             Center(
