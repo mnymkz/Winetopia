@@ -35,9 +35,9 @@ class NfcStateModel extends ChangeNotifier {
 enum NfcState {
   idle('Tap to pay for a wine sample', ''),
   scanning('Scanning...', ''),
-  success('Purchase successful!', 'Tap again to buy another wine sample.'),
-  insufficientTokens(
-      'Oops', 'Looks like you don\'t have enough tokens for this wine sample'),
+  success('Enjoy your wine!', 'Tap again to buy another wine sample.'),
+  insufficientTokens('Oops, not enough tokens!',
+      'Please top up your tokens to continue your purchase'),
   error('An error occurred while scanning.', 'Press the button to try again.'),
   notAvailable('NFC unavailable or turned off',
       'Please turn on your device\'s NFC settings or check if it is available.');

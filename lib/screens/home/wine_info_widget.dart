@@ -1,8 +1,8 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:winetopia/models/wine_sample.dart';
 
+/// Widget displaying most recently purchased wine sample
 class WineInfoWidget extends StatelessWidget {
   final WineSample? wine;
 

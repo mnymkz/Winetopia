@@ -73,11 +73,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 // Secondary feedback message only shows if it is not empty
                 if (nfcState.secondaryMessage.isNotEmpty)
-                  Center(
-                    child: Text(
-                      nfcState.secondaryMessage,
-                      style: const TextStyle(
-                        fontSize: 16,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Center(
+                      child: Text(
+                        nfcState.secondaryMessage,
+                        style: const TextStyle(
+                          fontSize: 16,
+                        ),
                       ),
                     ),
                   ),

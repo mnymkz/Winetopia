@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+/// Class representing an exhibitor
 class Exhibitor {
   final String docId;
   final int bal;
@@ -11,6 +12,7 @@ class Exhibitor {
     required this.name,
   });
 
+  /// Returns an exhibitor object from exhibitor document snapshot
   factory Exhibitor.fromFirestore(DocumentSnapshot doc) {
     return Exhibitor(
       docId: doc.id,

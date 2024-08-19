@@ -26,7 +26,8 @@ class NfcReadController {
       try {
         await NfcManager.instance.startSession(
           onError: (error) async {
-            nfcStateStream.updateState(NfcState.error);
+            nfcStateStream
+                .updateState(NfcState.error); // Change UI to error state
             NfcManager.instance.stopSession();
           },
           onDiscovered: (NfcTag tag) async {
@@ -34,17 +35,19 @@ class NfcReadController {
               final wineSample = await _processTag(tag);
               onWineSamplePurchased(wineSample);
             } catch (e) {
-              nfcStateStream.updateState(NfcState.error);
+              nfcStateStream
+                  .updateState(NfcState.error); // Change UI to error state
             } finally {
               NfcManager.instance.stopSession();
             }
           },
         );
       } catch (e) {
-        nfcStateStream.updateState(NfcState.error);
+        nfcStateStream.updateState(NfcState.error); // Change UI to error state
       }
     } else {
-      nfcStateStream.updateState(NfcState.notAvailable);
+      nfcStateStream.updateState(
+          NfcState.notAvailable); // Change UI to NFC unavailable state
     }
   }
 
@@ -56,21 +59,17 @@ class NfcReadController {
 
       if (cachedMessage != null) {
         for (var record in cachedMessage.records) {
+          // Get wine doc id from record text
           final wineDocId = NdefRecordInfo.fromNdef(record).title;
 
           // Validate the wine docId and handle the purchase.
           final wineSample = await _handleWinePurchase(wineDocId);
-          if (wineSample != null) {
-            nfcStateStream.updateState(NfcState.success);
-          } else {
-            nfcStateStream.updateState(NfcState.error);
-          }
           return wineSample;
         }
       }
     }
 
-    nfcStateStream.updateState(NfcState.error);
+    nfcStateStream.updateState(NfcState.error); // Change UI to error state
     return null; // Return error state if no valid NDEF data is found
   }
 
@@ -82,26 +81,22 @@ class NfcReadController {
       final wineSample = await DataBaseService(uid: uid).getWineInfo(wineDocId);
 
       if (wineSample != null) {
-        // Deduct wine's tPrice from the user's token amount
-        await DataBaseService(uid: uid)
-            .deductTokensFromAttendee(wineSample.tPrice);
-
-        // Add the wine's docId to the attendee's purchased wines list
-        await DataBaseService(uid: uid).addPurchasedWine(wineDocId);
-
-        // Add the wine's tPrice to the exhibitor's balance
-        await DataBaseService(uid: uid).updateExhibitorBalance(
-            wineSample.exhibitor.docId, wineSample.tPrice);
+        // Deduct tokens from attendee account, add to exhibitor account, and add wine to attendee purchases list
+        await DataBaseService(uid: uid).purchaseWine(wineSample.docId);
+        nfcStateStream
+            .updateState(NfcState.success); // Change UI to success state
         return wineSample; // Return success state
       } else {
+        nfcStateStream.updateState(NfcState.error); // Change UI to error state
         return null; // Return error if wine is not found
       }
     } catch (e) {
       if (e is InsufficientTokensException) {
-        nfcStateStream.updateState(
-            NfcState.insufficientTokens); // Return insufficient tokens state
+        nfcStateStream.updateState(NfcState
+            .insufficientTokens); // Change UI to insufficient tokens state
         return null;
       } else {
+        nfcStateStream.updateState(NfcState.error); // Change UI to error state
         // Error processing wine purchase
         return null;
       }

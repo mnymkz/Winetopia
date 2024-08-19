@@ -67,7 +67,6 @@ class DataBaseService {
       if (e is InsufficientTokensException) {
         rethrow; // Propagate the custom exception
       } else {
-        print('Error processing wine purchase: $e');
         throw Exception('Error processing wine purchase: $e');
       }
     }
@@ -98,14 +97,14 @@ class DataBaseService {
       }
     } catch (e) {
       if (e is InsufficientTokensException) {
-        throw e; // Re-throw the custom exception
+        rethrow; // Re-throw the custom exception
       } else {
-        print('Error updating token amount: $e');
         throw Exception('Error updating token amount: $e');
       }
     }
   }
 
+  /// Get exhibitor information from database
   Future<Exhibitor?> getExhibitorInfo(String exhibitorDocId) async {
     DocumentSnapshot docSnapshot =
         await exhibitorCollection.doc(exhibitorDocId).get();
@@ -116,7 +115,7 @@ class DataBaseService {
     }
   }
 
-  // Add tokens to the exhibitor's balance
+  /// Add tokens to the exhibitor's balance in database
   Future<void> updateExhibitorBalance(
       String exhibitorDocId, int numTokens) async {
     try {
@@ -133,18 +132,17 @@ class DataBaseService {
         throw Exception('Exhibitor not found');
       }
     } catch (e) {
-      print('Error updating exhibitor balance: $e');
       throw Exception('Error updating exhibitor balance: $e');
     }
   }
 
-  // Check if wine exists in the wine collection
+  /// Check if wine exists in the wine collection
   Future<bool> validateWine(String wineDocId) async {
     DocumentSnapshot docSnapshot = await wineCollection.doc(wineDocId).get();
     return docSnapshot.exists;
   }
 
-  // Add a wine reference to the user's purchased wines list
+  /// Add a wine reference to the user's purchased wines list in database
   Future<void> addPurchasedWine(String wineDocId) async {
     DocumentReference userDoc = attendeeCollection.doc(uid);
 
@@ -154,6 +152,7 @@ class DataBaseService {
     });
   }
 
+  /// Get wine information from database
   Future<WineSample?> getWineInfo(String wineDocId) async {
     try {
       DocumentSnapshot wineDoc = await wineCollection.doc(wineDocId).get();
@@ -168,12 +167,11 @@ class DataBaseService {
       }
       return null; // Handle case where wine is not found or exhibitor is null
     } catch (e) {
-      print('Error fetching wine sample with exhibitor: $e');
       throw Exception('Error fetching wine sample with exhibitor: $e');
     }
   }
 
-  // Get the list of purchased wine docIds for the attendee
+  /// Get the list of purchased wine docIds for the attendee
   Future<List<String>> getPurchasedWineIds() async {
     DocumentSnapshot userDoc = await attendeeCollection.doc(uid).get();
     if (userDoc.exists) {
@@ -184,7 +182,7 @@ class DataBaseService {
     }
   }
 
-  // Get the list of purchased wines for the attendee
+  /// Get the list of purchased wines for the attendee
   Future<List<WineSample>> getPurchasedWines() async {
     List<String> wineIds = await getPurchasedWineIds();
     List<WineSample> wines = [];
