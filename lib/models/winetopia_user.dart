@@ -5,12 +5,18 @@ class WinetopiaUser {
   WinetopiaUser({required this.uid});
 }
 
-class UserData{
+class UserData {
   final String uid;
   final String email;
   final String fname;
   final String lname;
   final String phone;
   final int tokenAmount;
-  UserData({required this.uid, required this.email, required this.fname, required this.lname, required this.phone, required this.tokenAmount});
+  UserData(
+      {required this.uid,
+      required this.email,
+      required this.fname,
+      required this.lname,
+      required this.phone,
+      required this.tokenAmount});
 }

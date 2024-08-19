@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:winetopia/services/auth.dart';
-import 'package:winetopia/shared/consts.dart';
+import 'package:winetopia/shared/constants.dart';
 import 'package:winetopia/shared/loading.dart';
 
 class SignIn extends StatefulWidget {
