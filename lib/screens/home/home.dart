@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:nfc_manager/nfc_manager.dart';
+import 'package:provider/provider.dart';
 import 'package:winetopia/models/nfc_state.dart';
+import 'package:winetopia/models/wine_sample.dart';
 import 'package:winetopia/screens/home/nfc_read_button.dart';
-import 'package:winetopia/screens/home/nfc_read_result_widget.dart';
 import 'package:winetopia/controllers/nfc_read_controller.dart';
+import 'package:winetopia/screens/home/wine_info_widget.dart';
 import 'package:winetopia/services/auth.dart';
 import '../profile.dart';
 
@@ -18,8 +19,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final AuthService _auth = AuthService();
-  Future<NfcTag?> _scannedTag = Future.value(null);
-  NfcState _nfcState = NfcState.idle;
+  WineSample? _wineSample;
 
   @override
   Widget build(BuildContext context) {
@@ -47,90 +47,82 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       body: Center(
-        child: ListView(
-          shrinkWrap: true,
-          children: [
-            // Primary feedback message
-            Center(
-              child: Text(
-                _nfcState.primaryMessage,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 24,
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            // NFC Read Button
-            GestureDetector(
-                onTap: nfcButtonPressed,
-                child: NfcReadButton(nfcState: _nfcState)),
-            const SizedBox(height: 20),
-
-            // Secondary feedback message only shows if it is not empty
-            if (_nfcState.secondaryMessage.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: Text(
-                  _nfcState.secondaryMessage,
-                  style: const TextStyle(
-                    fontSize: 16,
+        child: Consumer<NfcState>(
+          builder: (context, nfcState, child) {
+            return ListView(
+              shrinkWrap: true,
+              children: [
+                // Primary feedback message
+                Center(
+                  child: Text(
+                    nfcState.primaryMessage,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 24,
+                    ),
                   ),
                 ),
-              ),
-            const SizedBox(height: 20),
+                const SizedBox(height: 20),
 
-            // NFC Read Result (to be deleted later)
-            NfcReadResultWidget(
-                scannedTag: _scannedTag, nfcState: _nfcState, auth: _auth),
+                // NFC Read Button
+                GestureDetector(
+                  onTap: () => _nfcButtonPressed(context),
+                  child: NfcReadButton(nfcState: nfcState),
+                ),
+                const SizedBox(height: 20),
 
-            // Button to navigate to a new screen
-            Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => NewScreen()),
-                  );
-                },
-                child: const Text('My Profile'),
-              ),
-            ),
-          ],
+                // Secondary feedback message only shows if it is not empty
+                if (nfcState.secondaryMessage.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Center(
+                      child: Text(
+                        nfcState.secondaryMessage,
+                        style: const TextStyle(
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ),
+                const SizedBox(height: 20),
+
+                // Wine Info Widget - shows information about the recently purchased wine
+                if (_wineSample != null) WineInfoWidget(wine: _wineSample),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => NewScreen()),
+                      );
+                    },
+                    child: const Text('My Profile'),
+                  ),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
   }
 
-  /// Initiates the NFC reading process and updates the NFC state based on the result.
-  void nfcButtonPressed() async {
-    setState(() {
-      _nfcState = NfcState.scanning;
-    });
+  /// Initiates the NFC reading process and updates the NFC state based on the result
+  void _nfcButtonPressed(BuildContext context) async {
+    final nfcStateStream = Provider.of<NfcStateStream>(context, listen: false);
+    nfcStateStream.updateState(NfcState.scanning);
 
-    final nfcReadController = NfcReadController(_auth);
-    final NfcState result =
-        await nfcReadController.getNfcData(_handleError, _handleDiscovered);
+    final nfcReadController = NfcReadController(
+      auth: _auth,
+      nfcStateStream: nfcStateStream,
+      onWineSamplePurchased: (wineSample) {
+        setState(() {
+          _wineSample = wineSample;
+        });
+      },
+    );
 
-    setState(() {
-      _nfcState = result;
-    });
-  }
-
-  /// Handles errors during the NFC session and updates the state accordingly.
-  void _handleError(dynamic error) {
-    setState(() {
-      _nfcState = NfcState.error;
-      _scannedTag = Future.error(error);
-    });
-  }
-
-  /// Handles NFC tag discovery and updates the state with the discovered tag.
-  void _handleDiscovered(NfcTag tag) {
-    setState(() {
-      _nfcState = NfcState.success;
-      _scannedTag = Future.value(tag);
-    });
+    // Start the NFC reading process
+    await nfcReadController.getNfcData();
   }
 }
