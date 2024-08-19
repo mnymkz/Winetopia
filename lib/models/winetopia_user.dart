@@ -9,12 +9,15 @@ class UserData {
   final String fname;
   final String lname;
   final String phone;
-  final int tokenAmount;
+  final int goldTokens;
+  final int silverTokens;
+
   UserData(
       {required this.uid,
       required this.email,
       required this.fname,
       required this.lname,
       required this.phone,
-      required this.tokenAmount});
+      required this.goldTokens,
+      required this.silverTokens});
 }

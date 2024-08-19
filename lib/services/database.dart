@@ -19,13 +19,14 @@ class DataBaseService {
 
   //update userData, this should be use for registration only
   Future updateUserData(String email, String fname, String lname, String phone,
-      int tokenAmount) async {
+      int goldTokens, int silverTokens) async {
     return await attendeeCollection.doc(uid).set({
       'email': email,
       'fname': fname,
       'lname': lname,
       'phone': phone,
-      'tokenAmount': tokenAmount,
+      'goldTokens': goldTokens,
+      'silverTokens': silverTokens,
     });
   }
 
@@ -64,7 +65,8 @@ class DataBaseService {
         fname: snapshot.get('fname'),
         lname: snapshot.get('lname'),
         phone: snapshot.get('phone'),
-        tokenAmount: snapshot.get('tokenAmount'));
+        goldTokens: snapshot.get('goldTokens'),
+        silverTokens: snapshot.get('silverTokens'));
   }
 
   // Get attendee stream
@@ -81,14 +83,14 @@ class DataBaseService {
       }
 
       // Deduct tokens from attendee
-      await deductTokensFromAttendee(wineSample.tPrice);
+      await deductTokensFromAttendee(wineSample.tPrice, wineSample.isGold);
 
       // Add the wine's docId to the attendee's purchased wines list
       await addPurchasedWine(wineDocId);
 
       // Update the exhibitor's balance
       await updateExhibitorBalance(
-          wineSample.exhibitor.docId, wineSample.tPrice);
+          wineSample.exhibitor.docId, wineSample.tPrice, wineSample.isGold);
 
       return wineSample; // Return success state
     } catch (e) {
@@ -104,18 +106,24 @@ class DataBaseService {
    * deductTokens function deducts tokens from the user's account 
    * 
    * @param numToken the number of tokens to dedeuct from the user's account
+   * @param isGold indicates whether to deduct from goldTokens or silverTokens
    */
-  Future<void> deductTokensFromAttendee(int numTokens) async {
+  Future<void> deductTokensFromAttendee(int numTokens, bool isGold) async {
     try {
       DocumentReference userDoc = attendeeCollection.doc(uid);
       DocumentSnapshot docSnapshot = await userDoc.get();
 
       if (docSnapshot.exists) {
-        int currentTokenAmount = docSnapshot.get('tokenAmount') ?? 0;
+        // Get the appropriate token balance based on isGold
+        int currentTokenAmount = isGold
+            ? (docSnapshot.get('goldTokens') ?? 0)
+            : (docSnapshot.get('silverTokens') ?? 0);
 
         if (currentTokenAmount >= numTokens) {
+          // Deduct the tokens from the correct balance
           await userDoc.update({
-            'tokenAmount': currentTokenAmount - numTokens,
+            isGold ? 'goldTokens' : 'silverTokens':
+                currentTokenAmount - numTokens,
           });
         } else {
           throw InsufficientTokensException('Not enough tokens');
@@ -145,16 +153,20 @@ class DataBaseService {
 
   /// Add tokens to the exhibitor's balance in database
   Future<void> updateExhibitorBalance(
-      String exhibitorDocId, int numTokens) async {
+      String exhibitorDocId, int numTokens, bool isGold) async {
     try {
       DocumentReference exhibitorDoc = exhibitorCollection.doc(exhibitorDocId);
       DocumentSnapshot docSnapshot = await exhibitorDoc.get();
 
       if (docSnapshot.exists) {
-        int currentBalance = docSnapshot.get('bal') ?? 0;
+        // Get the appropriate balance based on isGold
+        int currentBalance = isGold
+            ? (docSnapshot.get('goldBalance') ?? 0)
+            : (docSnapshot.get('silverBalance') ?? 0);
 
+        // Add the tokens to the correct balance
         await exhibitorDoc.update({
-          'bal': currentBalance + numTokens,
+          isGold ? 'goldBalance' : 'silverBalance': currentBalance + numTokens,
         });
       } else {
         throw Exception('Exhibitor not found');
@@ -185,7 +197,6 @@ class DataBaseService {
     try {
       DocumentSnapshot wineDoc = await wineCollection.doc(wineDocId).get();
       if (wineDoc.exists) {
-        // Handle if `exhibitorId` is a DocumentReference
         DocumentReference exhibitorRef =
             wineDoc.get('exhibitorId') as DocumentReference;
         Exhibitor? exhibitor = await getExhibitorInfo(exhibitorRef.id);

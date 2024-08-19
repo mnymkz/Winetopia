@@ -8,6 +8,7 @@ class WineSample {
   final String name;
   final int tPrice;
   final Exhibitor exhibitor;
+  final bool isGold;
 
   WineSample({
     required this.docId,
@@ -15,6 +16,7 @@ class WineSample {
     required this.name,
     required this.tPrice,
     required this.exhibitor,
+    required this.isGold,
   });
 
   /// Returns a wine sample object from wine document snapshot
@@ -25,6 +27,7 @@ class WineSample {
       name: doc.get('name'),
       tPrice: doc.get('tPrice'),
       exhibitor: exhibitor,
+      isGold: doc.get('isGold'),
     );
   }
 }
