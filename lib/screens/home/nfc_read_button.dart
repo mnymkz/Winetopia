@@ -31,6 +31,7 @@ class NfcReadButton extends StatelessWidget {
         break;
       case NfcState.error:
       case NfcState.notAvailable:
+      case NfcState.insufficientTokens:
         icon = Icons.close;
         iconColor = Colors.red;
         backgroundColor = Colors.white;
@@ -47,8 +48,8 @@ class NfcReadButton extends StatelessWidget {
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 100),
-      width: 250.0,
-      height: 250.0,
+      width: 150.0,
+      height: 150.0,
       decoration: BoxDecoration(
         color: backgroundColor,
         shape: BoxShape.circle,
@@ -70,7 +71,7 @@ class NfcReadButton extends StatelessWidget {
       child: Center(
         child: Icon(
           icon,
-          size: 100,
+          size: 75,
           color: iconColor,
         ),
       ),
