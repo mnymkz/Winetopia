@@ -47,7 +47,7 @@ class WineInfoWidget extends StatelessWidget {
                   children: [
                     Icon(
                       Icons.wine_bar,
-                      color: Colors.white,
+                      color: wine!.isGold ? Colors.amber : Colors.white,
                       size: iconSize,
                     ),
                     Text(
