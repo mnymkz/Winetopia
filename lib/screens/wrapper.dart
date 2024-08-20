@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:winetopia/models/winetopia_user.dart';
 import 'package:winetopia/screens/authenticate/authenticate.dart';
-import 'home/home.dart'; // Import the home screen
+import 'navigation.dart';
+//import 'home/home.dart'; // Import the home screen
 
 //screen wrapper class contains the screens
 class Wrapper extends StatelessWidget {
@@ -14,7 +15,8 @@ class Wrapper extends StatelessWidget {
     if (user == null) {
       return Authenticate();
     } else {
-      return HomeScreen();
+      //return HomeScreen();
+      return NavigationScreen();
     }
   }
 }

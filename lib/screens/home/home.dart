@@ -24,13 +24,13 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.purple[50],
+      backgroundColor: Colors.purple.shade50,
       appBar: AppBar(
         title: const Text(
           'Winetopia - Home',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Colors.purple[800],
+        backgroundColor: Colors.deepPurple.shade400,
         elevation: 0.0,
         actions: <Widget>[
           TextButton.icon(
