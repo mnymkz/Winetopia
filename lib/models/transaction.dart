@@ -1,35 +1,37 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:winetopia/models/exhibitor.dart';
+import 'package:winetopia/models/wine_sample.dart';
 
 class WineTransaction {
   final String attendeeId;
-  final String wineDocId;
-  final String exhibitorId;
-  final Timestamp? timestamp;
+  final WineSample wineSample;
+  final Exhibitor exhibitor;
+  Timestamp? timestamp;
 
   WineTransaction({
     required this.attendeeId,
-    required this.wineDocId,
-    required this.exhibitorId,
+    required this.wineSample,
+    required this.exhibitor,
     this.timestamp,
   });
 
-  // Convert Transaction to a Firestore document format
+  // Convert WineTransaction to a Firestore document format
   Map<String, dynamic> toFirestore() {
     return {
       'attendeeId': attendeeId,
-      'wineDocId': wineDocId,
-      'exhibitorId': exhibitorId,
-      'timestamp': timestamp ?? FieldValue.serverTimestamp(),
+      'wineSample': wineSample.docId, // Convert WineSample to Firestore
+      'exhibitor': exhibitor.docId, // Convert Exhibitor to Firestore
+      'timestamp': FieldValue.serverTimestamp(),
     };
   }
 
-  // Returns a Transaction object from Transaction document snapshot
+  // Returns a WineTransaction object from Firestore document snapshot
   factory WineTransaction.fromFirestore(DocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
     return WineTransaction(
       attendeeId: data['attendeeId'],
-      wineDocId: data['wineDocId'],
-      exhibitorId: data['exhibitorId'],
+      wineSample: WineSample.fromFirestore(data['wineSample']),
+      exhibitor: Exhibitor.fromFirestore(data['exhibitor']),
       timestamp: data['timestamp'],
     );
   }
