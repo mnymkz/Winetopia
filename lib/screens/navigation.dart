@@ -2,6 +2,7 @@
 
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:winetopia/services/auth.dart';
 import 'home/home.dart';
 
 class NavigationScreen extends StatefulWidget {
@@ -13,6 +14,7 @@ class NavigationScreen extends StatefulWidget {
 
 class _NavigationScreenState extends State<NavigationScreen> {
   int _selectedIndex = 0;
+  final AuthService _auth = AuthService();
 
   void _navigateCurvedBar(int index) {
     setState(() {
@@ -29,7 +31,30 @@ class _NavigationScreenState extends State<NavigationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Winetopia',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.deepPurple.shade400,
+        elevation: 0.0,
+        actions: <Widget>[
+          TextButton.icon(
+            icon: const Icon(
+              Icons.person,
+              color: Colors.white,
+            ),
+            label:
+                const Text('Sign Out', style: TextStyle(color: Colors.white)),
+            onPressed: () async {
+              await _auth.signOut();
+            },
+          ),
+        ],
+      ),
+
       body: _screens[_selectedIndex],
+
       backgroundColor: Colors.white,
       bottomNavigationBar: CurvedNavigationBar(
         backgroundColor: Colors.purple.shade50,

@@ -25,27 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.purple.shade50,
-      appBar: AppBar(
-        title: const Text(
-          'Winetopia - Home',
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: Colors.deepPurple.shade400,
-        elevation: 0.0,
-        actions: <Widget>[
-          TextButton.icon(
-            icon: const Icon(
-              Icons.person,
-              color: Colors.white,
-            ),
-            label:
-                const Text('sign out', style: TextStyle(color: Colors.white)),
-            onPressed: () async {
-              await _auth.signOut();
-            },
-          ),
-        ],
-      ),
+
       body: Center(
         child: Consumer<NfcState>(
           builder: (context, nfcState, child) {
