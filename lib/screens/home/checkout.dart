@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:winetopia/services/stripe_service.dart';
 
 class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({super.key});
@@ -27,64 +27,19 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       appBar: AppBar(
         title: const Text('Checkout'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: SizedBox.expand(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // First token input
-            Text(
-              'Enter silver token amount:',
-              style: const TextStyle(fontSize: 18),
-            ),
-            TextField(
-              controller: _tokenAmountController1,
-              keyboardType: TextInputType.number,
-              inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly,
-                FilteringTextInputFormatter.allow(
-                    RegExp(r'^([1-9]|10)$')), // Limits input to 1-10
-              ],
-              decoration: const InputDecoration(
-                hintText: 'Enter a number between 1 and 10',
-              ),
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton(
+            MaterialButton(
               onPressed: () {
-                // Handle purchase logic for the first token amount
-                _purchaseTokens(
-                    int.tryParse(_tokenAmountController1.text) ?? 1);
+                StripeService.instance.makePayment();
               },
-              child: const Text('Purchase Silver Token'),
-            ),
-            const SizedBox(height: 20),
-
-            // Second token input
-            Text(
-              'Enter gold token amount:',
-              style: const TextStyle(fontSize: 18),
-            ),
-            TextField(
-              controller: _tokenAmountController2,
-              keyboardType: TextInputType.number,
-              inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly,
-                FilteringTextInputFormatter.allow(
-                    RegExp(r'^([1-9]|10)$')), // Limits input to 1-10
-              ],
-              decoration: const InputDecoration(
-                hintText: 'Enter a number between 1 and 10',
+              color: Colors.green,
+              child: const Text(
+                "Purchase",
               ),
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () {
-                // Handle purchase logic for the second token amount
-                _purchaseTokens(
-                    int.tryParse(_tokenAmountController2.text) ?? 1);
-              },
-              child: const Text('Purchase Gold Token'),
             ),
           ],
         ),
