@@ -4,6 +4,7 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:winetopia/services/auth.dart';
 import 'home/home.dart';
+import 'profile.dart';
 
 class NavigationScreen extends StatefulWidget {
   const NavigationScreen({Key? key}) : super(key: key);
@@ -23,9 +24,10 @@ class _NavigationScreenState extends State<NavigationScreen> {
   }
 
   final List<Widget> _screens = [
-    HomeScreen(),
+    HomeScreen(), // navigates to home screen (nfc scanning)
     HomeScreen(), // change route to history
     HomeScreen(), // change route to event info
+    NewScreen(), // navigates to profile screen
   ];
 
   @override
@@ -55,7 +57,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
 
       body: _screens[_selectedIndex],
 
-      backgroundColor: Colors.white,
+      //backgroundColor: Colors.white,
       bottomNavigationBar: CurvedNavigationBar(
         backgroundColor: Colors.purple.shade50,
         color: Colors.deepPurple.shade400,
@@ -72,6 +74,10 @@ class _NavigationScreenState extends State<NavigationScreen> {
           ),
           Icon(
             Icons.calendar_month,
+            color: Colors.white
+          ),
+          Icon(
+            Icons.person,
             color: Colors.white
           ),
         ]

@@ -86,15 +86,7 @@ class _NewScreenState extends State<NewScreen> {
                 ? Loading()
                 : Scaffold(
                     resizeToAvoidBottomInset: false,
-                    backgroundColor: Colors.purple[50],
-                    appBar: AppBar(
-                      backgroundColor: Colors.purple[800],
-                      elevation: 0.0,
-                      title: Text(
-                        'Profile',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
+                    backgroundColor: Colors.purple.shade50,
                     body: Container(
                       padding: EdgeInsets.symmetric(
                           vertical: 20.0, horizontal: 50.0),
@@ -297,6 +289,18 @@ class _NewScreenState extends State<NewScreen> {
                                 //style: TextStyle(color: Colors.white)
                               ),
                             ),
+                            
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  ),
+                              onPressed: () async {
+                                await _auth.signOut();
+                              },
+                              child: Text(
+                                'Sign Out',
+                              ),
+                            ),
+
                             SizedBox(
                               height: 20.0,
                             ),
@@ -311,15 +315,13 @@ class _NewScreenState extends State<NewScreen> {
                     ),
                   );
           } else {
-            return Scaffold(
-              appBar: AppBar(
-                title: Text('Profile'),
-              ),
-              body: Center(
-                child: Text('Something happend with firebase!'),
-              ),
-            );
-          }
+              return Scaffold(
+                backgroundColor: Colors.purple.shade50,
+                body: Center(
+                  child: Loading(),
+                ),
+              );
+            }
         });
   }
 }
