@@ -64,7 +64,7 @@ class _NewScreenState extends State<NewScreen> {
             actions: <Widget>[
               TextButton(
                 child: const Text('OK!'),
-                onPressed: () {
+                onPressed: (){
                   Navigator.of(context).pop();
                 },
               ),
@@ -79,7 +79,7 @@ class _NewScreenState extends State<NewScreen> {
     return StreamBuilder<UserData>(
         stream: DataBaseService(uid: user!.uid).userData,
         builder: (context, snapshot) {
-          DataBaseService(uid: user!.uid).updateEmail(_auth.getUserEmail());
+          DataBaseService(uid: user.uid).updateEmail(_auth.getUserEmail());
           if (snapshot.hasData) {
             UserData? userData = snapshot.data;
             return loading
@@ -281,9 +281,7 @@ class _NewScreenState extends State<NewScreen> {
                                   }
 
                                   if (phone != '') {
-                                    dynamic result =
-                                        await DataBaseService(uid: user!.uid)
-                                            .updatePhone(phone);
+                                    dynamic result = await DataBaseService(uid: user!.uid).updatePhone(phone);
                                     phone = '';
                                   }
 

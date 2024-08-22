@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ffi';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:winetopia/models/winetopia_user.dart';
@@ -48,8 +49,9 @@ class AuthService {
       UserCredential result = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
       User? user = result.user;
-      return _userFromFirebaseUser(
-          user); //return the Winetopia user create by Firebase user intance
+      //await _auth.currentUser!.sendEmailVerification();
+
+      return _userFromFirebaseUser(user); //return the Winetopia user create by Firebase user intance
     } on FirebaseAuthException catch (e) {
       print(e.toString());
       return null;
@@ -60,16 +62,13 @@ class AuthService {
   Future resigterWithEmailAndPassword(String email, String password,
       String fname, String lname, String phone) async {
     try {
-      UserCredential result = await _auth.createUserWithEmailAndPassword(
-          email: email, password: password);
+      UserCredential result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       User? user = result.user;
+      checkVerifyEmail();
 
       //create a new document for the user with the uid
-      await DataBaseService(uid: user!.uid)
-          .updateUserData(email, fname, lname, phone, 0, 0);
-
-      return _userFromFirebaseUser(
-          user); //return the Winetopia user create by Firebase user intance
+      await DataBaseService(uid: user!.uid).updateUserData(email, fname, lname, phone, 0, 0);
+      return _userFromFirebaseUser(user); //return the Winetopia user create by Firebase user intance
     } on FirebaseAuthException catch (e) {
       print(e.toString());
       firebaseErrorCode = e.code.toString();
@@ -104,7 +103,7 @@ class AuthService {
   //sign out
   Future signOut() async {
     try {
-      return await _auth.signOut();
+      await _auth.signOut();
     } catch (e) {
       print(e.toString());
       return null;
@@ -121,5 +120,9 @@ class AuthService {
   String? getUserEmail() {
     User? user = _auth.currentUser;
     return user?.email;
+  }
+
+  bool checkVerifyEmail (){
+    return _auth.currentUser!.emailVerified;
   }
 }
