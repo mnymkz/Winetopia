@@ -11,12 +11,12 @@ import 'package:winetopia/shared/loading.dart';
 import 'package:flutter/services.dart';
 
 //test screen
-class NewScreen extends StatefulWidget {
+class ProfileScreen extends StatefulWidget {
   @override
-  State<NewScreen> createState() => _NewScreenState();
+  State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _NewScreenState extends State<NewScreen> {
+class _ProfileScreenState extends State<ProfileScreen> {
   //get an instance of the AuthService class (auth.dart)
   final AuthService _auth = AuthService();
 

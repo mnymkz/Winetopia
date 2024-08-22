@@ -72,7 +72,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => NewScreen()),
+                        MaterialPageRoute(
+                            builder: (context) => ProfileScreen()),
                       );
                     },
                     child: const Text('My Profile'),
