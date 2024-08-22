@@ -1,87 +1,104 @@
 import 'dart:async';
 import 'package:nfc_manager/nfc_manager.dart';
+import 'package:winetopia/models/ndef_record_info.dart';
 import 'package:winetopia/models/nfc_state.dart';
+import 'package:winetopia/models/wine_sample.dart';
 import 'package:winetopia/services/database.dart';
 import 'package:winetopia/services/auth.dart';
 
-/// Provides methods for starting and managing NFC reading sessions.
+/// Controller class for NFC reading sessions
 class NfcReadController {
   final AuthService auth;
+  final NfcStateStream nfcStateStream;
+  final Function(WineSample?) onWineSamplePurchased;
 
-  NfcReadController(this.auth);
+  NfcReadController({
+    required this.auth,
+    required this.nfcStateStream,
+    required this.onWineSamplePurchased,
+  });
 
-  /// Starts an NFC reading session and returns the resulting [NfcState].
-  Future<NfcState> getNfcData(Function onError, Function onDiscovered) async {
+  /// Starts an NFC reading session and modifies the [NfcState] accordingly.
+  Future<void> getNfcData() async {
     bool isAvailable = await NfcManager.instance.isAvailable();
 
     if (isAvailable) {
-      final completer = Completer<NfcState>();
-
       try {
         await NfcManager.instance.startSession(
           onError: (error) async {
-            onError(error);
+            nfcStateStream
+                .updateState(NfcState.error); // Change UI to error state
             NfcManager.instance.stopSession();
-            completer.complete(NfcState.error);
           },
           onDiscovered: (NfcTag tag) async {
             try {
-              final nfcState = await _processTag(tag);
-              onDiscovered(tag);
-              completer.complete(nfcState);
+              final wineSample = await _processTag(tag);
+              onWineSamplePurchased(wineSample);
             } catch (e) {
-              onError(e);
-              completer.complete(NfcState.error);
+              nfcStateStream
+                  .updateState(NfcState.error); // Change UI to error state
             } finally {
               NfcManager.instance.stopSession();
             }
           },
         );
-
-        return completer.future; // Return the future to be completed later
       } catch (e) {
-        onError(e);
-        return NfcState.error; // Error occurred during NFC session
+        nfcStateStream.updateState(NfcState.error); // Change UI to error state
       }
     } else {
-      return NfcState.notAvailable; // NFC is not available
+      nfcStateStream.updateState(
+          NfcState.notAvailable); // Change UI to NFC unavailable state
     }
   }
 
-  /// Process the NFC tag to extract NDEF message and handle token cost information.
-  Future<NfcState> _processTag(NfcTag tag) async {
+  /// Process the NFC tag to extract NDEF message.
+  Future<WineSample?> _processTag(NfcTag tag) async {
     var tech = Ndef.from(tag);
     if (tech is Ndef) {
       final cachedMessage = tech.cachedMessage;
 
       if (cachedMessage != null) {
         for (var record in cachedMessage.records) {
-          final payload = String.fromCharCodes(record.payload);
-          final parts = payload.split(':');
+          // Get wine doc id from record text
+          final wineDocId = NdefRecordInfo.fromNdef(record).title;
 
-          if (parts.length == 2) {
-            final tokenCostString = parts[1];
-            return await _handleTokenCost(int.parse(tokenCostString));
-          }
+          // Validate the wine docId and handle the purchase.
+          final wineSample = await _handleWinePurchase(wineDocId);
+          return wineSample;
         }
       }
     }
-    return NfcState.error; // Return error state if no valid NDEF data is found
+
+    nfcStateStream.updateState(NfcState.error); // Change UI to error state
+    return null; // Return error state if no valid NDEF data is found
   }
 
-  /// Handles the deduction of tokens from the user's account.
-  Future<NfcState> _handleTokenCost(int tokenCost) async {
+  Future<WineSample?> _handleWinePurchase(String wineDocId) async {
     try {
       auth.setUserId(); // Set the user ID
-      dynamic uid = auth.userID; // Get the user ID from database file
-      await DataBaseService(uid: uid)
-          .deductTokens(tokenCost); // Call deduct tokens method
-      return NfcState.success; // Return success state
+      dynamic uid = auth.userID; // Get the user ID
+
+      final wineSample = await DataBaseService(uid: uid).getWineInfo(wineDocId);
+
+      if (wineSample != null) {
+        // Deduct tokens from attendee account, add to exhibitor account, and add wine to attendee purchases list
+        await DataBaseService(uid: uid).purchaseWine(wineSample.docId);
+        nfcStateStream
+            .updateState(NfcState.success); // Change UI to success state
+        return wineSample; // Return success state
+      } else {
+        nfcStateStream.updateState(NfcState.error); // Change UI to error state
+        return null; // Return error if wine is not found
+      }
     } catch (e) {
       if (e is InsufficientTokensException) {
-        return NfcState.insufficientTokens; // Return insufficient tokens state
+        nfcStateStream.updateState(NfcState
+            .insufficientTokens); // Change UI to insufficient tokens state
+        return null;
       } else {
-        throw Exception('Invalid token format or deduction error: $e');
+        nfcStateStream.updateState(NfcState.error); // Change UI to error state
+        // Error processing wine purchase
+        return null;
       }
     }
   }

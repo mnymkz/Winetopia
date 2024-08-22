@@ -102,17 +102,21 @@ class _NewScreenState extends State<NewScreen> {
                         key: _formKey,
                         child: Column(
                           children: <Widget>[
-                            SizedBox(
+                            const SizedBox(
                               height: 20.0,
                             ),
-                            Row(
+                            Column(
                               children: <Widget>[
-                                SizedBox(
+                                const SizedBox(
                                   width: 70.0,
                                 ),
                                 Text(
-                                  'Token Balance: ${userData?.tokenAmount}',
-                                  style: TextStyle(fontSize: 20),
+                                  'Gold Token Balance: ${userData?.goldTokens}',
+                                  style: const TextStyle(fontSize: 18),
+                                ),
+                                Text(
+                                  'Silver Token Balance: ${userData?.silverTokens}',
+                                  style: const TextStyle(fontSize: 18),
                                 ),
 
                                 // SizedBox(width: 30,),

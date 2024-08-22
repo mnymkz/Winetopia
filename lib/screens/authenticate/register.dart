@@ -37,18 +37,18 @@ class _RegisterState extends State<Register> {
         ? Loading()
         : Scaffold(
             resizeToAvoidBottomInset: false,
-            backgroundColor: Colors.purple[50],
+            backgroundColor: Colors.purple.shade50,
             appBar: AppBar(
-                backgroundColor: Colors.purple[800],
+                backgroundColor: Colors.deepPurple.shade400,
                 elevation: 0.0,
                 title: Text(
-                  'Sign up',
+                  'Register',
                   style: TextStyle(color: Colors.white),
                 ),
                 actions: <Widget>[
                   TextButton.icon(
                     label: Text(
-                      'Sign in',
+                      'Sign In',
                       style: TextStyle(color: Colors.white),
                     ),
                     icon: Icon(Icons.person, color: Colors.white),

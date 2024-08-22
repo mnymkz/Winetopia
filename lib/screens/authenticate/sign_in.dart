@@ -32,9 +32,9 @@ class _SignInState extends State<SignIn> {
         ? Loading()
         : Scaffold(
             resizeToAvoidBottomInset: false,
-            backgroundColor: Colors.purple[50],
+            backgroundColor: Colors.purple.shade50,
             appBar: AppBar(
-              backgroundColor: Colors.purple[800],
+              backgroundColor: Colors.deepPurple.shade400,
               elevation: 0.0,
               title: Text(
                 'Sign in',
