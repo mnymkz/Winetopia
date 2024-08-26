@@ -37,14 +37,14 @@ class _RegisterState extends State<Register> {
   Widget build(BuildContext context) {
     return loading ? Loading() : Scaffold(
       resizeToAvoidBottomInset : false,
-      backgroundColor: Colors.purple[50],
+      backgroundColor: Colors.purple.shade50,
       appBar: AppBar(
-        backgroundColor: Colors.purple[800],
+        backgroundColor: Colors.deepPurple.shade400,
         elevation: 0.0,
-        title: Text('Sign up', style: TextStyle(color: Colors.white),),
+        title: Text('Register', style: TextStyle(color: Colors.white),),
         actions: <Widget>[
           TextButton.icon(
-            label: Text('Sign in', style: TextStyle(color: Colors.white),),
+            label: Text('Sign In', style: TextStyle(color: Colors.white),),
             icon: Icon(Icons.person, color: Colors.white),
             onPressed: (){
               //widget keyword refer to the widget itself which is Register
