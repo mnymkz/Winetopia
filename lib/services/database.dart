@@ -79,11 +79,20 @@ class DataBaseService {
 
   /// Get wine information from database
   Future<WineSample?> getWineInfo(String wineDocId) async {
-    DocumentSnapshot wineDoc = await wineCollection.doc(wineDocId).get();
-    if (wineDoc.exists) {
-      return WineSample.fromFirestore(wineDoc);
+    try {
+      DocumentSnapshot wineDoc = await wineCollection.doc(wineDocId).get();
+      if (wineDoc.exists) {
+        DocumentReference exhibitorRef =
+            wineDoc.get('exhibitorId') as DocumentReference;
+        Exhibitor? exhibitor = await getExhibitorInfo(exhibitorRef.id);
+        if (exhibitor != null) {
+          return WineSample.fromFirestore(wineDoc, exhibitor);
+        }
+      }
+      return null; // Handle case where wine is not found or exhibitor is null
+    } catch (e) {
+      throw Exception('Error fetching wine sample with exhibitor: $e');
     }
-    return null; // Handle case where wine is not found or exhibitor is null
   }
 
   /// Get exhibitor information from database
@@ -94,18 +103,6 @@ class DataBaseService {
       return Exhibitor.fromFirestore(docSnapshot);
     } else {
       return null; // Handle case where exhibitor is not found
-    }
-  }
-
-  /// Get transaction information from the database
-  Future<WineTransaction?> getWineTransactionInfo(String transactionId) async {
-    DocumentSnapshot docSnapshot =
-        await transactionCollection.doc(transactionId).get();
-
-    if (docSnapshot.exists) {
-      return WineTransaction.fromFirestore(docSnapshot);
-    } else {
-      return null;
     }
   }
 
@@ -121,13 +118,14 @@ class DataBaseService {
       await deductTokensFromAttendee(wineSample.tPrice, wineSample.isGold);
 
       // Log the transaction and get the transaction ID
-      String transactionId = await logTransaction(wineSample);
+      String transactionId =
+          await logTransaction(wineDocId, wineSample.exhibitor.docId);
 
       // Add the transction Id  to the attendee's wineTransactions list
       await addToAttendeeWineTransactions(transactionId);
 
       // Update the exhibitor's balance
-      await addTokensToExhibitor(
+      await updateExhibitorBalance(
           wineSample.exhibitor.docId, wineSample.tPrice, wineSample.isGold);
 
       return wineSample; // Return success state
@@ -141,12 +139,12 @@ class DataBaseService {
   }
 
   /// Log the transaction in the transaction collection
-  Future<String> logTransaction(WineSample wineSample) async {
+  Future<String> logTransaction(String wineDocId, String exhibitorId) async {
     try {
       WineTransaction transaction = WineTransaction(
         attendeeId: uid,
-        wineSample: wineSample,
-        exhibitor: wineSample.exhibitor,
+        wineDocId: wineDocId,
+        exhibitorId: exhibitorId,
       );
 
       DocumentReference docRef =
@@ -208,7 +206,7 @@ class DataBaseService {
   }
 
   /// Add tokens to the exhibitor's balance in database
-  Future<void> addTokensToExhibitor(
+  Future<void> updateExhibitorBalance(
       String exhibitorDocId, int numTokens, bool isGold) async {
     try {
       DocumentReference exhibitorDoc = exhibitorCollection.doc(exhibitorDocId);
@@ -229,43 +227,6 @@ class DataBaseService {
       }
     } catch (e) {
       throw Exception('Error updating exhibitor balance: $e');
-    }
-  }
-
-  /// Get the list of wine trasaction docIds for the attendee
-  Future<List<String>> getWineTransactionIds() async {
-    DocumentSnapshot userDoc = await attendeeCollection.doc(uid).get();
-    if (userDoc.exists) {
-      List<dynamic> wineTransactions = userDoc.get('wineTransactions') ?? [];
-      return List<String>.from(wineTransactions);
-    } else {
-      return []; // Handle case where user document is not found
-    }
-  }
-
-  /// Get the list of WineTransaction objects for the attendee
-  Future<List<WineTransaction>> getWineTransactions() async {
-    try {
-      // Step 1: Fetch the transaction IDs for the attendee
-      List<String> transactionIds = await getWineTransactionIds();
-
-      List<WineTransaction> wineTransactions = [];
-
-      // Step 2: Loop through each transaction ID and fetch corresponding data
-      for (String transactionId in transactionIds) {
-        // Fetch the transaction document from Firestore
-        WineTransaction? wineTransaction =
-            await getWineTransactionInfo(transactionId);
-
-        if (wineTransaction != null) {
-          wineTransactions.add(wineTransaction);
-        }
-      }
-
-      // Step 3: Return the list of wine transactions
-      return wineTransactions;
-    } catch (e) {
-      throw Exception('Error fetching wine transactions: $e');
     }
   }
 }

@@ -20,14 +20,13 @@ class WineSample {
   });
 
   /// Returns a wine sample object from wine document snapshot
-  factory WineSample.fromFirestore(DocumentSnapshot doc) {
-    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+  factory WineSample.fromFirestore(DocumentSnapshot doc, Exhibitor exhibitor) {
     return WineSample(
       docId: doc.id,
-      desc: data['desc'],
-      name: data['name'],
-      tPrice: data['tPrice'],
-      exhibitor: Exhibitor.fromFirestore(data['exhibitor']),
+      desc: doc.get('desc'),
+      name: doc.get('name'),
+      tPrice: doc.get('tPrice'),
+      exhibitor: exhibitor,
       isGold: doc.get('isGold'),
     );
   }
