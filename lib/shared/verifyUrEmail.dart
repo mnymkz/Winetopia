@@ -20,7 +20,7 @@ class VerifyEmail extends StatelessWidget {
               child: ListBody(
                 children: <Widget>[
                   Text(
-                      'An email has been sent to you with instruction to verify your new email address'),
+                      'An email has been sent to you with instruction to verify your email address.\nYou have to verify your email before using the app!'),
                   SizedBox(
                     height: 20,
                   ),
