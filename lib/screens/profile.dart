@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:winetopia/screens/authenticate/authenticate.dart';
 import 'package:winetopia/screens/authenticate/sign_in.dart';
+import 'package:winetopia/screens/home/home.dart';
 import 'package:winetopia/services/auth.dart';
 import 'package:winetopia/services/database.dart';
 import 'package:winetopia/shared/constants.dart';
@@ -64,8 +65,10 @@ class _NewScreenState extends State<NewScreen> {
             actions: <Widget>[
               TextButton(
                 child: const Text('OK!'),
-                onPressed: () {
-                  Navigator.of(context).pop();
+                onPressed: (){
+                  Navigator.of(context).pop();     
+                  Navigator.of(context).pop();  
+                  _auth.signOut();
                 },
               ),
             ],
@@ -79,7 +82,7 @@ class _NewScreenState extends State<NewScreen> {
     return StreamBuilder<UserData>(
         stream: DataBaseService(uid: user!.uid).userData,
         builder: (context, snapshot) {
-          DataBaseService(uid: user!.uid).updateEmail(_auth.getUserEmail());
+          DataBaseService(uid: user.uid).updateEmail(_auth.getUserEmail());
           if (snapshot.hasData) {
             UserData? userData = snapshot.data;
             return loading
@@ -194,10 +197,7 @@ class _NewScreenState extends State<NewScreen> {
                                   hintText: 'New Password'),
                               obscureText:
                                   true, //hiding the text (for password)
-                              validator: (val) => (val!.length < 6 &&
-                                      val.isNotEmpty)
-                                  ? 'Your Password needs to be atleast 6 characters'
-                                  : null,
+                              validator: (val) => (val!.length < 6 && val.isNotEmpty) ? 'Your Password needs to be atleast 6 characters' : null,
                               onChanged: (val) {
                                 setState(() {
                                   password = val;
@@ -222,10 +222,8 @@ class _NewScreenState extends State<NewScreen> {
                                         await _auth.updatePassword(password);
                                     if (result_password == null) {
                                       setState(() {
-                                        if (_auth.firebaseErrorCode ==
-                                            'requires-recent-login') {
-                                          error =
-                                              'Changging password requires recent authentication. Please log in again!';
+                                        if (_auth.firebaseErrorCode == 'requires-recent-login') {
+                                          error = 'Changging password requires recent authentication. Please log in again!';
                                         }
                                       });
                                     }
@@ -243,20 +241,14 @@ class _NewScreenState extends State<NewScreen> {
                                       //handling error from firebase response
                                       //for more error type, plz visit: https://firebase.google.com/docs/auth/admin/errors
                                       setState(() {
-                                        if (_auth.firebaseErrorCode ==
-                                            'user-token-expired') {
-                                          error =
-                                              'Changging Email requires recent authentication. Please log in again!';
-                                        } else if (_auth.firebaseErrorCode ==
-                                            'requires-recent-login') {
-                                          error =
-                                              'Changging Email requires recent authentication. Please log in again!';
-                                        } else if (_auth.firebaseErrorCode ==
-                                            'unknown') {
+                                        if (_auth.firebaseErrorCode == 'user-token-expired') {
+                                          error = 'Changging Email requires recent authentication. Please log in again!';
+                                        } else if (_auth.firebaseErrorCode == 'requires-recent-login') {
+                                          error = 'Changging Email requires recent authentication. Please log in again!';
+                                        } else if (_auth.firebaseErrorCode == 'unknown') {
                                           error = 'Invalid email';
                                         } else {
-                                          error =
-                                              'Update fail! Please try again latter!';
+                                          error = 'Update fail! Please try again latter!';
                                         }
                                       });
                                     } else {
@@ -267,23 +259,17 @@ class _NewScreenState extends State<NewScreen> {
                                   }
 
                                   if (fname != '') {
-                                    dynamic result =
-                                        await DataBaseService(uid: user!.uid)
-                                            .updateFirstName(fname);
+                                    dynamic result = await DataBaseService(uid: user!.uid).updateFirstName(fname);
                                     fname = '';
                                   }
 
                                   if (lname != '') {
-                                    dynamic result =
-                                        await DataBaseService(uid: user!.uid)
-                                            .updateLastName(lname);
+                                    dynamic result = await DataBaseService(uid: user!.uid).updateLastName(lname);
                                     lname = '';
                                   }
 
                                   if (phone != '') {
-                                    dynamic result =
-                                        await DataBaseService(uid: user!.uid)
-                                            .updatePhone(phone);
+                                    dynamic result = await DataBaseService(uid: user!.uid).updatePhone(phone);
                                     phone = '';
                                   }
 
