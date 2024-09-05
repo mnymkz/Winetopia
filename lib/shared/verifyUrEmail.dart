@@ -9,6 +9,7 @@ class VerifyEmail extends StatelessWidget {
  
   @override
   Widget build(BuildContext context) {
+    final AuthService auth = AuthService();
     Future<void> _showMyDialog() async {
       return showDialog<void>(
         context: context,
@@ -34,9 +35,8 @@ class VerifyEmail extends StatelessWidget {
               TextButton(
                 child: const Text('OK!'),
                 onPressed: () async{
-                  final AuthService _auth = AuthService();
-                  await _auth.signOut();
                   Navigator.of(context).pop();
+                  await auth.signOut();
                 },
               ),
             ],

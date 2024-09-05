@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'dart:nativewrappers/_internal/vm/lib/core_patch.dart';
 import 'package:winetopia/models/winetopia_user.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -38,7 +38,8 @@ class _NewScreenState extends State<NewScreen> {
   @override
   //placeholder view
   Widget build(BuildContext context) {
-    Future<void> _showMyDialog() async {
+    final Function toggleView;
+    Future<void> changeEmailDialog() async {
       return showDialog<void>(
         context: context,
         barrierDismissible: false, // user must tap button!
@@ -75,6 +76,58 @@ class _NewScreenState extends State<NewScreen> {
         },
       );
     }
+    Future<void> errorDialog() async {
+      Future.microtask(() {
+        return showDialog<void>(
+          context: context,
+          barrierDismissible: false, // user must tap button!
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Require recent login'),
+              content: const SingleChildScrollView(
+                child: ListBody(
+                  children: <Widget>[
+                    Text('Delete account is a sensitive operation which require recent login. \nPlease sign in again!'),
+                    SizedBox(
+                      height: 10,
+                    ),
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      child: const Text('Cancel'),
+                      onPressed: (){
+                        Navigator.of(context).pop();     
+                      },
+                    ),
+                    ElevatedButton(
+                      child: Text(
+                        'Sign out',
+                        style: TextStyle(color: Colors.white)
+                      ),
+                      
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red[400],
+                      ),
+                      onPressed: () async{
+                        Navigator.of(context).pop();     
+                        logout = true;//stop the stream Builder
+                        await _auth.signOut();
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            );
+          },
+        );
+      },);
+    }
+
     Future<void> deleteAccountDialog() async {
       return showDialog<void>(
         context: context,
@@ -116,8 +169,12 @@ class _NewScreenState extends State<NewScreen> {
                     onPressed: () async{
                       Navigator.of(context).pop();     
                       Navigator.of(context).pop();
-                      logout = true;
+                      logout = true;//stop the stream Builder
                       await _auth.deleteAccount();
+                      if(_auth.firebaseErrorCode == 'requires-recent-login'){
+                        errorDialog();
+                      }
+                      //can use else here since _auth.delete() only have one exception.
                     },
                   ),
                 ],
@@ -285,7 +342,7 @@ class _NewScreenState extends State<NewScreen> {
                                     }
                                   });
                                 } else {
-                                  _showMyDialog();
+                                  changeEmailDialog();
                                 }
 
                                 email = '';
@@ -340,8 +397,7 @@ class _NewScreenState extends State<NewScreen> {
 
                     Text(
                       error,
-                      style:
-                          TextStyle(color: Colors.red, fontSize: 14.0),
+                      style: TextStyle(color: Colors.red, fontSize: 14.0),
                     ),
                   ],
                 ),

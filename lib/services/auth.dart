@@ -107,8 +107,14 @@ class AuthService {
   //Delete account
   Future deleteAccount() async{
     try{
-      await DataBaseService(uid: _auth.currentUser!.uid).deleteProfile(_auth.currentUser!.uid);
+      // throw FirebaseAuthException(
+      //   code: 'requires-recent-login',
+      //   message: 'This operation is sensitive and requires recent authentication. Log in again before retrying this request.',
+      // );
+      String uid = _auth.currentUser!.uid;
       await _auth.currentUser!.delete();
+      await DataBaseService(uid: uid).deleteProfile(uid);
+
       return true;
     } on FirebaseAuthException catch(e){
       print(e.toString());
