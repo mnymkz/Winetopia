@@ -10,12 +10,9 @@ class DataBaseService {
   DataBaseService({required this.uid});
 
   // Collection references
-  final CollectionReference attendeeCollection =
-      FirebaseFirestore.instance.collection('attendee');
-  final CollectionReference wineCollection =
-      FirebaseFirestore.instance.collection('wine');
-  final CollectionReference exhibitorCollection =
-      FirebaseFirestore.instance.collection('exhibitor');
+  final CollectionReference attendeeCollection = FirebaseFirestore.instance.collection('attendee');
+  final CollectionReference wineCollection = FirebaseFirestore.instance.collection('wine');
+  final CollectionReference exhibitorCollection = FirebaseFirestore.instance.collection('exhibitor');
 
   //update userData, this should be use for registration only
   Future updateUserData(String email, String fname, String lname, String phone,
@@ -29,10 +26,13 @@ class DataBaseService {
       'silverTokens': silverTokens,
     });
   }
+  //delete profile
+  Future deleteProfile(String uid) async{
+    await attendeeCollection.doc(uid).delete();
+  }
 
   //update user profile in firebase
-  Future updateProfile(
-      String email, String fname, String lname, String phone) async {
+  Future updateProfile(String email, String fname, String lname, String phone) async {
     return await attendeeCollection.doc(uid).update({
       'email': email,
       'fname': fname,
