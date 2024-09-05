@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:ffi';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:winetopia/models/winetopia_user.dart';
 import 'package:winetopia/services/database.dart';
@@ -45,11 +47,13 @@ class AuthService {
   //sign in with email and password
   Future signInWithEmailAndPassword(String email, String password) async {
     try {
-      UserCredential result = await _auth.signInWithEmailAndPassword(
-          email: email, password: password);
+      UserCredential result = await _auth.signInWithEmailAndPassword(email: email, password: password);
       User? user = result.user;
-      return _userFromFirebaseUser(
-          user); //return the Winetopia user create by Firebase user intance
+      if(!checkVerifyEmail()){
+        _auth.currentUser!.sendEmailVerification();
+      }
+
+      return _userFromFirebaseUser(user); //return the Winetopia user create by Firebase user intance
     } on FirebaseAuthException catch (e) {
       print(e.toString());
       return null;
@@ -60,16 +64,15 @@ class AuthService {
   Future resigterWithEmailAndPassword(String email, String password,
       String fname, String lname, String phone) async {
     try {
-      UserCredential result = await _auth.createUserWithEmailAndPassword(
-          email: email, password: password);
+      UserCredential result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       User? user = result.user;
+      if(!checkVerifyEmail()){
+        _auth.currentUser!.sendEmailVerification();
+      }
 
       //create a new document for the user with the uid
-      await DataBaseService(uid: user!.uid)
-          .updateUserData(email, fname, lname, phone, 0, 0);
-
-      return _userFromFirebaseUser(
-          user); //return the Winetopia user create by Firebase user intance
+      await DataBaseService(uid: user!.uid).updateUserData(email, fname, lname, phone, 0, 0);
+      return _userFromFirebaseUser(user); //return the Winetopia user create by Firebase user intance
     } on FirebaseAuthException catch (e) {
       print(e.toString());
       firebaseErrorCode = e.code.toString();
@@ -101,10 +104,29 @@ class AuthService {
     }
   }
 
+  //Delete account
+  Future deleteAccount() async{
+    try{
+      // throw FirebaseAuthException(
+      //   code: 'requires-recent-login',
+      //   message: 'This operation is sensitive and requires recent authentication. Log in again before retrying this request.',
+      // );
+      String uid = _auth.currentUser!.uid;
+      await _auth.currentUser!.delete();
+      await DataBaseService(uid: uid).deleteProfile(uid);
+
+      return true;
+    } on FirebaseAuthException catch(e){
+      print(e.toString());
+      firebaseErrorCode = e.code.toString();
+      return false;
+    }
+  }
+
   //sign out
   Future signOut() async {
     try {
-      return await _auth.signOut();
+      await _auth.signOut();
     } catch (e) {
       print(e.toString());
       return null;
@@ -121,5 +143,9 @@ class AuthService {
   String? getUserEmail() {
     User? user = _auth.currentUser;
     return user?.email;
+  }
+
+  bool checkVerifyEmail (){
+    return _auth.currentUser!.emailVerified;
   }
 }

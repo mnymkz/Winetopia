@@ -4,6 +4,7 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:winetopia/services/auth.dart';
 import 'home/home.dart';
+import 'package:winetopia/shared/verifyUrEmail.dart';
 
 class NavigationScreen extends StatefulWidget {
   const NavigationScreen({Key? key}) : super(key: key);
@@ -30,7 +31,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return _auth.checkVerifyEmail() ? Scaffold(
       appBar: AppBar(
         title: const Text(
           'Winetopia',
@@ -76,6 +77,6 @@ class _NavigationScreenState extends State<NavigationScreen> {
           ),
         ]
       ),
-    );
+    ) : VerifyEmail();
   }
 }
