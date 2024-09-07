@@ -3,20 +3,19 @@ import 'package:provider/provider.dart';
 import 'package:winetopia/models/winetopia_user.dart';
 import 'package:winetopia/screens/authenticate/authenticate.dart';
 import 'navigation.dart';
-//import 'home/home.dart'; // Import the home screen
 
 //screen wrapper class contains the screens
 class Wrapper extends StatelessWidget {
+  const Wrapper({super.key});
+
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<WinetopiaUser?>(context);
-    print(user.toString());
-    //show either home screen or authenticate screen
+    // Show either home screen or authenticate screen
     if (user == null) {
-      return Authenticate();
+      return const Authenticate();
     } else {
-      //return HomeScreen();
-      return NavigationScreen();
+      return const NavigationScreen();
     }
   }
 }

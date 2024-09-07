@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:winetopia/models/exhibitor.dart';
 import 'package:winetopia/models/wine_sample.dart';
 import 'package:winetopia/models/winetopia_user.dart';
+import 'package:winetopia/models/wine_transaction.dart';
 
 class DataBaseService {
   final String uid;
@@ -10,9 +11,17 @@ class DataBaseService {
   DataBaseService({required this.uid});
 
   // Collection references
-  final CollectionReference attendeeCollection = FirebaseFirestore.instance.collection('attendee');
-  final CollectionReference wineCollection = FirebaseFirestore.instance.collection('wine');
-  final CollectionReference exhibitorCollection = FirebaseFirestore.instance.collection('exhibitor');
+  final CollectionReference attendeeCollection =
+      FirebaseFirestore.instance.collection('attendee');
+  final CollectionReference wineCollection =
+      FirebaseFirestore.instance.collection('wine');
+  final CollectionReference exhibitorCollection =
+      FirebaseFirestore.instance.collection('exhibitor');
+
+  // Transactions subcollection under attendee
+  CollectionReference get transactionHistoryCollection {
+    return attendeeCollection.doc(uid).collection('transactionHistory');
+  }
 
   //update userData, this should be use for registration only
   Future updateUserData(String email, String fname, String lname, String phone,
@@ -26,13 +35,15 @@ class DataBaseService {
       'silverTokens': silverTokens,
     });
   }
+
   //delete profile
-  Future deleteProfile(String uid) async{
+  Future deleteProfile(String uid) async {
     await attendeeCollection.doc(uid).delete();
   }
 
   //update user profile in firebase
-  Future updateProfile(String email, String fname, String lname, String phone) async {
+  Future updateProfile(
+      String email, String fname, String lname, String phone) async {
     return await attendeeCollection.doc(uid).update({
       'email': email,
       'fname': fname,
@@ -74,6 +85,18 @@ class DataBaseService {
     return attendeeCollection.doc(uid).snapshots().map(_userDataFromSnapshot);
   }
 
+  // Stream for current user's wine transactions
+  Stream<List<WineTransaction>> get allTransactions {
+    return transactionHistoryCollection
+        .orderBy('purchaseTime', descending: true)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return WineTransaction.fromFirestore(doc);
+      }).toList();
+    });
+  }
+
   /// Handle the wine purchase process.
   Future<WineSample?> purchaseWine(String wineDocId) async {
     try {
@@ -85,8 +108,8 @@ class DataBaseService {
       // Deduct tokens from attendee
       await deductTokensFromAttendee(wineSample.tPrice, wineSample.isGold);
 
-      // Add the wine's docId to the attendee's purchased wines list
-      await addPurchasedWine(wineDocId);
+      // Record the transaction in the attendee's transactions subcollection
+      await recordTransaction(wineSample);
 
       // Update the exhibitor's balance
       await updateExhibitorBalance(
@@ -100,6 +123,18 @@ class DataBaseService {
         throw Exception('Error processing wine purchase: $e');
       }
     }
+  }
+
+  // Record the transaction
+  Future<void> recordTransaction(WineSample wineSample) async {
+    await transactionHistoryCollection.add({
+      'wineId': wineSample.docId,
+      'wineName': wineSample.name,
+      'exhibitorName': wineSample.exhibitor.name,
+      'cost': wineSample.tPrice,
+      'isGoldPurchase': wineSample.isGold,
+      'purchaseTime': FieldValue.serverTimestamp(),
+    });
   }
 
   /*

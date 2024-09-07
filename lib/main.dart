@@ -14,17 +14,11 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  final nfcStateStream = NfcStateStream();
-
   runApp(
     MultiProvider(
       providers: [
-        StreamProvider<NfcState>.value(
-          value: nfcStateStream.stream,
-          initialData: NfcState.idle, // the default state is idle
-        ),
-        Provider<NfcStateStream>.value(
-          value: nfcStateStream,
+        ChangeNotifierProvider<NfcStateModel>(
+          create: (_) => NfcStateModel(),
         ),
         StreamProvider<WinetopiaUser?>.value(
           // Specifying stream provider will listen to the user stream
@@ -42,7 +36,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       home: Wrapper(),
     );
   }

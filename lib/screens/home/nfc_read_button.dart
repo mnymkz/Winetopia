@@ -26,7 +26,7 @@ class NfcReadButton extends StatelessWidget {
       case NfcState.success:
         icon = Icons.check;
         iconColor = Colors.green;
-        backgroundColor = Colors.white;
+        backgroundColor = Colors.green.shade50;
         borderColor = Colors.green;
         break;
       case NfcState.error:
@@ -34,22 +34,22 @@ class NfcReadButton extends StatelessWidget {
       case NfcState.insufficientTokens:
         icon = Icons.close;
         iconColor = Colors.red;
-        backgroundColor = Colors.white;
+        backgroundColor = Colors.red.shade50;
         borderColor = Colors.red;
         break;
       case NfcState.idle:
       default:
         icon = CupertinoIcons.radiowaves_right;
         iconColor = Colors.white;
-        backgroundColor = Colors.purple;
-        borderColor = Colors.transparent; // No border
+        backgroundColor = const Color(0xFF99E4EF);
+        borderColor = const Color(0xFF3ACAE2);
         break;
     }
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 100),
-      width: 150.0,
-      height: 150.0,
+      width: 100.0,
+      height: 100.0,
       decoration: BoxDecoration(
         color: backgroundColor,
         shape: BoxShape.circle,
@@ -57,21 +57,21 @@ class NfcReadButton extends StatelessWidget {
           color: borderColor,
           width: 3.0,
         ),
-        boxShadow: nfcState == NfcState.idle
-            ? [
+        boxShadow: nfcState == NfcState.scanning
+            ? []
+            : [
                 BoxShadow(
                   color: Colors.grey.shade500,
-                  offset: const Offset(6, 6),
-                  blurRadius: 15,
+                  offset: const Offset(6, 2),
+                  blurRadius: 5,
                   spreadRadius: 1,
                 ),
-              ]
-            : [],
+              ],
       ),
       child: Center(
         child: Icon(
           icon,
-          size: 75,
+          size: 40,
           color: iconColor,
         ),
       ),
