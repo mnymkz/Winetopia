@@ -1,18 +1,18 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:winetopia/firebase_options.dart';
 import 'package:winetopia/models/nfc_state.dart';
 import 'package:winetopia/models/winetopia_user.dart';
 import 'package:winetopia/services/auth.dart';
 import 'screens/wrapper.dart';
+import 'utils/stripe_config.dart';
+import 'utils/firebase_config.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  // await dotenv.load();
+  await setupStripe(); //setup stripe
+  await setupFirebase(); //setup firebase
 
   final nfcStateStream = NfcStateStream();
 
