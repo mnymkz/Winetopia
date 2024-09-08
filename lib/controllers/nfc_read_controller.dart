@@ -2,22 +2,22 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:provider/provider.dart';
-import 'package:winetopia/models/ndef_record_info.dart';
-import 'package:winetopia/models/nfc_state.dart';
+import 'package:winetopia/models/ndef_record.dart';
+import 'package:winetopia/shared/nfc_state.dart';
 import 'package:winetopia/models/winetopia_user.dart';
 import 'package:winetopia/services/database.dart';
 
 /// Controller class for NFC reading sessions
 class NfcReadController {
   final BuildContext context; // Access context to use Provider
-  final NfcStateModel nfcStateModel;
+  final NfcState nfcStateModel;
 
   NfcReadController({
     required this.context,
     required this.nfcStateModel,
   });
 
-  /// Starts an NFC reading session and modifies the [NfcState] accordingly.
+  /// Starts an NFC reading session and modifies the [NfcStateEnum] accordingly.
   Future<void> getNfcData() async {
     bool isAvailable = await NfcManager.instance.isAvailable();
 
@@ -25,24 +25,24 @@ class NfcReadController {
       try {
         await NfcManager.instance.startSession(
           onError: (error) async {
-            nfcStateModel.updateState(NfcState.error);
+            nfcStateModel.updateState(NfcStateEnum.error);
             NfcManager.instance.stopSession();
           },
           onDiscovered: (NfcTag tag) async {
             try {
               await _processTag(tag);
             } catch (e) {
-              nfcStateModel.updateState(NfcState.error);
+              nfcStateModel.updateState(NfcStateEnum.error);
             } finally {
               NfcManager.instance.stopSession();
             }
           },
         );
       } catch (e) {
-        nfcStateModel.updateState(NfcState.error);
+        nfcStateModel.updateState(NfcStateEnum.error);
       }
     } else {
-      nfcStateModel.updateState(NfcState.notAvailable);
+      nfcStateModel.updateState(NfcStateEnum.notAvailable);
     }
   }
 
@@ -61,7 +61,7 @@ class NfcReadController {
         }
       }
     } else {
-      nfcStateModel.updateState(NfcState.error);
+      nfcStateModel.updateState(NfcStateEnum.error);
     }
   }
 
@@ -71,26 +71,25 @@ class NfcReadController {
       final WinetopiaUser? currentUser =
           Provider.of<WinetopiaUser?>(context, listen: false);
       if (currentUser == null) {
-        nfcStateModel.updateState(NfcState.error);
+        nfcStateModel.updateState(NfcStateEnum.error);
         return;
       }
 
       final uid = currentUser.uid; // Get the user ID
       final dbService = DataBaseService(uid: uid);
-      final wineSample = await dbService.getWineInfo(wineDocId);
+      // Deduct tokens from attendee account, add to exhibitor account, and add wine to attendee purchases list
+      final wineSample = await dbService.purchaseWine(wineDocId);
 
       if (wineSample != null) {
-        // Deduct tokens from attendee account, add to exhibitor account, and add wine to attendee purchases list
-        await dbService.purchaseWine(wineSample.docId);
-        nfcStateModel.updateState(NfcState.success);
+        nfcStateModel.updateState(NfcStateEnum.success);
       } else {
-        nfcStateModel.updateState(NfcState.error);
+        nfcStateModel.updateState(NfcStateEnum.error);
       }
     } catch (e) {
       if (e is InsufficientTokensException) {
-        nfcStateModel.updateState(NfcState.insufficientTokens);
+        nfcStateModel.updateState(NfcStateEnum.insufficientTokens);
       } else {
-        nfcStateModel.updateState(NfcState.error);
+        nfcStateModel.updateState(NfcStateEnum.error);
       }
     }
   }

@@ -9,6 +9,7 @@ class AuthService {
   //get the firebase authentication instance
   final FirebaseAuth _auth = FirebaseAuth.instance;
   String firebaseErrorCode = '';
+  String? userID = '';
   String? userEmail = '';
 
   //create user object base on FirebaseUser (models/user.dart)
@@ -122,6 +123,13 @@ class AuthService {
       firebaseErrorCode = e.code.toString();
       return false;
     }
+  }
+
+  // Method to get the current user's uid
+  // call function before accessing the user id
+  void setUserId() {
+    User? user = _auth.currentUser;
+    userID = user?.uid;
   }
 
   //sign out

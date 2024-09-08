@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:winetopia/models/exhibitor.dart';
 import 'package:winetopia/models/wine_sample.dart';
 import 'package:winetopia/models/winetopia_user.dart';
 import 'package:winetopia/models/wine_transaction.dart';
@@ -19,11 +18,11 @@ class DataBaseService {
       FirebaseFirestore.instance.collection('exhibitor');
 
   // Transactions subcollection under attendee
-  CollectionReference get transactionHistoryCollection {
+  CollectionReference get userTransactionHistoryCollection {
     return attendeeCollection.doc(uid).collection('transactionHistory');
   }
 
-  //update userData, this should be use for registration only
+  /// Update userData, this should be use for registration only
   Future updateUserData(String email, String fname, String lname, String phone,
       int goldTokens, int silverTokens) async {
     return await attendeeCollection.doc(uid).set({
@@ -36,12 +35,12 @@ class DataBaseService {
     });
   }
 
-  //delete profile
+  /// Delete profile
   Future deleteProfile(String uid) async {
     await attendeeCollection.doc(uid).delete();
   }
 
-  //update user profile in firebase
+  /// Update user profile in firebase
   Future updateProfile(
       String email, String fname, String lname, String phone) async {
     return await attendeeCollection.doc(uid).update({
@@ -68,7 +67,7 @@ class DataBaseService {
     return await attendeeCollection.doc(uid).update({'phone': phone});
   }
 
-  // UserData from snapshot
+  /// UserData from snapshot
   UserData _userDataFromSnapshot(DocumentSnapshot snapshot) {
     return UserData(
         uid: uid,
@@ -80,14 +79,14 @@ class DataBaseService {
         silverTokens: snapshot.get('silverTokens'));
   }
 
-  // Get attendee stream
+  /// Get attendee stream
   Stream<UserData> get userData {
     return attendeeCollection.doc(uid).snapshots().map(_userDataFromSnapshot);
   }
 
-  // Stream for current user's wine transactions
+  // Stream for current user's wine transaction history
   Stream<List<WineTransaction>> get allTransactions {
-    return transactionHistoryCollection
+    return userTransactionHistoryCollection
         .orderBy('purchaseTime', descending: true)
         .snapshots()
         .map((snapshot) {
@@ -97,7 +96,7 @@ class DataBaseService {
     });
   }
 
-  /// Handle the wine purchase process.
+  /// Handle the wine purchase.
   Future<WineSample?> purchaseWine(String wineDocId) async {
     try {
       final wineSample = await getWineInfo(wineDocId);
@@ -109,11 +108,11 @@ class DataBaseService {
       await deductTokensFromAttendee(wineSample.tPrice, wineSample.isGold);
 
       // Record the transaction in the attendee's transactions subcollection
-      await recordTransaction(wineSample);
+      await recordTransactionInUserHistory(wineSample);
 
       // Update the exhibitor's balance
       await updateExhibitorBalance(
-          wineSample.exhibitor.docId, wineSample.tPrice, wineSample.isGold);
+          wineSample.exhibitorId, wineSample.tPrice, wineSample.isGold);
 
       return wineSample; // Return success state
     } catch (e) {
@@ -125,24 +124,20 @@ class DataBaseService {
     }
   }
 
-  // Record the transaction
-  Future<void> recordTransaction(WineSample wineSample) async {
-    await transactionHistoryCollection.add({
-      'wineId': wineSample.docId,
-      'wineName': wineSample.name,
-      'exhibitorName': wineSample.exhibitor.name,
-      'cost': wineSample.tPrice,
-      'isGoldPurchase': wineSample.isGold,
-      'purchaseTime': FieldValue.serverTimestamp(),
-    });
+  /// Get wine information from database
+  Future<WineSample?> getWineInfo(String wineDocId) async {
+    try {
+      DocumentSnapshot wineDoc = await wineCollection.doc(wineDocId).get();
+      if (wineDoc.exists) {
+        return WineSample.fromFirestore(wineDoc);
+      }
+      return null; // Wine not found in the database
+    } catch (e) {
+      throw Exception('Error fetching wine sample with exhibitor: $e');
+    }
   }
 
-  /*
-   * deductTokens function deducts tokens from the user's account 
-   * 
-   * @param numToken the number of tokens to dedeuct from the user's account
-   * @param isGold indicates whether to deduct from goldTokens or silverTokens
-   */
+  /// Deducts tokens from the user's account
   Future<void> deductTokensFromAttendee(int numTokens, bool isGold) async {
     try {
       DocumentReference userDoc = attendeeCollection.doc(uid);
@@ -175,23 +170,26 @@ class DataBaseService {
     }
   }
 
-  /// Get exhibitor information from database
-  Future<Exhibitor?> getExhibitorInfo(String exhibitorDocId) async {
-    DocumentSnapshot docSnapshot =
-        await exhibitorCollection.doc(exhibitorDocId).get();
-    if (docSnapshot.exists) {
-      return Exhibitor.fromFirestore(docSnapshot);
-    } else {
-      return null; // Handle case where exhibitor is not found
-    }
+  /// Record the transaction in user's transaction history
+  Future<void> recordTransactionInUserHistory(WineSample wineSample) async {
+    await userTransactionHistoryCollection.add({
+      'wineId': wineSample.docId,
+      'wineName': wineSample.name,
+      'exhibitorId': wineSample.exhibitorId,
+      'exhibitorName': wineSample.exhibitorName,
+      'cost': wineSample.tPrice,
+      'isGoldPurchase': wineSample.isGold,
+      'purchaseTime': FieldValue.serverTimestamp(),
+    });
   }
 
   /// Add tokens to the exhibitor's balance in database
   Future<void> updateExhibitorBalance(
-      String exhibitorDocId, int numTokens, bool isGold) async {
+      String exhibitorId, int numTokens, bool isGold) async {
     try {
-      DocumentReference exhibitorDoc = exhibitorCollection.doc(exhibitorDocId);
-      DocumentSnapshot docSnapshot = await exhibitorDoc.get();
+      DocumentReference exhibitorDoc = exhibitorCollection.doc(exhibitorId);
+      DocumentSnapshot docSnapshot =
+          await exhibitorCollection.doc(exhibitorId).get();
 
       if (docSnapshot.exists) {
         // Get the appropriate balance based on isGold
@@ -209,65 +207,6 @@ class DataBaseService {
     } catch (e) {
       throw Exception('Error updating exhibitor balance: $e');
     }
-  }
-
-  /// Check if wine exists in the wine collection
-  Future<bool> validateWine(String wineDocId) async {
-    DocumentSnapshot docSnapshot = await wineCollection.doc(wineDocId).get();
-    return docSnapshot.exists;
-  }
-
-  /// Add a wine reference to the user's purchased wines list in database
-  Future<void> addPurchasedWine(String wineDocId) async {
-    DocumentReference userDoc = attendeeCollection.doc(uid);
-
-    // Add the wineDocId to an array of purchased wine references
-    return await userDoc.update({
-      'purchasedWines': FieldValue.arrayUnion([wineDocId]),
-    });
-  }
-
-  /// Get wine information from database
-  Future<WineSample?> getWineInfo(String wineDocId) async {
-    try {
-      DocumentSnapshot wineDoc = await wineCollection.doc(wineDocId).get();
-      if (wineDoc.exists) {
-        DocumentReference exhibitorRef =
-            wineDoc.get('exhibitorId') as DocumentReference;
-        Exhibitor? exhibitor = await getExhibitorInfo(exhibitorRef.id);
-        if (exhibitor != null) {
-          return WineSample.fromFirestore(wineDoc, exhibitor);
-        }
-      }
-      return null; // Handle case where wine is not found or exhibitor is null
-    } catch (e) {
-      throw Exception('Error fetching wine sample with exhibitor: $e');
-    }
-  }
-
-  /// Get the list of purchased wine docIds for the attendee
-  Future<List<String>> getPurchasedWineIds() async {
-    DocumentSnapshot userDoc = await attendeeCollection.doc(uid).get();
-    if (userDoc.exists) {
-      List<dynamic> purchasedWines = userDoc.get('purchasedWines') ?? [];
-      return List<String>.from(purchasedWines);
-    } else {
-      return []; // Handle case where user document is not found
-    }
-  }
-
-  /// Get the list of purchased wines for the attendee
-  Future<List<WineSample>> getPurchasedWines() async {
-    List<String> wineIds = await getPurchasedWineIds();
-    List<WineSample> wines = [];
-
-    for (String wineId in wineIds) {
-      WineSample? wine = await getWineInfo(wineId);
-      if (wine != null) {
-        wines.add(wine);
-      }
-    }
-    return wines;
   }
 }
 

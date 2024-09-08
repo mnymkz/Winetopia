@@ -2,7 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:winetopia/firebase_options.dart';
-import 'package:winetopia/models/nfc_state.dart';
+import 'package:winetopia/shared/nfc_state.dart';
 import 'package:winetopia/models/winetopia_user.dart';
 import 'package:winetopia/services/auth.dart';
 import 'screens/wrapper.dart';
@@ -17,8 +17,8 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider<NfcStateModel>(
-          create: (_) => NfcStateModel(),
+        ChangeNotifierProvider<NfcState>(
+          create: (context) => NfcState(),
         ),
         StreamProvider<WinetopiaUser?>.value(
           // Specifying stream provider will listen to the user stream

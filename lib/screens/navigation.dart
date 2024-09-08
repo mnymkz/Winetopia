@@ -65,6 +65,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
             ),
             backgroundColor: Colors.white,
             bottomNavigationBar: CurvedNavigationBar(
+              height: 60,
               index: _selectedIndex,
               backgroundColor: const Color(0xFFF6F6F6),
               color: Colors.deepPurple.shade400,
