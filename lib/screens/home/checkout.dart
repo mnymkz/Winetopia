@@ -21,6 +21,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     super.dispose();
   }
 
+  //price ids
+  final String _silverTokenPriceId = 'price_1PpOMDIMm5TYEIRdJyM8qm2k';
+  final String _goldTokenPriceId = 'price_1PwhK7IMm5TYEIRdnVROX7Ya';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,24 +36,32 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            // Silver token purchase button
             MaterialButton(
-              onPressed: () {
-                StripeService.instance.makePayment();
+              onPressed: () async {
+                //make payment using silver token ID
+                await StripeService.instance.makePayment(_silverTokenPriceId);
               },
               color: Colors.green,
               child: const Text(
-                "Purchase",
+                "Purchase Silver Token",
+              ),
+            ),
+            const SizedBox(height: 20),
+            // Gold token purchase button
+            MaterialButton(
+              onPressed: () async {
+                //make payment using gold token id
+                await StripeService.instance.makePayment(_goldTokenPriceId);
+              },
+              color: Colors.amber,
+              child: const Text(
+                "Purchase Gold Token",
               ),
             ),
           ],
         ),
       ),
     );
-  }
-
-  // Placeholder function for purchasing tokens
-  void _purchaseTokens(int tokenAmount) {
-    // Implement the logic for purchasing tokens based on tokenAmount
-    print('Purchased $tokenAmount tokens');
   }
 }
