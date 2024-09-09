@@ -10,9 +10,12 @@ class DataBaseService {
   DataBaseService({required this.uid});
 
   // Collection references
-  final CollectionReference attendeeCollection = FirebaseFirestore.instance.collection('attendee');
-  final CollectionReference wineCollection = FirebaseFirestore.instance.collection('wine');
-  final CollectionReference exhibitorCollection = FirebaseFirestore.instance.collection('exhibitor');
+  final CollectionReference attendeeCollection =
+      FirebaseFirestore.instance.collection('attendee');
+  final CollectionReference wineCollection =
+      FirebaseFirestore.instance.collection('wine');
+  final CollectionReference exhibitorCollection =
+      FirebaseFirestore.instance.collection('exhibitor');
 
   //update userData, this should be use for registration only
   Future updateUserData(String email, String fname, String lname, String phone,
@@ -26,13 +29,15 @@ class DataBaseService {
       'silverTokens': silverTokens,
     });
   }
+
   //delete profile
-  Future deleteProfile(String uid) async{
+  Future deleteProfile(String uid) async {
     await attendeeCollection.doc(uid).delete();
   }
 
   //update user profile in firebase
-  Future updateProfile(String email, String fname, String lname, String phone) async {
+  Future updateProfile(
+      String email, String fname, String lname, String phone) async {
     return await attendeeCollection.doc(uid).update({
       'email': email,
       'fname': fname,
@@ -137,6 +142,36 @@ class DataBaseService {
       } else {
         throw Exception('Error updating token amount: $e');
       }
+    }
+  }
+
+/*
+ * addTokens function adds tokens to the user's account 
+ * 
+ * @param numTokens the number of tokens to add to the user's account
+ * @param isGold indicates whether to add to goldTokens or silverTokens
+ */
+  Future<void> addTokensToAttendee(int numTokens, bool isGold) async {
+    try {
+      DocumentReference userDoc = attendeeCollection.doc(uid);
+      DocumentSnapshot docSnapshot = await userDoc.get();
+
+      if (docSnapshot.exists) {
+        // Get the current token balance based on isGold
+        int currentTokenAmount = isGold
+            ? (docSnapshot.get('goldTokens') ?? 0)
+            : (docSnapshot.get('silverTokens') ?? 0);
+
+        // Add the tokens to the correct balance
+        await userDoc.update({
+          isGold ? 'goldTokens' : 'silverTokens':
+              currentTokenAmount + numTokens,
+        });
+      } else {
+        throw Exception('User not found');
+      }
+    } catch (e) {
+      throw Exception('Error updating token amount: $e');
     }
   }
 

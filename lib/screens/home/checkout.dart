@@ -13,6 +13,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       TextEditingController(text: '1');
   final TextEditingController _goldTokenController =
       TextEditingController(text: '1');
+  String? _errorMessage;
+  String? _confirmationMessage; // New variable for confirmation message
 
   @override
   void dispose() {
@@ -25,13 +27,40 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   final String _silverTokenPriceId = 'price_1PpOMDIMm5TYEIRdJyM8qm2k';
   final String _goldTokenPriceId = 'price_1PwhK7IMm5TYEIRdnVROX7Ya';
 
-  // Validate the quantity input (must be an integer >= 1)
+  //validate the quantity input (must be >= 1)
   int _validateQuantity(String quantityText) {
     final quantity = int.tryParse(quantityText);
     if (quantity == null || quantity <= 0) {
       return 1; // default to 1 if invalid
     }
     return quantity;
+  }
+
+  //handle purchase error messages
+  Future<void> _handlePurchase(
+      String priceId, TextEditingController controller) async {
+    setState(() {
+      _errorMessage = null; // Clear previous error message
+      _confirmationMessage = null; // Clear previous confirmation message
+    });
+
+    final quantity = _validateQuantity(controller.text);
+
+    try {
+      final success =
+          await StripeService.instance.makePayment(priceId, quantity: quantity);
+      print(success);
+      if (success) {
+        setState(() {
+          _confirmationMessage =
+              'Your purchase was successful!'; // Update confirmation message
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _errorMessage = e.toString(); // Display error message to the user
+      });
+    }
   }
 
   @override
@@ -46,7 +75,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Silver Token Section
+            // Silver button
             TextField(
               controller: _silverTokenController,
               keyboardType: TextInputType.number,
@@ -57,25 +86,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             ),
             const SizedBox(height: 10),
             MaterialButton(
-              onPressed: () async {
-                // Get the quantity of silver tokens
-                final silverTokenQuantity =
-                    _validateQuantity(_silverTokenController.text);
-
-                // Multiply the amount by the quantity and pass it to Stripe
-                await StripeService.instance.makePayment(
-                  _silverTokenPriceId,
-                  quantity: silverTokenQuantity,
-                );
-              },
+              onPressed: () =>
+                  _handlePurchase(_silverTokenPriceId, _silverTokenController),
               color: Colors.green,
-              child: const Text(
-                "Purchase Silver Tokens",
-              ),
+              child: const Text("Purchase Silver Tokens"),
             ),
             const SizedBox(height: 30),
 
-            // Gold Token Section
+            // Gold token button
             TextField(
               controller: _goldTokenController,
               keyboardType: TextInputType.number,
@@ -86,22 +104,27 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             ),
             const SizedBox(height: 10),
             MaterialButton(
-              onPressed: () async {
-                // Get the quantity of gold tokens
-                final goldTokenQuantity =
-                    _validateQuantity(_goldTokenController.text);
-
-                // Multiply the amount by the quantity and pass it to Stripe
-                await StripeService.instance.makePayment(
-                  _goldTokenPriceId,
-                  quantity: goldTokenQuantity,
-                );
-              },
+              onPressed: () =>
+                  _handlePurchase(_goldTokenPriceId, _goldTokenController),
               color: Colors.amber,
-              child: const Text(
-                "Purchase Gold Tokens",
-              ),
+              child: const Text("Purchase Gold Tokens"),
             ),
+            const SizedBox(height: 20),
+            // Display error message if any
+            if (_errorMessage != null) ...[
+              Text(
+                _errorMessage!,
+                style: TextStyle(color: Colors.red),
+              ),
+            ],
+            // Display confirmation message if any
+            if (_confirmationMessage != null) ...[
+              Text(
+                _confirmationMessage!,
+                style:
+                    TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+              ),
+            ],
           ],
         ),
       ),

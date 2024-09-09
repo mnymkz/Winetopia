@@ -1,6 +1,8 @@
 import "package:flutter_stripe/flutter_stripe.dart";
 import "package:dio/dio.dart";
 import "package:flutter_dotenv/flutter_dotenv.dart";
+import "database.dart";
+import "auth.dart";
 
 class StripeService {
   //singleton instance of StripeService
@@ -9,14 +11,14 @@ class StripeService {
   static final StripeService instance = StripeService._();
 
   ///makePayment creates a payment when the user clicks the button
-  ///Takes in the price id of the gold/silver token from the Stripe dashboard and quantiy of tokens
-  Future<void> makePayment(String priceId, {int quantity = 1}) async {
+  ///takes in the price id of the gold/silver token from the Stripe dashboard and quantiy of tokens
+  Future<bool> makePayment(String priceId, {int quantity = 1}) async {
     try {
       //create a payment intent using the price id of the token and quantity
       String? paymentIntentClientSecret =
           await _createPaymentIntent(priceId, quantity);
 
-      if (paymentIntentClientSecret == null) return;
+      if (paymentIntentClientSecret == null) return false; //payment error
 
       //init payment sheet
       await Stripe.instance.initPaymentSheet(
@@ -27,9 +29,12 @@ class StripeService {
       );
 
       //process payment
-      await _processPayment();
+      bool paymentSuccessful = await _processPayment(quantity, priceId);
+      return paymentSuccessful;
     } catch (e) {
-      print(e);
+      print("Payment process error: $e");
+      throw Exception(
+          "Payment process failed. Please check your connection and try again.");
     }
   }
 
@@ -67,9 +72,10 @@ class StripeService {
       }
       return null;
     } catch (e) {
-      print(e);
+      print("Error creating payment intent: $e");
+      throw Exception(
+          "Failed to create payment intent. Please check your connection and try again.");
     }
-    return null;
   }
 
   ///gets the product amount from Stripe and multiplies it by the quantity
@@ -92,7 +98,9 @@ class StripeService {
         return unitAmount * quantity; //multiply the unit amount by the quantity
       }
     } catch (e) {
-      print(e);
+      print("Error fetching product details: $e");
+      throw Exception(
+          "Fetching product details failed. Please check your connection and try again.");
     }
 
     //return 0 if there's an error
@@ -100,12 +108,20 @@ class StripeService {
   }
 
   /// Process payment by presenting the payment sheet to the user and confirming the payment
-  Future<void> _processPayment() async {
+  Future<bool> _processPayment(int quantity, String priceId) async {
     try {
       await Stripe.instance.presentPaymentSheet();
       await Stripe.instance.confirmPaymentSheetPayment();
+
+      // Update user's token balance upon successful payment
+      bool isGold =
+          priceId == 'price_1PwhK7IMm5TYEIRdnVROX7Ya'; // Gold token price ID
+      //add to user account
+
+      return true;
     } catch (e) {
-      print(e);
+      print("Payment processing failed: $e");
+      return false;
     }
   }
 }
