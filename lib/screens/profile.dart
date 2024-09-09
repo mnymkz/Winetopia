@@ -382,7 +382,9 @@ class _NewScreenState extends State<NewScreen> {
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
                               ),
-                          onPressed: () async {
+                          onPressed: () async{
+                            Navigator.of(context).pop();     
+                            logout = true;//stop the stream Builder
                             await _auth.signOut();
                           },
                           child: Text(
