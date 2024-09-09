@@ -85,6 +85,20 @@ class _NewScreenState extends State<NewScreen> {
             return loading
                 ? Loading()
                 : Scaffold(
+                    appBar: AppBar(
+                      title: const Text(
+                        'Winetopia',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      backgroundColor: Colors.deepPurple.shade400,
+                      elevation: 0.0,
+                      leading: IconButton(
+                        icon: const Icon(Icons.arrow_back, color: Colors.white),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
                     resizeToAvoidBottomInset: false,
                     backgroundColor: Colors.purple.shade50,
                     body: Container(
