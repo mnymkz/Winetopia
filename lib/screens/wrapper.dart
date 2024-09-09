@@ -10,7 +10,7 @@ class Wrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<WinetopiaUser?>(context);
-
+    print(user.toString());
     //show either home screen or authenticate screen
     if (user == null) {
       return Authenticate();
