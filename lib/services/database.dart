@@ -151,7 +151,7 @@ class DataBaseService {
  * @param numTokens the number of tokens to add to the user's account
  * @param isGold indicates whether to add to goldTokens or silverTokens
  */
-  Future<void> addTokensToAttendee(int numTokens, bool isGold) async {
+  Future<bool> addTokensToAttendee(int numTokens, bool isGold) async {
     try {
       DocumentReference userDoc = attendeeCollection.doc(uid);
       DocumentSnapshot docSnapshot = await userDoc.get();
@@ -167,8 +167,9 @@ class DataBaseService {
           isGold ? 'goldTokens' : 'silverTokens':
               currentTokenAmount + numTokens,
         });
+        return true;
       } else {
-        throw Exception('User not found');
+        return false;
       }
     } catch (e) {
       throw Exception('Error updating token amount: $e');
@@ -195,13 +196,14 @@ class DataBaseService {
 
       if (docSnapshot.exists) {
         // Get the appropriate balance based on isGold
-        int currentBalance = isGold
-            ? (docSnapshot.get('goldBalance') ?? 0)
-            : (docSnapshot.get('silverBalance') ?? 0);
+        int currentTokenAmount = isGold
+            ? (docSnapshot.get('goldTokens') ?? 0)
+            : (docSnapshot.get('silverTokens') ?? 0);
 
         // Add the tokens to the correct balance
         await exhibitorDoc.update({
-          isGold ? 'goldBalance' : 'silverBalance': currentBalance + numTokens,
+          isGold ? 'goldTokens' : 'silverTokens':
+              currentTokenAmount + numTokens,
         });
       } else {
         throw Exception('Exhibitor not found');
