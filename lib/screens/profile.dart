@@ -197,11 +197,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
             resizeToAvoidBottomInset: false,
             backgroundColor: Colors.purple[50],
             appBar: AppBar(
-              backgroundColor: Colors.purple[800],
-              elevation: 0.0,
-              title: Text(
-                'Profile',
+              title: const Text(
+                'Winetopia',
                 style: TextStyle(color: Colors.white),
+              ),
+              backgroundColor: Colors.deepPurple.shade400,
+              elevation: 0.0,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.white),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
               ),
             ),
             body: Container(
@@ -308,7 +314,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               setState(() {
                                 loading = true;
                               });
-
                               if (password != '') {
                                 dynamic result_password = await _auth.updatePassword(password);
                                 if (result_password == null) {
@@ -362,7 +367,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 dynamic result = await DataBaseService(uid: user!.uid).updatePhone(phone);
                                 phone = '';
                               }
-
                               setState(() {
                                 loading = false;
                               });
@@ -373,7 +377,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             'Update!',
                             //style: TextStyle(color: Colors.white)
                           ),
-                          
+                        ),
+                        
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              ),
+                          onPressed: () async{
+                            Navigator.of(context).pop();     
+                            logout = true;//stop the stream Builder
+                            await _auth.signOut();
+                          },
+                          child: Text(
+                            'Sign Out',
+                          ),
                         ),
 
                         ElevatedButton(
@@ -390,7 +406,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ],
                     ),
-                    
                     SizedBox(
                       height: 20.0,
                     ),
@@ -406,11 +421,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           );
         } else {
           return Scaffold(
-            appBar: AppBar(
-              title: Text('Profile'),
-            ),
+            backgroundColor: Colors.purple.shade50,
             body: Center(
-              child: Text('Something happend with firebase!'),
+              child: Loading(),
             ),
           );
         }

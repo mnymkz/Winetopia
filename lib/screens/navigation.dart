@@ -3,7 +3,9 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:winetopia/services/auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'home/home.dart';
+import 'profile.dart';
 import 'package:winetopia/shared/verifyUrEmail.dart';
 
 class NavigationScreen extends StatefulWidget {
@@ -24,9 +26,10 @@ class _NavigationScreenState extends State<NavigationScreen> {
   }
 
   final List<Widget> _screens = [
-    HomeScreen(),
+    HomeScreen(), // navigates to home screen (nfc scanning)
     HomeScreen(), // change route to history
     HomeScreen(), // change route to event info
+    NewScreen(), // navigates to profile screen
   ];
 
   @override
@@ -40,15 +43,33 @@ class _NavigationScreenState extends State<NavigationScreen> {
         backgroundColor: Colors.deepPurple.shade400,
         elevation: 0.0,
         actions: <Widget>[
-          TextButton.icon(
+          IconButton(
             icon: const Icon(
               Icons.person,
               color: Colors.white,
             ),
-            label:
-                const Text('Sign Out', style: TextStyle(color: Colors.white)),
-            onPressed: () async {
-              await _auth.signOut();
+            onPressed: () {
+              // Navigate to the profile screen
+              Navigator.push(
+                context,
+                PageRouteBuilder(
+                  pageBuilder: (context, animation, secondaryAnimation) => NewScreen(),
+                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                    const begin = Offset(1.0, 0.0); // Start from the right (1.0 means off-screen right)
+                    const end = Offset.zero; // End at the center (normal position)
+                    const curve = Curves.easeInOut;
+
+                    var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                    var offsetAnimation = animation.drive(tween);
+
+                    return SlideTransition(
+                      position: offsetAnimation,
+                      child: child,
+                    );
+                  },
+                  transitionDuration: const Duration(milliseconds: 300), // Customize duration if needed
+                ),
+              );
             },
           ),
         ],
@@ -56,7 +77,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
 
       body: _screens[_selectedIndex],
 
-      backgroundColor: Colors.white,
+      //backgroundColor: Colors.white,
       bottomNavigationBar: CurvedNavigationBar(
         backgroundColor: Colors.purple.shade50,
         color: Colors.deepPurple.shade400,
