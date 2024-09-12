@@ -4,7 +4,6 @@ import 'package:winetopia/models/wine_transaction.dart';
 import 'package:winetopia/models/winetopia_user.dart';
 import 'package:winetopia/screens/home/nfc_button.dart';
 import 'package:winetopia/screens/navigation.dart';
-import 'package:winetopia/screens/profile.dart';
 import 'package:winetopia/screens/transaction_history/transaction_list.dart';
 import 'package:winetopia/screens/home/checkout.dart'; // Import the checkout screen
 import 'package:winetopia/services/database.dart';
@@ -31,7 +30,6 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           const SizedBox(height: 20),
 
-          // User's gold and silver token balance
           StreamBuilder<UserData>(
             stream: DataBaseService(uid: currentUser!.uid).userData,
             builder: (context, snapshot) {
@@ -49,9 +47,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Row(
                   children: [
+                    // Gold and silver token balance
                     Expanded(
                       child: Container(
-                        padding: const EdgeInsets.all(5.0),
+                        padding: const EdgeInsets.all(0),
                         height: 50.0,
                         decoration: BoxDecoration(
                           border: Border.all(color: Colors.purple, width: 2),
@@ -87,6 +86,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                     const SizedBox(width: 5),
+
+                    //Button to checkout screen
                     Container(
                       height: 50.0,
                       padding: const EdgeInsets.all(5.0),
@@ -95,19 +96,29 @@ class _HomeScreenState extends State<HomeScreen> {
                         borderRadius: BorderRadius.circular(12.0),
                         color: Colors.purple[200],
                       ),
-                      child: const Text('TOP\n UP',
-                          style: TextStyle(color: Colors.white)),
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const CheckoutScreen(),
+                            ),
+                          );
+                        },
+                        child: const Text('TOP\n UP',
+                            style: TextStyle(color: Colors.white)),
+                      ),
                     ),
                   ],
                 ),
               );
             },
           ),
-          const SizedBox(height: 15),
+          const SizedBox(height: 25),
 
           // Nfc Button that starts an Nfc reading session
           const NfcButton(),
-          const SizedBox(height: 15),
+          const SizedBox(height: 20),
 
           // Recent Transactions
           Flexible(
@@ -189,30 +200,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           const SizedBox(height: 15.0),
-          Center(
-              child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => ProfileScreen()),
-                    );
-                  },
-                  child: const Text('My Profile'))),
-
-          //Button to checkout screen
-          Center(
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const CheckoutScreen(),
-                  ),
-                );
-              },
-              child: const Text('Checkout'),
-            ),
-          ),
         ],
       )),
     );

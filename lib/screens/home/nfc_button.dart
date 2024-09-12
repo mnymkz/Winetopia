@@ -50,6 +50,7 @@ class NfcButton extends StatelessWidget {
                 ),
               ),
             ),
+            const SizedBox(height: 15),
 
             // Primary feedback messages
             Center(
