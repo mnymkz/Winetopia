@@ -14,7 +14,6 @@ class TransactionHistoryScreen extends StatelessWidget {
     final currentUser = Provider.of<WinetopiaUser?>(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF6F6F6),
       body: StreamBuilder<List<WineTransaction>>(
         stream: DataBaseService(uid: currentUser!.uid)
             .allTransactions, // Listening to transactions stream

@@ -24,7 +24,6 @@ class _HomeScreenState extends State<HomeScreen> {
     final currentUser = Provider.of<WinetopiaUser?>(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF6F6F6),
       body: Center(
           child: Column(
         children: [
@@ -118,7 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
           // Nfc Button that starts an Nfc reading session
           const NfcPurchaseButton(),
-          const SizedBox(height: 20),
+          const SizedBox(height: 18),
 
           // Recent Transactions
           Flexible(
@@ -126,7 +125,7 @@ class _HomeScreenState extends State<HomeScreen> {
               margin: const EdgeInsets.symmetric(horizontal: 15.0),
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.purple, width: 2),
-                borderRadius: BorderRadius.circular(8.0),
+                borderRadius: BorderRadius.circular(15.0),
                 color: const Color(0x1A761973),
               ),
               child: Column(
@@ -199,7 +198,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-          const SizedBox(height: 15.0),
+          const SizedBox(height: 80.0),
         ],
       )),
     );

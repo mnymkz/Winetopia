@@ -209,7 +209,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             'Winetopia',
                             style: TextStyle(color: Colors.white),
                           ),
-                          backgroundColor: Colors.deepPurple.shade400,
+                          backgroundColor: const Color(0xFF292663),
                           elevation: 0.0,
                           leading: IconButton(
                             icon: const Icon(Icons.arrow_back,
@@ -428,22 +428,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         'Sign Out',
                                       ),
                                     ),
-                                    ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.red[400],
-                                      ),
-                                      onPressed: () async {
-                                        deleteAccountDialog();
-                                      },
-                                      child: Text('Delete Profile!',
-                                          style:
-                                              TextStyle(color: Colors.white)),
-                                    ),
                                   ],
                                 ),
-                                SizedBox(
-                                  height: 20.0,
+                                SizedBox(height: 5.0),
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.red[400],
+                                  ),
+                                  onPressed: () async {
+                                    deleteAccountDialog();
+                                  },
+                                  child: Text('Delete Profile!',
+                                      style: TextStyle(color: Colors.white)),
                                 ),
+                                SizedBox(height: 20.0),
                                 Text(
                                   error,
                                   style: TextStyle(

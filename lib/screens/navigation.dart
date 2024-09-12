@@ -46,11 +46,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
     return _auth.checkVerifyEmail()
         ? Scaffold(
             appBar: AppBar(
-              title: const Text(
-                'Winetopia',
-                style: TextStyle(color: Colors.white),
-              ),
-              backgroundColor: Colors.deepPurple.shade400,
+              title: Image.asset('assets/img/winetopia_logo.png', height: 55),
+              backgroundColor: Color(0xFF292663),
               elevation: 0.0,
               actions: <Widget>[
                 IconButton(
@@ -94,12 +91,13 @@ class _NavigationScreenState extends State<NavigationScreen> {
               index: _selectedIndex,
               children: _screens,
             ),
-            backgroundColor: Colors.white,
+            backgroundColor: Color(0xFFF6F6F6),
+            extendBody: true,
             bottomNavigationBar: CurvedNavigationBar(
               height: 60,
               index: _selectedIndex,
-              backgroundColor: const Color(0xFFF6F6F6),
-              color: Colors.deepPurple.shade400,
+              backgroundColor: Color(0xFF292663).withOpacity(0.5),
+              color: Color(0xFF292663),
               animationDuration: const Duration(milliseconds: 200),
               onTap: _navigateCurvedBar,
               items: const [

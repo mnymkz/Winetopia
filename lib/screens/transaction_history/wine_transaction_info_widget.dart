@@ -14,7 +14,7 @@ class WineTransactionInfoWidget extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
       decoration: BoxDecoration(
         color: const Color(0x40761973),
-        borderRadius: BorderRadius.circular(15.0),
+        borderRadius: BorderRadius.circular(20.0),
         border: Border.all(
           color: Colors.purple,
           width: 1.0,
@@ -38,13 +38,15 @@ class WineTransactionInfoWidget extends StatelessWidget {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.wine_bar,
+                  Image.asset(
+                    'assets/img/wine_glass.png',
                     color: transaction.isGoldPurchase
                         ? Colors.amber
                         : Colors.white,
-                    size: iconSize,
+                    width: iconSize,
+                    height: iconSize,
                   ),
+                  const SizedBox(height: 1.0),
                   Text(
                     '${transaction.cost} ${transaction.cost > 1 ? 'tokens' : 'token'}',
                     style: TextStyle(
@@ -62,11 +64,15 @@ class WineTransactionInfoWidget extends StatelessWidget {
           style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
+            letterSpacing: 1.5,
           ),
         ),
         subtitle: Text(
           transaction.exhibitorName,
-          style: const TextStyle(fontSize: 14),
+          style: const TextStyle(
+            fontSize: 14,
+            letterSpacing: 1.5,
+          ),
         ),
       ),
     );
