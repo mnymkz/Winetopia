@@ -55,6 +55,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           _confirmationMessage =
               'Your purchase was successful!'; // Update confirmation message
         });
+      } else {
+        setState(() {
+          _confirmationMessage =
+              'Something went wrong, please try again'; // Update confirmation message
+        });
       }
     } catch (e) {
       setState(() {

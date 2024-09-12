@@ -111,14 +111,20 @@ class StripeService {
   Future<bool> _processPayment(int quantity, String priceId) async {
     try {
       await Stripe.instance.presentPaymentSheet();
-      await Stripe.instance.confirmPaymentSheetPayment();
+      //await Stripe.instance.confirmPaymentSheetPayment();
 
       // Update user's token balance upon successful payment
       bool isGold =
           priceId == 'price_1PwhK7IMm5TYEIRdnVROX7Ya'; // Gold token price ID
-      //add to user account
 
-      return true;
+      //add to user account
+      AuthService auth = AuthService(); // Create a new instance of AuthService
+      auth.setUserId(); // Set the user ID
+      dynamic uid = auth.userID; // Get the user ID
+
+      bool result =
+          await DataBaseService(uid: uid).addTokensToAttendee(quantity, isGold);
+      return result;
     } catch (e) {
       print("Payment processing failed: $e");
       return false;
