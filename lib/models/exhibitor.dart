@@ -14,7 +14,7 @@ class Exhibitor {
     required this.name,
   });
 
-  /// Returns an exhibitor object from exhibitor document snapshot
+  /// Creates an [Exhibitor] object from Firestore data
   factory Exhibitor.fromFirestore(DocumentSnapshot doc) {
     return Exhibitor(
       docId: doc.id,

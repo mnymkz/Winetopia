@@ -1,23 +1,30 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:winetopia/screens/transaction_history/transaction_history.dart';
 import 'package:winetopia/services/auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'home/home.dart';
 import 'profile.dart';
 import 'package:winetopia/shared/verifyUrEmail.dart';
 
 class NavigationScreen extends StatefulWidget {
-  const NavigationScreen({Key? key}) : super(key: key);
+  final int initialIndex;
+  const NavigationScreen({super.key, this.initialIndex = 0});
 
   @override
   State<NavigationScreen> createState() => _NavigationScreenState();
 }
 
 class _NavigationScreenState extends State<NavigationScreen> {
-  int _selectedIndex = 0;
+  late int _selectedIndex;
   final AuthService _auth = AuthService();
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.initialIndex;
+  }
 
   void _navigateCurvedBar(int index) {
     setState(() {
@@ -26,10 +33,12 @@ class _NavigationScreenState extends State<NavigationScreen> {
   }
 
   final List<Widget> _screens = [
-    HomeScreen(), // navigates to home screen (nfc scanning)
-    HomeScreen(), // change route to history
-    HomeScreen(), // change route to event info
-    ProfileScreen(), // navigates to profile screen
+    const HomeScreen(key: PageStorageKey('home')),
+    const TransactionHistoryScreen(key: PageStorageKey('history')),
+    const Placeholder(
+        key: PageStorageKey(
+            'placeholder')), // Replace with actual widget when ready,
+    const ProfileScreen(key: PageStorageKey('profile')),
   ];
 
   @override
@@ -37,11 +46,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
     return _auth.checkVerifyEmail()
         ? Scaffold(
             appBar: AppBar(
-              title: const Text(
-                'Winetopia',
-                style: TextStyle(color: Colors.white),
-              ),
-              backgroundColor: Colors.deepPurple.shade400,
+              title: Image.asset('assets/img/winetopia_logo.png', height: 55),
+              backgroundColor: Color(0xFF292663),
               elevation: 0.0,
               actions: <Widget>[
                 IconButton(
@@ -55,7 +61,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
                       context,
                       PageRouteBuilder(
                         pageBuilder: (context, animation, secondaryAnimation) =>
-                            ProfileScreen(),
+                            const ProfileScreen(),
                         transitionsBuilder:
                             (context, animation, secondaryAnimation, child) {
                           const begin = Offset(1.0,
@@ -82,19 +88,25 @@ class _NavigationScreenState extends State<NavigationScreen> {
               ],
             ),
 
-            body: _screens[_selectedIndex],
-
-            //backgroundColor: Colors.white,
+            body: IndexedStack(
+              index: _selectedIndex,
+              children: _screens,
+            ),
+            backgroundColor: Color(0xFFF6F6F6),
+            extendBody: true,
             bottomNavigationBar: CurvedNavigationBar(
-                backgroundColor: Colors.purple.shade50,
-                color: Colors.deepPurple.shade400,
-                animationDuration: Duration(milliseconds: 200),
-                onTap: _navigateCurvedBar,
-                items: [
-                  Icon(Icons.home, color: Colors.white),
-                  Icon(Icons.history, color: Colors.white),
-                  Icon(Icons.calendar_month, color: Colors.white),
-                ]),
+              height: 60,
+              index: _selectedIndex,
+              backgroundColor: Color(0xFF292663).withOpacity(0.5),
+              color: Color(0xFF292663),
+              animationDuration: const Duration(milliseconds: 200),
+              onTap: _navigateCurvedBar,
+              items: const [
+                Icon(Icons.home, color: Colors.white),
+                Icon(Icons.history, color: Colors.white),
+                Icon(Icons.calendar_month, color: Colors.white),
+              ],
+            ),
           )
         : VerifyEmail();
   }
