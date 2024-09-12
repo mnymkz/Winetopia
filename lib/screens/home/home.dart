@@ -68,17 +68,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 // Wine Info Widget - shows information about the recently purchased wine
                 if (_wineSample != null) WineInfoWidget(wine: _wineSample),
-                Center(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => NewScreen()),
-                      );
-                    },
-                    child: const Text('My Profile'),
-                  ),
-                ),
               ],
             );
           },
