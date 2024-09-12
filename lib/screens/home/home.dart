@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:winetopia/models/wine_transaction.dart';
 import 'package:winetopia/models/winetopia_user.dart';
+import 'package:winetopia/screens/authenticate/authenticate.dart';
+import 'package:winetopia/screens/authenticate/sign_in.dart';
 import 'package:winetopia/screens/home/nfc_purchase_button.dart';
 import 'package:winetopia/screens/navigation.dart';
 import 'package:winetopia/screens/transaction_history/transaction_list.dart';
@@ -23,12 +25,12 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final currentUser = Provider.of<WinetopiaUser?>(context);
 
-    return Scaffold(
+    return currentUser == null ? Authenticate() : Scaffold(
       body: Center(
           child: Column(
         children: [
           const SizedBox(height: 20),
-
+          
           StreamBuilder<UserData>(
             stream: DataBaseService(uid: currentUser!.uid).userData,
             builder: (context, snapshot) {

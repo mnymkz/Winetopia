@@ -113,8 +113,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         },
                       ),
                       ElevatedButton(
-                        child: Text('Sign out',
-                            style: TextStyle(color: Colors.white)),
+                        child: Text('Sign out', style: TextStyle(color: Colors.white)),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red[400],
                         ),
