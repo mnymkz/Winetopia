@@ -1,16 +1,13 @@
-import 'package:flutter/foundation.dart';
+/// Manages the NFC State.
+class NfcState {
+  NfcStateEnum state;
 
-/// Manages the current state of NFC operations and notifies listeners of state changes.
-class NfcState extends ChangeNotifier {
-  NfcStateEnum _state = NfcStateEnum.idle; // Initial state is idle
-
-  NfcStateEnum get state => _state;
+  NfcState({
+    this.state = NfcStateEnum.idle,
+  });
 
   void updateState(NfcStateEnum newState) {
-    if (_state != newState) {
-      _state = newState;
-      notifyListeners();
-    }
+    state = newState;
   }
 }
 

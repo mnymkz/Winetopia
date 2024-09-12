@@ -28,21 +28,7 @@ void main() async {
     print("error initialising firebase");
   }
 
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider<NfcState>(
-          create: (context) => NfcState(),
-        ),
-        StreamProvider<WinetopiaUser?>.value(
-          // Specifying stream provider will listen to the user stream
-          initialData: null,
-          value: AuthService().user,
-        ),
-      ],
-      child: const MyApp(),
-    ),
-  );
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -50,8 +36,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Wrapper(),
-    );
+    return StreamProvider<WinetopiaUser?>.value(
+        initialData: null,
+        value: AuthService()
+            .user, //specifying StreamProvider will listen to the user stream
+        child: const MaterialApp(
+          home: Wrapper(),
+        ));
   }
 }

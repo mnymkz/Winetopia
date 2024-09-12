@@ -6,7 +6,7 @@ import 'package:winetopia/screens/authenticate/authenticate.dart';
 import 'package:winetopia/screens/authenticate/sign_in.dart';
 import 'package:winetopia/screens/home/home.dart';
 import 'package:winetopia/services/auth.dart';
-import 'package:winetopia/services/database.dart';
+import 'package:winetopia/services/database_service.dart';
 import 'package:winetopia/shared/constants.dart';
 import 'package:winetopia/shared/loading.dart';
 import 'package:flutter/services.dart';

@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:winetopia/models/wine_transaction.dart';
 import 'package:winetopia/models/winetopia_user.dart';
-import 'package:winetopia/screens/home/nfc_button.dart';
+import 'package:winetopia/screens/home/nfc_purchase_button.dart';
 import 'package:winetopia/screens/navigation.dart';
 import 'package:winetopia/screens/transaction_history/transaction_list.dart';
 import 'package:winetopia/screens/home/checkout.dart'; // Import the checkout screen
-import 'package:winetopia/services/database.dart';
+import 'package:winetopia/services/database_service.dart';
 import 'package:winetopia/shared/loading.dart';
 
 /// HomeScreen widget serves as the main screen of the app where users can pay
@@ -117,7 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 25),
 
           // Nfc Button that starts an Nfc reading session
-          const NfcButton(),
+          const NfcPurchaseButton(),
           const SizedBox(height: 20),
 
           // Recent Transactions

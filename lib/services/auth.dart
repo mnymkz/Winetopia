@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:winetopia/models/winetopia_user.dart';
-import 'package:winetopia/services/database.dart';
+import 'package:winetopia/services/database_service.dart';
 
 class AuthService {
   // the '_<variable name>' means this variable is private

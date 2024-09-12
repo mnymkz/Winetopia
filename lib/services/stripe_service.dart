@@ -1,7 +1,7 @@
 import "package:flutter_stripe/flutter_stripe.dart";
 import "package:dio/dio.dart";
 import "package:flutter_dotenv/flutter_dotenv.dart";
-import "database.dart";
+import "database_service.dart";
 import "auth.dart";
 
 class StripeService {

@@ -3,8 +3,6 @@ import 'dart:typed_data';
 import 'package:nfc_manager/nfc_manager.dart';
 
 /// Holds information about an NDEF record, including the text content.
-///
-/// Only supports well-known NFC record type data.
 class NdefRecordInfo {
   const NdefRecordInfo({required this.record, required this.title});
 
@@ -23,10 +21,7 @@ class NdefRecordInfo {
   }
 }
 
-/// Abstract class representing a generic NFC record.
-///
-/// Provides methods to create instances of different record types from
-/// NDEF records. Only recognizes well-known NFC record type data.
+/// Abstract class representing a generic NFC record. Only recognizes well-known NFC text records.
 abstract class Record {
   static Record fromNdef(NdefRecord record) {
     if (record.typeNameFormat == NdefTypeNameFormat.nfcWellknown &&

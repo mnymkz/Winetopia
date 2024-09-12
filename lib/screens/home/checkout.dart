@@ -119,15 +119,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             if (_errorMessage != null) ...[
               Text(
                 _errorMessage!,
-                style: TextStyle(color: Colors.red),
+                style: const TextStyle(color: Colors.red),
               ),
             ],
             // Display confirmation message if any
             if (_confirmationMessage != null) ...[
               Text(
                 _confirmationMessage!,
-                style:
-                    TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                    color: Colors.green, fontWeight: FontWeight.bold),
               ),
             ],
           ],

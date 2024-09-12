@@ -23,6 +23,7 @@ class TransactionList extends StatelessWidget {
     }
 
     return ListView.builder(
+      // Non-scrollable if limit exists
       physics: limit != null ? const NeverScrollableScrollPhysics() : null,
       shrinkWrap: true,
       itemCount: displayedTransactions.length,
