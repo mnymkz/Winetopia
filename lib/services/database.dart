@@ -224,14 +224,13 @@ class DataBaseService {
 
       if (docSnapshot.exists) {
         // Get the appropriate balance based on isGold
-        int currentTokenAmount = isGold
-            ? (docSnapshot.get('goldTokens') ?? 0)
-            : (docSnapshot.get('silverTokens') ?? 0);
+        int currentBalance = isGold
+            ? (docSnapshot.get('goldBalance') ?? 0)
+            : (docSnapshot.get('silverBalance') ?? 0);
 
         // Add the tokens to the correct balance
         await exhibitorDoc.update({
-          isGold ? 'goldTokens' : 'silverTokens':
-              currentTokenAmount + numTokens,
+          isGold ? 'goldBalance' : 'silverBalance': currentBalance + numTokens,
         });
       } else {
         throw Exception('Exhibitor not found');

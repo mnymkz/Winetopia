@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:winetopia/firebase_options.dart';
 import 'package:winetopia/shared/nfc_state.dart';
 import 'package:winetopia/models/winetopia_user.dart';
 import 'package:winetopia/services/auth.dart';
