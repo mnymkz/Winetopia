@@ -87,6 +87,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
                 ),
               ],
             ),
+
             body: IndexedStack(
               index: _selectedIndex,
               children: _screens,
