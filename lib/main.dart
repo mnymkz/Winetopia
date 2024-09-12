@@ -10,9 +10,23 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await dotenv.load();
-  await setupStripe(); //setup stripe
-  await setupFirebase(); //setup firebase
+  try {
+    await dotenv.load(fileName: ".env"); //load environment variables
+  } catch (e) {
+    print("error loading environment variables");
+  }
+
+  try {
+    await setupStripe(); //setup stripe
+  } catch (e) {
+    print("error initialising stripe key");
+  }
+
+  try {
+    await setupFirebase(); //setup firebase
+  } catch (e) {
+    print("error initialising firebase");
+  }
 
   final nfcStateStream = NfcStateStream();
 

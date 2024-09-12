@@ -5,11 +5,10 @@ import 'package:winetopia/models/wine_sample.dart';
 import 'package:winetopia/screens/home/nfc_read_button.dart';
 import 'package:winetopia/controllers/nfc_read_controller.dart';
 import 'package:winetopia/screens/home/wine_info_widget.dart';
+import 'package:winetopia/screens/home/checkout.dart'; // Import the checkout screen
 import 'package:winetopia/services/auth.dart';
 import '../profile.dart';
 
-/// HomeScreen widget serves as the main screen of the app where users
-/// can pay for wine samples.
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -25,7 +24,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.purple.shade50,
-
       body: Center(
         child: Consumer<NfcState>(
           builder: (context, nfcState, child) {
@@ -68,6 +66,34 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 // Wine Info Widget - shows information about the recently purchased wine
                 if (_wineSample != null) WineInfoWidget(wine: _wineSample),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ProfileScreen()),
+                      );
+                    },
+                    child: const Text('My Profile'),
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                //Button to checkout screen
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CheckoutScreen(),
+                        ),
+                      );
+                    },
+                    child: const Text('Checkout'),
+                  ),
+                ),
               ],
             );
           },
@@ -76,7 +102,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  /// Initiates the NFC reading process and updates the NFC state based on the result
   void _nfcButtonPressed(BuildContext context) async {
     final nfcStateStream = Provider.of<NfcStateStream>(context, listen: false);
     nfcStateStream.updateState(NfcState.scanning);
@@ -91,7 +116,6 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
 
-    // Start the NFC reading process
     await nfcReadController.getNfcData();
   }
 }
