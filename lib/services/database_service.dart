@@ -96,32 +96,58 @@ class DataBaseService {
     });
   }
 
-  /// Handle the wine purchase.
+  /// Handles the purchase of a wine sample by performing several actions in a transaction.
   Future<WineSample?> purchaseWine(String wineDocId) async {
-    try {
+    return FirebaseFirestore.instance.runTransaction((transaction) async {
+      // Retrieve wine sample from database
       final wineSample = await getWineInfo(wineDocId);
       if (wineSample == null) {
         throw Exception('Wine not found');
       }
 
+      // Reference to current attendee's document
+      DocumentReference userDoc = attendeeCollection.doc(uid);
+      DocumentSnapshot userSnapshot = await transaction.get(userDoc);
+
+      // Reference to exhibitor's document
+      DocumentReference exhibitorDoc =
+          exhibitorCollection.doc(wineSample.exhibitorId);
+      DocumentSnapshot exhibitorSnapshot = await transaction.get(exhibitorDoc);
+
       // Deduct tokens from attendee
-      await deductTokensFromAttendee(wineSample.tPrice, wineSample.isGold);
-
-      // Record the transaction in the attendee's transactions subcollection
-      await recordTransactionInUserHistory(wineSample);
-
-      // Update the exhibitor's balance
-      await updateExhibitorBalance(
-          wineSample.exhibitorId, wineSample.tPrice, wineSample.isGold);
-
-      return wineSample; // Return success state
-    } catch (e) {
-      if (e is InsufficientTokensException) {
-        rethrow; // Propagate the custom exception
-      } else {
-        throw Exception('Error processing wine purchase: $e');
+      int currentTokenAmount = wineSample.isGold
+          ? (userSnapshot.get('goldTokens') ?? 0)
+          : (userSnapshot.get('silverTokens') ?? 0);
+      if (currentTokenAmount < wineSample.tPrice) {
+        throw InsufficientTokensException('Not enough tokens');
       }
-    }
+      transaction.update(userDoc, {
+        wineSample.isGold ? 'goldTokens' : 'silverTokens':
+            currentTokenAmount - wineSample.tPrice,
+      });
+
+      // Record the wine transaction in attendee account
+      transaction.set(userTransactionHistoryCollection.doc(), {
+        'wineId': wineSample.docId,
+        'wineName': wineSample.name,
+        'exhibitorId': wineSample.exhibitorId,
+        'exhibitorName': wineSample.exhibitorName,
+        'cost': wineSample.tPrice,
+        'isGoldPurchase': wineSample.isGold,
+        'purchaseTime': FieldValue.serverTimestamp(),
+      });
+
+      // Update exhibitor's balance
+      int exhibitorCurrentBalance = wineSample.isGold
+          ? (exhibitorSnapshot.get('goldBalance') ?? 0)
+          : (exhibitorSnapshot.get('silverBalance') ?? 0);
+      transaction.update(exhibitorDoc, {
+        wineSample.isGold ? 'goldBalance' : 'silverBalance':
+            exhibitorCurrentBalance + wineSample.tPrice,
+      });
+
+      return wineSample;
+    });
   }
 
   /// Get wine information from database
@@ -134,39 +160,6 @@ class DataBaseService {
       return null; // Wine not found in the database
     } catch (e) {
       throw Exception('Error fetching wine sample with exhibitor: $e');
-    }
-  }
-
-  /// Deducts tokens from the user's account
-  Future<void> deductTokensFromAttendee(int numTokens, bool isGold) async {
-    try {
-      DocumentReference userDoc = attendeeCollection.doc(uid);
-      DocumentSnapshot docSnapshot = await userDoc.get();
-
-      if (docSnapshot.exists) {
-        // Get the appropriate token balance based on isGold
-        int currentTokenAmount = isGold
-            ? (docSnapshot.get('goldTokens') ?? 0)
-            : (docSnapshot.get('silverTokens') ?? 0);
-
-        if (currentTokenAmount >= numTokens) {
-          // Deduct the tokens from the correct balance
-          await userDoc.update({
-            isGold ? 'goldTokens' : 'silverTokens':
-                currentTokenAmount - numTokens,
-          });
-        } else {
-          throw InsufficientTokensException('Not enough tokens');
-        }
-      } else {
-        throw Exception('User not found');
-      }
-    } catch (e) {
-      if (e is InsufficientTokensException) {
-        rethrow; // Re-throw the custom exception
-      } else {
-        throw Exception('Error updating token amount: $e');
-      }
     }
   }
 
@@ -198,45 +191,6 @@ class DataBaseService {
       }
     } catch (e) {
       throw Exception('Error updating token amount: $e');
-    }
-  }
-
-  /// Record the transaction in user's transaction history
-  Future<void> recordTransactionInUserHistory(WineSample wineSample) async {
-    await userTransactionHistoryCollection.add({
-      'wineId': wineSample.docId,
-      'wineName': wineSample.name,
-      'exhibitorId': wineSample.exhibitorId,
-      'exhibitorName': wineSample.exhibitorName,
-      'cost': wineSample.tPrice,
-      'isGoldPurchase': wineSample.isGold,
-      'purchaseTime': FieldValue.serverTimestamp(),
-    });
-  }
-
-  /// Add tokens to the exhibitor's balance in database
-  Future<void> updateExhibitorBalance(
-      String exhibitorId, int numTokens, bool isGold) async {
-    try {
-      DocumentReference exhibitorDoc = exhibitorCollection.doc(exhibitorId);
-      DocumentSnapshot docSnapshot =
-          await exhibitorCollection.doc(exhibitorId).get();
-
-      if (docSnapshot.exists) {
-        // Get the appropriate balance based on isGold
-        int currentBalance = isGold
-            ? (docSnapshot.get('goldBalance') ?? 0)
-            : (docSnapshot.get('silverBalance') ?? 0);
-
-        // Add the tokens to the correct balance
-        await exhibitorDoc.update({
-          isGold ? 'goldBalance' : 'silverBalance': currentBalance + numTokens,
-        });
-      } else {
-        throw Exception('Exhibitor not found');
-      }
-    } catch (e) {
-      throw Exception('Error updating exhibitor balance: $e');
     }
   }
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:winetopia/shared/nfc_state.dart';
 import 'package:winetopia/models/winetopia_user.dart';
 import 'package:winetopia/services/auth.dart';
 import 'screens/wrapper.dart';
@@ -39,7 +38,7 @@ class MyApp extends StatelessWidget {
     return StreamProvider<WinetopiaUser?>.value(
         initialData: null,
         value: AuthService()
-            .user, //specifying StreamProvider will listen to the user stream
+            .user, // Specifying StreamProvider will listen to the user stream
         child: const MaterialApp(
           home: Wrapper(),
         ));

@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:winetopia/services/nfc_service.dart';
 import 'package:winetopia/shared/nfc_state.dart';
 
+/// A button that initiates the NFC reading session.
+/// Changes appearance based on the [NfcState] stream.
 class NfcPurchaseButton extends StatefulWidget {
   const NfcPurchaseButton({super.key});
 
@@ -24,6 +26,7 @@ class _NfcPurchaseButtonState extends State<NfcPurchaseButton> {
           alignment: Alignment.center,
           children: [
             if (nfcState.state == NfcStateEnum.scanning)
+              // Ripple effect
               Positioned.fill(
                 child: RippleAnimation(
                   duration: const Duration(milliseconds: 2000),
@@ -35,6 +38,8 @@ class _NfcPurchaseButtonState extends State<NfcPurchaseButton> {
                   child: const SizedBox.expand(),
                 ),
               ),
+
+            // Circular button
             GestureDetector(
               onTap: () => _nfcButtonPressed(context),
               child: AnimatedContainer(
@@ -82,6 +87,8 @@ class _NfcPurchaseButtonState extends State<NfcPurchaseButton> {
           ],
         ),
         const SizedBox(height: 15),
+
+        // Display the primary feedback message
         Center(
           child: Text(
             nfcState.state.primaryMessage,
@@ -91,6 +98,8 @@ class _NfcPurchaseButtonState extends State<NfcPurchaseButton> {
             ),
           ),
         ),
+
+        // Display the secondary feedback message
         Center(
           child: Text(
             nfcState.state.secondaryMessage,
@@ -104,17 +113,20 @@ class _NfcPurchaseButtonState extends State<NfcPurchaseButton> {
     );
   }
 
+  /// Handles the button press event by initiating an NFC session.
   void _nfcButtonPressed(BuildContext context) async {
     await NfcService.instance.startNfcSession(context, _setNfcState);
     setState(() {}); // Rebuild UI when state changes
   }
 
+  /// Updates the NFC state and triggers a UI rebuild.
   void _setNfcState(NfcStateEnum newState) {
     setState(() {
       nfcState.state = newState;
     });
   }
 
+  /// Returns the button style based on the current NFC state.
   Map<String, dynamic> _getButtonStyle(NfcStateEnum state) {
     switch (state) {
       case NfcStateEnum.scanning:

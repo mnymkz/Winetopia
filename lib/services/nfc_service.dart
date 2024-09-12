@@ -6,12 +6,14 @@ import 'package:winetopia/shared/nfc_state.dart';
 import 'package:winetopia/models/winetopia_user.dart';
 import 'package:winetopia/services/database_service.dart';
 
+/// Provides methods for managing NFC interactions, including starting NFC sessions
+/// and processing NFC tags.
 class NfcService {
-  // Singleton instance of NfcService
   NfcService._();
 
   static final NfcService instance = NfcService._();
 
+  /// Starts an NFC session and processes NFC tags.
   Future<void> startNfcSession(
       BuildContext context, Function(NfcStateEnum) onStateUpdate) async {
     bool isAvailable = await NfcManager.instance.isAvailable();
@@ -43,6 +45,8 @@ class NfcService {
     }
   }
 
+  /// Extracts data from the NFC tag and calls [_handleWinePurchase] if the tag
+  /// contains valid information.
   Future<void> _processTag(NfcTag tag, BuildContext context,
       Function(NfcStateEnum) onStateUpdate) async {
     var tech = Ndef.from(tag);
@@ -60,6 +64,8 @@ class NfcService {
     }
   }
 
+  /// Performs the wine purchase using [DataBaseService], and updates the NFC state
+  /// based on the purchase outcome.
   Future<void> _handleWinePurchase(String wineDocId, BuildContext context,
       Function(NfcStateEnum) onStateUpdate) async {
     try {

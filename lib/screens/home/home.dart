@@ -5,7 +5,7 @@ import 'package:winetopia/models/winetopia_user.dart';
 import 'package:winetopia/screens/home/nfc_purchase_button.dart';
 import 'package:winetopia/screens/navigation.dart';
 import 'package:winetopia/screens/transaction_history/transaction_list.dart';
-import 'package:winetopia/screens/home/checkout.dart'; // Import the checkout screen
+import 'package:winetopia/screens/home/checkout.dart';
 import 'package:winetopia/services/database_service.dart';
 import 'package:winetopia/shared/loading.dart';
 
