@@ -6,6 +6,7 @@ import 'package:winetopia/screens/home/nfc_button.dart';
 import 'package:winetopia/screens/navigation.dart';
 import 'package:winetopia/screens/profile.dart';
 import 'package:winetopia/screens/transaction_history/transaction_list.dart';
+import 'package:winetopia/screens/home/checkout.dart'; // Import the checkout screen
 import 'package:winetopia/services/database.dart';
 import 'package:winetopia/shared/loading.dart';
 
@@ -193,10 +194,25 @@ class _HomeScreenState extends State<HomeScreen> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => NewScreen()),
+                      MaterialPageRoute(builder: (context) => ProfileScreen()),
                     );
                   },
                   child: const Text('My Profile'))),
+
+          //Button to checkout screen
+          Center(
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const CheckoutScreen(),
+                  ),
+                );
+              },
+              child: const Text('Checkout'),
+            ),
+          ),
         ],
       )),
     );

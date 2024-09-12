@@ -1,8 +1,11 @@
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:winetopia/screens/transaction_history/transaction_history.dart';
 import 'package:winetopia/services/auth.dart';
 import 'home/home.dart';
+import 'profile.dart';
 import 'package:winetopia/shared/verifyUrEmail.dart';
 
 class NavigationScreen extends StatefulWidget {
@@ -34,7 +37,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
     const TransactionHistoryScreen(key: PageStorageKey('history')),
     const Placeholder(
         key: PageStorageKey(
-            'placeholder')), // Replace with actual widget when ready
+            'placeholder')), // Replace with actual widget when ready,
+    const ProfileScreen(key: PageStorageKey('profile')),
   ];
 
   @override
@@ -49,12 +53,39 @@ class _NavigationScreenState extends State<NavigationScreen> {
               backgroundColor: Colors.deepPurple.shade400,
               elevation: 0.0,
               actions: <Widget>[
-                TextButton.icon(
-                  icon: const Icon(Icons.person, color: Colors.white),
-                  label: const Text('Sign Out',
-                      style: TextStyle(color: Colors.white)),
-                  onPressed: () async {
-                    await _auth.signOut();
+                IconButton(
+                  icon: const Icon(
+                    Icons.person,
+                    color: Colors.white,
+                  ),
+                  onPressed: () {
+                    // Navigate to the profile screen
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            const ProfileScreen(),
+                        transitionsBuilder:
+                            (context, animation, secondaryAnimation, child) {
+                          const begin = Offset(1.0,
+                              0.0); // Start from the right (1.0 means off-screen right)
+                          const end = Offset
+                              .zero; // End at the center (normal position)
+                          const curve = Curves.easeInOut;
+
+                          var tween = Tween(begin: begin, end: end)
+                              .chain(CurveTween(curve: curve));
+                          var offsetAnimation = animation.drive(tween);
+
+                          return SlideTransition(
+                            position: offsetAnimation,
+                            child: child,
+                          );
+                        },
+                        transitionDuration: const Duration(
+                            milliseconds: 300), // Customize duration if needed
+                      ),
+                    );
                   },
                 ),
               ],
@@ -78,6 +109,6 @@ class _NavigationScreenState extends State<NavigationScreen> {
               ],
             ),
           )
-        : const VerifyEmail();
+        : VerifyEmail();
   }
 }

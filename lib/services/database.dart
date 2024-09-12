@@ -170,6 +170,37 @@ class DataBaseService {
     }
   }
 
+/*
+ * addTokens function adds tokens to the user's account 
+ * 
+ * @param numTokens the number of tokens to add to the user's account
+ * @param isGold indicates whether to add to goldTokens or silverTokens
+ */
+  Future<bool> addTokensToAttendee(int numTokens, bool isGold) async {
+    try {
+      DocumentReference userDoc = attendeeCollection.doc(uid);
+      DocumentSnapshot docSnapshot = await userDoc.get();
+
+      if (docSnapshot.exists) {
+        // Get the current token balance based on isGold
+        int currentTokenAmount = isGold
+            ? (docSnapshot.get('goldTokens') ?? 0)
+            : (docSnapshot.get('silverTokens') ?? 0);
+
+        // Add the tokens to the correct balance
+        await userDoc.update({
+          isGold ? 'goldTokens' : 'silverTokens':
+              currentTokenAmount + numTokens,
+        });
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      throw Exception('Error updating token amount: $e');
+    }
+  }
+
   /// Record the transaction in user's transaction history
   Future<void> recordTransactionInUserHistory(WineSample wineSample) async {
     await userTransactionHistoryCollection.add({
@@ -193,13 +224,14 @@ class DataBaseService {
 
       if (docSnapshot.exists) {
         // Get the appropriate balance based on isGold
-        int currentBalance = isGold
-            ? (docSnapshot.get('goldBalance') ?? 0)
-            : (docSnapshot.get('silverBalance') ?? 0);
+        int currentTokenAmount = isGold
+            ? (docSnapshot.get('goldTokens') ?? 0)
+            : (docSnapshot.get('silverTokens') ?? 0);
 
         // Add the tokens to the correct balance
         await exhibitorDoc.update({
-          isGold ? 'goldBalance' : 'silverBalance': currentBalance + numTokens,
+          isGold ? 'goldTokens' : 'silverTokens':
+              currentTokenAmount + numTokens,
         });
       } else {
         throw Exception('Exhibitor not found');

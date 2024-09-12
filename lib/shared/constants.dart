@@ -10,3 +10,7 @@ const textImportDecoration = InputDecoration(
     borderSide: BorderSide(color: Colors.pinkAccent, width: 2.0),
   ),
 );
+
+const String stripePublishableKey =
+    "pk_test_51PpNEkIMm5TYEIRdgj0CZHknQEqYTgyTau05XJNNaDeA2DkdSTsCJQqSFliKGM2ObTqdHX837HXlosFGTyVArbS8009pjBOB7G";
+const String stripeSecretKey = "";
