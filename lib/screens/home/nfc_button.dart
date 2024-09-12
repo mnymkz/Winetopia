@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:awesome_ripple_animation/awesome_ripple_animation.dart';
 import 'package:winetopia/controllers/nfc_read_controller.dart';
 import 'package:winetopia/shared/nfc_state.dart';
 
@@ -17,38 +18,69 @@ class NfcButton extends StatelessWidget {
 
         return Column(
           children: [
-            GestureDetector(
-              onTap: () => _nfcButtonPressed(context),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 100),
-                width: 100.0,
-                height: 100.0,
-                decoration: BoxDecoration(
-                  color: buttonStyle['backgroundColor'],
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: buttonStyle['borderColor'],
-                    width: 3.0,
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                // Ripple effect when scanning
+                if (nfcStateModel.state == NfcStateEnum.scanning)
+                  Positioned.fill(
+                    child: RippleAnimation(
+                      duration: const Duration(milliseconds: 2000),
+                      minRadius: 40,
+                      size: const Size(100.0, 100.0),
+                      repeat: true,
+                      ripplesCount: 6,
+                      color: buttonStyle['borderColor'].withOpacity(0.5),
+                      child: const SizedBox.expand(),
+                    ),
                   ),
-                  boxShadow: nfcStateModel.state == NfcStateEnum.scanning
-                      ? []
-                      : [
-                          BoxShadow(
-                            color: Colors.grey.shade500,
-                            offset: const Offset(6, 2),
-                            blurRadius: 5,
-                            spreadRadius: 1,
-                          ),
-                        ],
-                ),
-                child: Center(
-                  child: Icon(
-                    buttonStyle['icon'],
-                    size: 40,
-                    color: buttonStyle['iconColor'],
+
+                // Circle button
+                GestureDetector(
+                  onTap: () => _nfcButtonPressed(context),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 100),
+                    width: 100.0,
+                    height: 100.0,
+                    decoration: BoxDecoration(
+                      color: buttonStyle['backgroundColor'],
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: buttonStyle['borderColor'],
+                        width: 3.0,
+                      ),
+                      boxShadow: nfcStateModel.state == NfcStateEnum.scanning
+                          ? []
+                          : [
+                              BoxShadow(
+                                color: Colors.grey.shade500,
+                                offset: const Offset(6, 2),
+                                blurRadius: 5,
+                                spreadRadius: 1,
+                              ),
+                            ],
+                    ),
+                    child: Center(
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 300),
+                        transitionBuilder:
+                            (Widget child, Animation<double> animation) {
+                          return ScaleTransition(
+                            scale: animation,
+                            child: child,
+                          );
+                        },
+                        child: Icon(
+                          buttonStyle['icon'],
+                          key: ValueKey(buttonStyle['icon']),
+                          size: 40,
+                          color: buttonStyle['iconColor'],
+                        ),
+                      ),
+                    ),
                   ),
                 ),
-              ),
+              ],
             ),
             const SizedBox(height: 15),
 
@@ -98,9 +130,9 @@ class NfcButton extends StatelessWidget {
       case NfcStateEnum.scanning:
         return {
           'icon': CupertinoIcons.radiowaves_right,
-          'iconColor': Colors.purple,
+          'iconColor': const Color(0xFF3ACAE2),
           'backgroundColor': Colors.white,
-          'borderColor': Colors.purple
+          'borderColor': const Color(0xFF3ACAE2)
         };
       case NfcStateEnum.success:
         return {

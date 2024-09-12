@@ -16,14 +16,12 @@ class NfcState extends ChangeNotifier {
 
 /// Defines the possible states for NFC operations and their feedback messages.
 enum NfcStateEnum {
-  idle('Tap the button to pay for a wine sample', ''),
+  idle('Tap the button to buy your wine', ''),
   scanning('Scanning...', ''),
-  success('Enjoy your wine!', 'Tap again to buy another wine sample.'),
-  insufficientTokens(
-      'Oops, not enough tokens!', 'Please top up and tap again to continue'),
+  success('Success!', 'Tap again to buy another wine sample.'),
+  insufficientTokens('Oops, not enough tokens', 'Please top up to continue'),
   error('An error occurred while scanning.', 'Press the button to try again.'),
-  notAvailable('NFC unavailable or turned off',
-      'Please turn on your device\'s NFC settings');
+  notAvailable('NFC unavailable', 'Please turn on your NFC settings');
 
   final String primaryMessage;
   final String secondaryMessage;
