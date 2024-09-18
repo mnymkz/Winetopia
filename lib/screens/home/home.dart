@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:winetopia/models/wine_transaction.dart';
 import 'package:winetopia/models/winetopia_user.dart';
 import 'package:winetopia/screens/authenticate/authenticate.dart';
-import 'package:winetopia/screens/authenticate/sign_in.dart';
 import 'package:winetopia/screens/home/nfc_purchase_button.dart';
 import 'package:winetopia/screens/navigation.dart';
 import 'package:winetopia/screens/transaction_history/transaction_list.dart';
@@ -25,184 +23,169 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final currentUser = Provider.of<WinetopiaUser?>(context);
 
-    return currentUser == null ? Authenticate() : Scaffold(
-      body: Center(
-          child: Column(
-        children: [
-          const SizedBox(height: 20),
-          
-          StreamBuilder<UserData>(
-            stream: DataBaseService(uid: currentUser!.uid).userData,
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return const Center(child: Text('Error loading user'));
-              }
+    return currentUser == null
+        ? Authenticate()
+        : Scaffold(
+            body: Center(
+                child: Column(
+              children: [
+                const SizedBox(height: 20),
 
-              if (!snapshot.hasData) {
-                return const Center(child: Loading());
-              }
+                StreamBuilder<UserData>(
+                  stream: DataBaseService(uid: currentUser!.uid).userData,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return const Center(child: Text('Error loading user'));
+                    }
 
-              UserData? userData = snapshot.data;
+                    if (!snapshot.hasData) {
+                      return const Center(child: Loading());
+                    }
 
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Row(
-                  children: [
-                    // Gold and silver token balance
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.all(0),
-                        height: 50.0,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.purple, width: 2),
-                          borderRadius: BorderRadius.circular(12.0),
-                          color: Colors.purple,
-                        ),
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(left: 50.0),
-                                child: Text(
-                                  'Gold: ${userData?.goldTokens}',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
-                                  ),
-                                ),
+                    UserData? userData = snapshot.data;
+
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Row(
+                        children: [
+                          // Gold and silver token balance
+                          Expanded(
+                            child: Container(
+                              padding: const EdgeInsets.all(0),
+                              height: 50.0,
+                              decoration: BoxDecoration(
+                                border:
+                                    Border.all(color: Colors.purple, width: 2),
+                                borderRadius: BorderRadius.circular(12.0),
+                                color: Colors.purple,
                               ),
-                              Padding(
-                                padding: const EdgeInsets.only(right: 50.0),
-                                child: Text(
-                                  'Silver: ${userData?.silverTokens}',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
-                                  ),
-                                ),
-                              )
-                            ]),
-                      ),
-                    ),
-                    const SizedBox(width: 5),
-
-                    //Button to checkout screen
-                    Container(
-                      height: 50.0,
-                      padding: const EdgeInsets.all(5.0),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.purple, width: 2),
-                        borderRadius: BorderRadius.circular(12.0),
-                        color: Colors.purple[200],
-                      ),
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const CheckoutScreen(),
+                              child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(left: 50.0),
+                                      child: Text(
+                                        'Gold: ${userData?.goldTokens}',
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18,
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(right: 50.0),
+                                      child: Text(
+                                        'Silver: ${userData?.silverTokens}',
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18,
+                                        ),
+                                      ),
+                                    )
+                                  ]),
                             ),
-                          );
-                        },
-                        child: const Text('TOP\n UP',
-                            style: TextStyle(color: Colors.white)),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-          const SizedBox(height: 25),
-
-          // Nfc Button that starts an Nfc reading session
-          const NfcPurchaseButton(),
-          const SizedBox(height: 18),
-
-          // Recent Transactions
-          Flexible(
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 15.0),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.purple, width: 2),
-                borderRadius: BorderRadius.circular(15.0),
-                color: const Color(0x1A761973),
-              ),
-              child: Column(
-                children: [
-                  // Recent Transactions title
-                  const Text(
-                    'Recent Transactions',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                      letterSpacing: 2.0,
-                    ),
-                  ),
-                  const SizedBox(height: 2.0),
-
-                  // Fetch and display three most recent wine transactions
-                  Expanded(
-                    child: StreamBuilder<List<WineTransaction>>(
-                      stream:
-                          DataBaseService(uid: currentUser.uid).allTransactions,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasError) {
-                          return const Center(
-                              child: Text('Error loading transactions'));
-                        }
-
-                        if (!snapshot.hasData) {
-                          return const Center(child: Loading());
-                        }
-
-                        List<WineTransaction> transactions =
-                            snapshot.data ?? [];
-
-                        if (transactions.isEmpty) {
-                          return const Center(
-                              child: Text('No transactions yet'));
-                        }
-
-                        return TransactionList(
-                          transactions: transactions,
-                          limit: 3,
-                        );
-                      },
-                    ),
-                  ),
-
-                  // "See More" button
-                  Align(
-                    alignment: Alignment.bottomRight,
-                    child: TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(
-                            builder: (context) => const NavigationScreen(
-                                initialIndex: 1), // TransactionHistoryPage
                           ),
-                        );
-                      },
-                      child: const Text(
-                        'See more...',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 2.0,
-                        ),
+                          const SizedBox(width: 5),
+
+                          //Button to checkout screen
+                          Container(
+                            height: 50.0,
+                            padding: const EdgeInsets.all(5.0),
+                            decoration: BoxDecoration(
+                              border:
+                                  Border.all(color: Colors.purple, width: 2),
+                              borderRadius: BorderRadius.circular(12.0),
+                              color: Colors.purple[200],
+                            ),
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const CheckoutScreen(),
+                                  ),
+                                );
+                              },
+                              child: const Text('TOP\n UP',
+                                  style: TextStyle(color: Colors.white)),
+                            ),
+                          ),
+                        ],
                       ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 25),
+
+                // Nfc Button that starts an Nfc reading session
+                const NfcPurchaseButton(),
+                const SizedBox(height: 18),
+
+                // Recent Transactions
+                Flexible(
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 15.0),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.purple, width: 2),
+                      borderRadius: BorderRadius.circular(15.0),
+                      color: const Color(0x1A761973),
+                    ),
+                    child: Column(
+                      children: [
+                        // Recent Transactions title
+                        const Text(
+                          'Recent Transactions',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                            letterSpacing: 2.0,
+                          ),
+                        ),
+                        const SizedBox(height: 2.0),
+
+                        // Wine Transactions list
+                        const Expanded(
+                          child: TransactionList(
+                            limit: 3,
+                          ),
+                        ),
+
+                        // "See More" button
+                        Align(
+                          alignment: Alignment.bottomRight,
+                          child: TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                  builder: (context) => const NavigationScreen(
+                                      initialIndex:
+                                          1), // TransactionHistoryPage
+                                ),
+                              );
+                            },
+                            child: const Text(
+                              'See more...',
+                              style: TextStyle(
+                                color: Colors.black,
+                                //fontWeight: FontWeight.bold,
+                                letterSpacing: 2.0,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 80.0),
-        ],
-      )),
-    );
+                ),
+                const SizedBox(height: 85.0),
+              ],
+            )),
+          );
   }
 }

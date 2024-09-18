@@ -74,12 +74,20 @@ class _NfcPurchaseButtonState extends State<NfcPurchaseButton> {
                         child: child,
                       );
                     },
-                    child: Icon(
-                      buttonStyle['icon'],
-                      key: ValueKey(buttonStyle['icon']),
-                      size: 40,
-                      color: buttonStyle['iconColor'],
-                    ),
+                    child: buttonStyle['icon'] is IconData
+                        ? Icon(
+                            buttonStyle['icon'],
+                            key: ValueKey(buttonStyle['icon']),
+                            size: 40,
+                            color: buttonStyle['iconColor'],
+                          )
+                        : ImageIcon(
+                            buttonStyle['icon']
+                                .image, // Use the ImageIcon widget
+                            key: ValueKey(buttonStyle['icon']),
+                            size: 40,
+                            color: buttonStyle['icon'].color,
+                          ),
                   ),
                 ),
               ),
@@ -155,7 +163,9 @@ class _NfcPurchaseButtonState extends State<NfcPurchaseButton> {
       case NfcStateEnum.idle:
       default:
         return {
-          'icon': CupertinoIcons.radiowaves_right,
+          'icon': const ImageIcon(
+            AssetImage("assets/img/tap_here.png"),
+          ),
           'iconColor': Colors.white,
           'backgroundColor': const Color(0xFF99E4EF),
           'borderColor': const Color(0xFF3ACAE2)
