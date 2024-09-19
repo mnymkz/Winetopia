@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:winetopia/screens/schedule.dart';
 import 'package:winetopia/screens/transaction_history/transaction_history.dart';
 import 'package:winetopia/services/auth.dart';
 import 'home/home.dart';
@@ -35,9 +36,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
   final List<Widget> _screens = [
     const HomeScreen(key: PageStorageKey('home')),
     const TransactionHistoryScreen(key: PageStorageKey('history')),
-    const Placeholder(
-        key: PageStorageKey(
-            'placeholder')), // Replace with actual widget when ready,
+    const Schedule(), // Replace with actual widget when ready,
     const ProfileScreen(key: PageStorageKey('profile')),
   ];
 
