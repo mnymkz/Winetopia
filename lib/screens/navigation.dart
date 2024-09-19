@@ -87,7 +87,6 @@ class _NavigationScreenState extends State<NavigationScreen> {
                 ),
               ],
             ),
-
             body: IndexedStack(
               index: _selectedIndex,
               children: _screens,
@@ -95,9 +94,9 @@ class _NavigationScreenState extends State<NavigationScreen> {
             backgroundColor: Color(0xFFF6F6F6),
             extendBody: true,
             bottomNavigationBar: CurvedNavigationBar(
-              height: 60,
+              height: 71,
               index: _selectedIndex,
-              backgroundColor: Color(0xFF292663).withOpacity(0.5),
+              backgroundColor: Color(0xFFF6F6F6),
               color: Color(0xFF292663),
               animationDuration: const Duration(milliseconds: 200),
               onTap: _navigateCurvedBar,

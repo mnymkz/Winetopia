@@ -5,16 +5,18 @@ class WineTransaction {
   final String docId;
   final String wineId;
   final String wineName;
+  final String attendeeId;
   final String exhibitorId;
   final String exhibitorName;
   final int cost;
   final bool isGoldPurchase;
-  final DateTime purchaseTime;
+  final dynamic purchaseTime;
 
   WineTransaction({
     required this.docId,
     required this.wineId,
     required this.wineName,
+    required this.attendeeId,
     required this.exhibitorId,
     required this.exhibitorName,
     required this.cost,
@@ -28,14 +30,14 @@ class WineTransaction {
       docId: doc.id,
       wineId: doc['wineId'] ?? 'Unknown Wine',
       wineName: doc['wineName'] ?? 'Unknown Wine',
+      attendeeId: doc['attendeeId'] ?? 'Unknown Attendee',
       exhibitorId: doc['exhibitorId'] ?? 'Unknown Exhibitor',
       exhibitorName: doc['exhibitorName'] ?? 'Unknown Exhibitor',
       cost: doc['cost'] ?? 0,
       isGoldPurchase: doc['isGoldPurchase'] ?? false,
       purchaseTime: doc['purchaseTime'] != null
           ? (doc['purchaseTime'] as Timestamp).toDate()
-          : DateTime
-              .now(), // Fallback to current time if purchaseTime is missing
+          : DateTime.now(),
     );
   }
 
@@ -44,6 +46,7 @@ class WineTransaction {
     return {
       'wineId': wineId,
       'wineName': wineName,
+      'attendeeId': attendeeId,
       'exhibitorId': exhibitorId,
       'exhibitorName': exhibitorName,
       'cost': cost,

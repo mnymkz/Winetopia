@@ -113,7 +113,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         },
                       ),
                       ElevatedButton(
-                        child: Text('Sign out', style: TextStyle(color: Colors.white)),
+                        child: Text('Sign out',
+                            style: TextStyle(color: Colors.white)),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red[400],
                         ),
@@ -205,7 +206,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         backgroundColor: Colors.purple[50],
                         appBar: AppBar(
                           title: const Text(
-                            'Winetopia',
+                            'Profile',
                             style: TextStyle(color: Colors.white),
                           ),
                           backgroundColor: const Color(0xFF292663),
@@ -228,7 +229,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 const SizedBox(
                                   height: 20.0,
                                 ),
-                                Column(
+                                /* Column(
                                   children: <Widget>[
                                     const SizedBox(
                                       width: 70.0,
@@ -245,7 +246,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                                 SizedBox(
                                   height: 20.0,
-                                ),
+                                ), */
                                 TextFormField(
                                   decoration: textImportDecoration.copyWith(
                                       hintText: 'Email: ${userData?.email}'),

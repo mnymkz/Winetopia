@@ -16,6 +16,8 @@ class DataBaseService {
       FirebaseFirestore.instance.collection('wine');
   final CollectionReference exhibitorCollection =
       FirebaseFirestore.instance.collection('exhibitor');
+  final CollectionReference transactionCollection =
+      FirebaseFirestore.instance.collection('transaction');
 
   // Transactions subcollection under attendee
   CollectionReference get userTransactionHistoryCollection {
@@ -126,16 +128,24 @@ class DataBaseService {
             currentTokenAmount - wineSample.tPrice,
       });
 
-      // Record the wine transaction in attendee account
-      transaction.set(userTransactionHistoryCollection.doc(), {
-        'wineId': wineSample.docId,
-        'wineName': wineSample.name,
-        'exhibitorId': wineSample.exhibitorId,
-        'exhibitorName': wineSample.exhibitorName,
-        'cost': wineSample.tPrice,
-        'isGoldPurchase': wineSample.isGold,
-        'purchaseTime': FieldValue.serverTimestamp(),
-      });
+      WineTransaction wineTransaction = WineTransaction(
+          docId: '',
+          wineId: wineSample.docId,
+          wineName: wineSample.name,
+          attendeeId: uid,
+          exhibitorId: wineSample.exhibitorId,
+          exhibitorName: wineSample.exhibitorName,
+          cost: wineSample.tPrice,
+          isGoldPurchase: wineSample.isGold,
+          purchaseTime: FieldValue.serverTimestamp());
+
+      // Record the transaction in attendee account
+      transaction.set(userTransactionHistoryCollection.doc(),
+          wineTransaction.toFirestore());
+
+      // Record the transaction in transaction collection
+      transaction.set(
+          transactionCollection.doc(), wineTransaction.toFirestore());
 
       // Update exhibitor's balance
       int exhibitorCurrentBalance = wineSample.isGold
