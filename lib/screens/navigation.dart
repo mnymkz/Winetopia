@@ -14,31 +14,34 @@ class NavigationScreen extends StatefulWidget {
   const NavigationScreen({super.key, this.initialIndex = 0});
 
   @override
-  State<NavigationScreen> createState() => _NavigationScreenState();
+  State<NavigationScreen> createState() => NavigationScreenState();
 }
 
-class _NavigationScreenState extends State<NavigationScreen> {
+class NavigationScreenState extends State<NavigationScreen> {
   late int _selectedIndex;
+  late List<Widget> _screens;
   final AuthService _auth = AuthService();
 
   @override
   void initState() {
     super.initState();
     _selectedIndex = widget.initialIndex;
+
+    // Initialize screens and pass in the navKey
+    _screens = [
+      HomeScreen(
+          key: PageStorageKey('home'),
+          navKey: widget.key as GlobalKey<NavigationScreenState>?),
+      const TransactionHistoryScreen(key: PageStorageKey('history')),
+      const Schedule(), // Replace with actual widget when ready,
+    ];
   }
 
-  void _navigateCurvedBar(int index) {
+  void navigateToPage(int index) {
     setState(() {
       _selectedIndex = index;
     });
   }
-
-  final List<Widget> _screens = [
-    const HomeScreen(key: PageStorageKey('home')),
-    const TransactionHistoryScreen(key: PageStorageKey('history')),
-    const Schedule(), // Replace with actual widget when ready,
-    const ProfileScreen(key: PageStorageKey('profile')),
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +101,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
               backgroundColor: Color(0xFFF6F6F6),
               color: Color(0xFF292663),
               animationDuration: const Duration(milliseconds: 200),
-              onTap: _navigateCurvedBar,
+              onTap: navigateToPage,
               items: const [
                 Icon(Icons.home, color: Colors.white),
                 Icon(Icons.history, color: Colors.white),

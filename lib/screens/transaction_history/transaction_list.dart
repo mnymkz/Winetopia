@@ -17,12 +17,10 @@ class TransactionList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<WinetopiaUser>(context);
-    final Stream<List<WineTransaction>> wineTransactionsStream =
-        DataBaseService(uid: user.uid).allTransactions;
+    final currentUser = Provider.of<WinetopiaUser?>(context);
 
     return StreamBuilder<List<WineTransaction>>(
-      stream: wineTransactionsStream,
+      stream: DataBaseService(uid: currentUser!.uid).allTransactions,
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return const Center(child: Text('Error loading transactions'));
@@ -48,21 +46,19 @@ class TransactionList extends StatelessWidget {
                     height: 6,
                     color: Colors.transparent,
                   ),
-            Expanded(
-              child: ListView.builder(
-                physics:
-                    limit != null ? const NeverScrollableScrollPhysics() : null,
-                shrinkWrap: true,
-                itemCount: displayedTransactions.length,
-                itemBuilder: (context, index) {
-                  final transaction = displayedTransactions[index];
-                  return Container(
-                    padding: const EdgeInsets.only(bottom: 8.0),
-                    margin: const EdgeInsets.symmetric(horizontal: 15.0),
-                    child: WineTransactionInfoWidget(transaction: transaction),
-                  );
-                },
-              ),
+            ListView.builder(
+              physics:
+                  limit != null ? const NeverScrollableScrollPhysics() : null,
+              shrinkWrap: true,
+              itemCount: displayedTransactions.length,
+              itemBuilder: (context, index) {
+                final transaction = displayedTransactions[index];
+                return Container(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  margin: const EdgeInsets.symmetric(horizontal: 15.0),
+                  child: WineTransactionInfoWidget(transaction: transaction),
+                );
+              },
             ),
           ],
         );

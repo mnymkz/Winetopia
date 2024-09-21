@@ -12,7 +12,8 @@ import 'package:winetopia/shared/loading.dart';
 /// HomeScreen widget serves as the main screen of the app where users can pay
 /// for wine samples and see their most recent wine transactions.
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final GlobalKey<NavigationScreenState>? navKey;
+  const HomeScreen({Key? key, this.navKey}) : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -32,7 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 20),
 
                 StreamBuilder<UserData>(
-                  stream: DataBaseService(uid: currentUser!.uid).userData,
+                  stream: DataBaseService(uid: currentUser.uid).userData,
                   builder: (context, snapshot) {
                     if (snapshot.hasError) {
                       return const Center(child: Text('Error loading user'));
@@ -128,62 +129,51 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 18),
 
                 // Recent Transactions
-                Flexible(
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 15.0),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.purple, width: 2),
-                      borderRadius: BorderRadius.circular(15.0),
-                      color: const Color(0x1A761973),
-                    ),
-                    child: Column(
-                      children: [
-                        // Recent Transactions title
-                        const Text(
-                          'Recent Transactions',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                            letterSpacing: 2.0,
-                          ),
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 15.0),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.purple, width: 2),
+                    borderRadius: BorderRadius.circular(15.0),
+                    color: const Color(0x1A761973),
+                  ),
+                  child: Column(
+                    children: [
+                      // Recent Transactions title
+                      const Text(
+                        'Recent Transactions',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          letterSpacing: 2.0,
                         ),
-                        const SizedBox(height: 2.0),
+                      ),
+                      const SizedBox(height: 2.0),
 
-                        // Wine Transactions list
-                        const Expanded(
-                          child: TransactionList(
-                            limit: 3,
-                          ),
-                        ),
+                      // Wine Transactions list
+                      const TransactionList(
+                        limit: 3,
+                      ),
 
-                        // "See More" button
-                        Align(
-                          alignment: Alignment.bottomRight,
-                          child: TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                  builder: (context) => const NavigationScreen(
-                                      initialIndex:
-                                          1), // TransactionHistoryPage
-                                ),
-                              );
-                            },
-                            child: const Text(
-                              'See more...',
-                              style: TextStyle(
-                                color: Colors.black,
-                                //fontWeight: FontWeight.bold,
-                                letterSpacing: 2.0,
-                              ),
+                      // "See More" button
+                      Align(
+                        alignment: Alignment.bottomRight,
+                        child: TextButton(
+                          onPressed: () {
+                            widget.navKey?.currentState?.navigateToPage(1);
+                          },
+                          child: const Text(
+                            'See more...',
+                            style: TextStyle(
+                              color: Colors.black,
+                              letterSpacing: 2.0,
                             ),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 85.0),
+                //const SizedBox(height: 85.0),
               ],
             )),
           );
