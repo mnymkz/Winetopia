@@ -2,7 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:winetopia/screens/schedule.dart';
+import 'package:winetopia/screens/event_info/event_map.dart';
+import 'package:winetopia/screens/event_info/schedule.dart';
 
 class EventInfoMenu extends StatefulWidget {
   final int initialIndex;
@@ -23,7 +24,7 @@ class EventInfoMenuState extends State<EventInfoMenu> {
 
     // Initialize screens
     _screens = [
-      Center(child: Text('Event Map')), // Placeholder for Event Map screen
+      const EventMap(), // Event Map screen
       const Schedule(), // Event Schedule screen
       Center(child: Text('Exhibitors')), // Placeholder for Exhibitors Screen
     ];
@@ -45,7 +46,7 @@ class EventInfoMenuState extends State<EventInfoMenu> {
         backgroundColor: Color(0xFFF6F6F6),
         extendBody: false,
         floatingActionButton: Padding(
-          padding: const EdgeInsets.all(25.0),
+          padding: const EdgeInsets.all(16.0),
           child: SpeedDial(
               spacing: 5.0,
               animatedIcon: AnimatedIcons.menu_close,
