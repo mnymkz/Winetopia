@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:winetopia/screens/event_info_menu.dart';
 import 'package:winetopia/screens/schedule.dart';
 import 'package:winetopia/screens/transaction_history/transaction_history.dart';
 import 'package:winetopia/services/auth.dart';
@@ -33,7 +34,7 @@ class NavigationScreenState extends State<NavigationScreen> {
           key: PageStorageKey('home'),
           navKey: widget.key as GlobalKey<NavigationScreenState>?),
       const TransactionHistoryScreen(key: PageStorageKey('history')),
-      const Schedule(), // Replace with actual widget when ready,
+      const EventInfoMenu(), // Event Information,
     ];
   }
 
@@ -94,7 +95,7 @@ class NavigationScreenState extends State<NavigationScreen> {
               children: _screens,
             ),
             backgroundColor: Color(0xFFF6F6F6),
-            extendBody: true,
+            extendBody: false,
             bottomNavigationBar: CurvedNavigationBar(
               height: 71,
               index: _selectedIndex,
