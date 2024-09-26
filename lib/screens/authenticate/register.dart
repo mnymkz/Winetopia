@@ -34,7 +34,7 @@ class _RegisterState extends State<Register> {
   @override
   Widget build(BuildContext context) {
     return loading
-        ? Loading()
+        ? const Loading()
         : Scaffold(
             resizeToAvoidBottomInset: true,
             backgroundColor: Colors.purple.shade50,
@@ -44,11 +44,11 @@ class _RegisterState extends State<Register> {
                 elevation: 0.0,
                 actions: <Widget>[
                   TextButton.icon(
-                    label: Text(
+                    label: const Text(
                       'Sign In',
                       style: TextStyle(color: Colors.white),
                     ),
-                    icon: Icon(Icons.person, color: Colors.white),
+                    icon: const Icon(Icons.person, color: Colors.white),
                     onPressed: () {
                       //widget keyword refer to the widget itself which is Register
                       widget.toggleView();
@@ -208,7 +208,8 @@ class _RegisterState extends State<Register> {
                       ),
                       Text(
                         error,
-                        style: TextStyle(color: Colors.red, fontSize: 14.0),
+                        style:
+                            const TextStyle(color: Colors.red, fontSize: 14.0),
                       ),
                     ],
                   ),

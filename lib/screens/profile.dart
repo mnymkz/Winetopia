@@ -1,9 +1,8 @@
 //import 'dart:nativewrappers/_internal/vm/lib/core_patch.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:winetopia/models/winetopia_user.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:winetopia/screens/authenticate/authenticate.dart';
-import 'package:winetopia/screens/authenticate/sign_in.dart';
 import 'package:winetopia/screens/home/home.dart';
 import 'package:winetopia/services/auth.dart';
 import 'package:winetopia/services/database_service.dart';
@@ -113,8 +112,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         },
                       ),
                       ElevatedButton(
-                        child: Text('Sign out',
-                            style: TextStyle(color: Colors.white)),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red[400],
                         ),
@@ -123,6 +120,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           logout = true; //stop the stream Builder
                           await _auth.signOut();
                         },
+                        child: const Text('Sign out',
+                            style: TextStyle(color: Colors.white)),
                       ),
                     ],
                   ),
@@ -164,8 +163,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     },
                   ),
                   ElevatedButton(
-                    child: Text('Continue!',
-                        style: TextStyle(color: Colors.white)),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red[400],
                     ),
@@ -179,6 +176,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       }
                       //can use else here since _auth.delete() only have one exception.
                     },
+                    child: const Text('Continue',
+                        style: TextStyle(color: Colors.white)),
                   ),
                 ],
               )
@@ -188,10 +187,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
     }
 
+    void showToast(String message, Color backgroundColor) {
+      Fluttertoast.showToast(
+        msg: message,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: backgroundColor,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+    }
+
     final user = Provider.of<WinetopiaUser?>(context);
 
     return logout
-        ? HomeScreen()
+        ? const HomeScreen()
         : StreamBuilder<UserData>(
             stream: DataBaseService(uid: user!.uid).userData,
             builder: (context, snapshot) {
@@ -200,11 +211,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     .updateEmail(_auth.getUserEmail());
                 UserData? userData = snapshot.data;
                 return loading
-                    ? Loading()
+                    ? const Loading()
                     : Scaffold(
-                        resizeToAvoidBottomInset: false,
+                        resizeToAvoidBottomInset: true,
                         backgroundColor: Colors.purple[50],
                         appBar: AppBar(
+                          centerTitle: true,
                           title: const Text(
                             'Profile',
                             style: TextStyle(color: Colors.white),
@@ -219,114 +231,161 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             },
                           ),
                         ),
-                        body: Container(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 20.0, horizontal: 50.0),
-                          child: Form(
-                            key: _formKey,
-                            child: Column(
-                              children: <Widget>[
-                                const SizedBox(
-                                  height: 20.0,
-                                ),
-                                /* Column(
-                                  children: <Widget>[
-                                    const SizedBox(
-                                      width: 70.0,
+                        body: SingleChildScrollView(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 20.0, horizontal: 30.0),
+                            child: Form(
+                              key: _formKey,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  const SizedBox(
+                                    height: 5.0,
+                                  ),
+                                  const Text('Email',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18)),
+                                  SizedBox(
+                                    height: 46,
+                                    child: TextFormField(
+                                      style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold),
+                                      decoration: textImportDecoration.copyWith(
+                                          hintText: '${userData?.email}',
+                                          hintStyle: const TextStyle(
+                                              fontWeight: FontWeight.normal)),
+                                      onChanged: (val) {
+                                        setState(() {
+                                          email = val;
+                                        });
+                                      },
                                     ),
-                                    Text(
-                                      'Gold Token Balance: ${userData?.goldTokens}',
-                                      style: const TextStyle(fontSize: 18),
+                                  ),
+                                  const SizedBox(
+                                    height: 15.0,
+                                  ),
+                                  const Text('First name',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18)),
+                                  SizedBox(
+                                    height: 46,
+                                    child: TextFormField(
+                                      style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold),
+                                      decoration: textImportDecoration.copyWith(
+                                          hintText: '${userData?.fname}',
+                                          hintStyle: const TextStyle(
+                                              fontWeight: FontWeight.normal)),
+                                      onChanged: (val) {
+                                        setState(() {
+                                          fname = val;
+                                        });
+                                      },
                                     ),
-                                    Text(
-                                      'Silver Token Balance: ${userData?.silverTokens}',
-                                      style: const TextStyle(fontSize: 18),
+                                  ),
+                                  const SizedBox(
+                                    height: 15.0,
+                                  ),
+                                  const Text('Last name',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18)),
+                                  SizedBox(
+                                    height: 46,
+                                    child: TextFormField(
+                                      style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold),
+                                      decoration: textImportDecoration.copyWith(
+                                          hintText: '${userData?.lname}',
+                                          hintStyle: const TextStyle(
+                                              fontWeight: FontWeight.normal)),
+                                      onChanged: (val) {
+                                        setState(() {
+                                          lname = val;
+                                        });
+                                      },
                                     ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 20.0,
-                                ), */
-                                TextFormField(
-                                  decoration: textImportDecoration.copyWith(
-                                      hintText: 'Email: ${userData?.email}'),
-                                  onChanged: (val) {
-                                    setState(() {
-                                      email = val;
-                                    });
-                                  },
-                                ),
-                                SizedBox(
-                                  height: 20.0,
-                                ),
-                                TextFormField(
-                                  decoration: textImportDecoration.copyWith(
-                                      hintText:
-                                          'First name: ${userData?.fname}'),
-                                  onChanged: (val) {
-                                    setState(() {
-                                      fname = val;
-                                    });
-                                  },
-                                ),
-                                SizedBox(
-                                  height: 20.0,
-                                ),
-                                TextFormField(
-                                  decoration: textImportDecoration.copyWith(
-                                      hintText:
-                                          'Last name: ${userData?.lname}'),
-                                  onChanged: (val) {
-                                    setState(() {
-                                      lname = val;
-                                    });
-                                  },
-                                ),
-                                SizedBox(
-                                  height: 20.0,
-                                ),
-                                TextFormField(
-                                  decoration: textImportDecoration.copyWith(
-                                      hintText: 'Phone: ${userData?.phone}'),
-                                  keyboardType: TextInputType.phone,
-                                  inputFormatters: <TextInputFormatter>[
-                                    FilteringTextInputFormatter.digitsOnly
-                                  ],
-                                  onChanged: (val) {
-                                    setState(() {
-                                      phone = val;
-                                    });
-                                  },
-                                ),
-                                SizedBox(
-                                  height: 20.0,
-                                ),
-                                TextFormField(
-                                  decoration: textImportDecoration.copyWith(
-                                      hintText: 'New Password'),
-                                  obscureText:
-                                      true, //hiding the text (for password)
-                                  validator: (val) => (val!.length < 6 &&
-                                          val.isNotEmpty)
-                                      ? 'Your Password needs to be atleast 6 characters'
-                                      : null,
-                                  onChanged: (val) {
-                                    setState(() {
-                                      password = val;
-                                    });
-                                  },
-                                ),
-                                SizedBox(
-                                  height: 20.0,
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    ElevatedButton(
+                                  ),
+                                  const SizedBox(
+                                    height: 15.0,
+                                  ),
+                                  const Text('Phone',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18)),
+                                  SizedBox(
+                                    height: 46,
+                                    child: TextFormField(
+                                      style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold),
+                                      decoration: textImportDecoration.copyWith(
+                                          hintText: '${userData?.phone}',
+                                          hintStyle: const TextStyle(
+                                              fontWeight: FontWeight.normal)),
+                                      keyboardType: TextInputType.phone,
+                                      inputFormatters: <TextInputFormatter>[
+                                        FilteringTextInputFormatter.digitsOnly
+                                      ],
+                                      onChanged: (val) {
+                                        setState(() {
+                                          phone = val;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 15.0,
+                                  ),
+                                  const Text('Update Password',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18)),
+                                  SizedBox(
+                                    height: 46,
+                                    child: TextFormField(
+                                      style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold),
+                                      decoration: textImportDecoration.copyWith(
+                                          hintText: 'Enter new password',
+                                          hintStyle: const TextStyle(
+                                              fontWeight: FontWeight.normal)),
+                                      obscureText:
+                                          true, //hiding the text (for password)
+                                      validator: (val) => (val!.length < 6 &&
+                                              val.isNotEmpty)
+                                          ? 'Your Password needs to be atleast 6 characters'
+                                          : null,
+                                      onChanged: (val) {
+                                        setState(() {
+                                          password = val;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 15.0,
+                                  ),
+                                  Align(
+                                    alignment: Alignment.centerRight,
+                                    child: ElevatedButton(
                                       style: ElevatedButton.styleFrom(
-                                          //backgroundColor: Colors.black
-                                          ),
+                                        backgroundColor:
+                                            const Color(0xFF761973),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 12.0, horizontal: 20.0),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                        ),
+                                      ),
                                       onPressed: () async {
                                         if (_formKey.currentState!.validate()) {
                                           setState(() {
@@ -349,13 +408,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           }
 
                                           if (email != '') {
-                                            print('email: ' + email);
+                                            //print('email: ' + email);
                                             //updating email for authentication
-                                            dynamic result_email_auth =
+                                            dynamic resultEmailAuth =
                                                 await _auth.updateEmail(email);
-                                            print(result_email_auth);
+                                            //print(result_email_auth);
                                             //handling error from firebase auth is not working!
-                                            if (result_email_auth == false) {
+                                            if (resultEmailAuth == false) {
                                               //handling error from firebase response
                                               //for more error type, plz visit: https://firebase.google.com/docs/auth/admin/errors
                                               setState(() {
@@ -412,42 +471,70 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           });
                                         }
                                       },
-                                      child: Text(
-                                        'Update!',
-                                        //style: TextStyle(color: Colors.white)
+                                      child: const Text(
+                                        'Update Details',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold),
                                       ),
                                     ),
-                                    ElevatedButton(
-                                      style: ElevatedButton.styleFrom(),
-                                      onPressed: () async {
-                                        Navigator.of(context).pop();
-                                        logout = true; //stop the stream Builder
-                                        await _auth.signOut();
-                                      },
-                                      child: Text(
-                                        'Sign Out',
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 5.0),
-                                ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.red[400],
                                   ),
-                                  onPressed: () async {
-                                    deleteAccountDialog();
-                                  },
-                                  child: Text('Delete Profile!',
-                                      style: TextStyle(color: Colors.white)),
-                                ),
-                                SizedBox(height: 20.0),
-                                Text(
-                                  error,
-                                  style: TextStyle(
-                                      color: Colors.red, fontSize: 14.0),
-                                ),
-                              ],
+                                  const SizedBox(height: 80.0),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.red[400],
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 12.0, horizontal: 20.0),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
+                                          ),
+                                        ),
+                                        onPressed: () async {
+                                          deleteAccountDialog();
+                                        },
+                                        child: const Text('Delete Account',
+                                            style:
+                                                TextStyle(color: Colors.white)),
+                                      ),
+                                      const SizedBox(height: 20.0),
+                                      Text(
+                                        error,
+                                        style: const TextStyle(
+                                            color: Colors.red, fontSize: 14.0),
+                                      ),
+                                      ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor:
+                                              const Color(0xFF761973),
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 12.0, horizontal: 20.0),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
+                                          ),
+                                        ),
+                                        onPressed: () async {
+                                          Navigator.of(context).pop();
+                                          logout =
+                                              true; //stop the stream Builder
+                                          await _auth.signOut();
+                                        },
+                                        child: const Text(
+                                          'Sign Out',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -455,7 +542,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               } else {
                 return Scaffold(
                   backgroundColor: Colors.purple.shade50,
-                  body: Center(
+                  body: const Center(
                     child: Loading(),
                   ),
                 );
