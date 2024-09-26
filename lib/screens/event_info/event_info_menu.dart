@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:winetopia/screens/event_info/event_map.dart';
+import 'package:winetopia/screens/event_info/exhibitors_list.dart';
 import 'package:winetopia/screens/event_info/schedule.dart';
 
 class EventInfoMenu extends StatefulWidget {
@@ -26,7 +27,7 @@ class EventInfoMenuState extends State<EventInfoMenu> {
     _screens = [
       const EventMap(), // Event Map screen
       const Schedule(), // Event Schedule screen
-      Center(child: Text('Exhibitors')), // Placeholder for Exhibitors Screen
+      const ExhibitorList(), // Exhibitor List screen
     ];
   }
 

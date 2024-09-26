@@ -76,6 +76,22 @@ flutter:
         - assets/img/wine_glass.png
         - assets/img/tap_here.png
         - assets/img/event_map.png
+        - assets/img/wineries/0.png
+        - assets/img/wineries/1.png
+        - assets/img/wineries/2.png
+        - assets/img/wineries/3.png
+        - assets/img/wineries/4.png
+        - assets/img/wineries/5.png
+        - assets/img/wineries/6.png
+        - assets/img/wineries/7.png
+        - assets/img/wineries/8.png
+        - assets/img/wineries/9.png
+        - assets/img/wineries/10.png
+        - assets/img/wineries/11.png
+        - assets/img/wineries/12.png
+        - assets/img/wineries/13.png
+        - assets/img/wineries/14.png
+
 
     # To add assets to your application, add an assets section, like this:
     # assets:
