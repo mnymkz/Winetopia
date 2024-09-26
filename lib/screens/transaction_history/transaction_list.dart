@@ -38,30 +38,46 @@ class TransactionList extends StatelessWidget {
         final displayedTransactions =
             limit != null ? transactions.take(limit!).toList() : transactions;
 
-        return Column(
-          children: [
-            limit != null
-                ? const SizedBox(height: 0)
-                : Container(
+        return limit != null
+            ? ListView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: displayedTransactions.length,
+                itemBuilder: (context, index) {
+                  final transaction = displayedTransactions[index];
+                  return Container(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    margin: const EdgeInsets.symmetric(horizontal: 15.0),
+                    child: WineTransactionInfoWidget(transaction: transaction),
+                  );
+                },
+              )
+            : Column(
+                children: [
+                  Container(
                     height: 6,
                     color: Colors.transparent,
                   ),
-            ListView.builder(
-              physics:
-                  limit != null ? const NeverScrollableScrollPhysics() : null,
-              shrinkWrap: true,
-              itemCount: displayedTransactions.length,
-              itemBuilder: (context, index) {
-                final transaction = displayedTransactions[index];
-                return Container(
-                  padding: const EdgeInsets.only(bottom: 8.0),
-                  margin: const EdgeInsets.symmetric(horizontal: 15.0),
-                  child: WineTransactionInfoWidget(transaction: transaction),
-                );
-              },
-            ),
-          ],
-        );
+                  Expanded(
+                    child: ListView.builder(
+                      physics: limit != null
+                          ? const NeverScrollableScrollPhysics()
+                          : null,
+                      shrinkWrap: true,
+                      itemCount: displayedTransactions.length,
+                      itemBuilder: (context, index) {
+                        final transaction = displayedTransactions[index];
+                        return Container(
+                          padding: const EdgeInsets.only(bottom: 8.0),
+                          margin: const EdgeInsets.symmetric(horizontal: 15.0),
+                          child: WineTransactionInfoWidget(
+                              transaction: transaction),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              );
       },
     );
   }

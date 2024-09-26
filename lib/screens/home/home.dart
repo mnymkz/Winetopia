@@ -8,6 +8,7 @@ import 'package:winetopia/screens/transaction_history/transaction_list.dart';
 import 'package:winetopia/screens/home/checkout.dart';
 import 'package:winetopia/services/database_service.dart';
 import 'package:winetopia/shared/loading.dart';
+import 'package:winetopia/shared/nfc_state.dart';
 
 /// HomeScreen widget serves as the main screen of the app where users can pay
 /// for wine samples and see their most recent wine transactions.
@@ -111,7 +112,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                     builder: (context) =>
                                         const CheckoutScreen(),
                                   ),
-                                );
+                                ).then((_) {
+                                  // Reset NFC state or perform other actions here
+                                  Provider.of<NfcState>(context, listen: false)
+                                      .resetState();
+                                });
+                                ;
                               },
                               child: const Text('TOP\n UP',
                                   style: TextStyle(color: Colors.white)),
