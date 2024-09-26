@@ -25,9 +25,9 @@ class NfcPurchaseButton extends StatelessWidget {
               // Ripple effect
               Positioned.fill(
                 child: RippleAnimation(
-                  duration: const Duration(milliseconds: 2000),
+                  duration: const Duration(milliseconds: 1400),
                   minRadius: 40,
-                  size: const Size(100.0, 100.0),
+                  size: const Size(90.0, 90.0),
                   repeat: true,
                   ripplesCount: 6,
                   color: buttonStyle['borderColor'].withOpacity(0.5),
@@ -104,15 +104,16 @@ class NfcPurchaseButton extends StatelessWidget {
         ),
 
         // Display the secondary feedback message
-        Center(
-          child: Text(
-            nfcState.state.secondaryMessage,
-            style: const TextStyle(
-              fontSize: 12,
-            ),
-          ),
-        ),
-        const SizedBox(height: 15),
+        nfcState.state.secondaryMessage.isNotEmpty
+            ? Center(
+                child: Text(
+                  nfcState.state.secondaryMessage,
+                  style: const TextStyle(
+                    fontSize: 12,
+                  ),
+                ),
+              )
+            : const SizedBox.shrink(),
       ],
     );
   }

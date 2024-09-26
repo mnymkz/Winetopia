@@ -66,35 +66,29 @@ class _TransactionListState extends State<TransactionList> {
                   );
                 },
               )
-            : Column(
-                children: [
-                  Container(
-                    height: 6,
-                    color: Colors.transparent,
-                  ),
-                  Expanded(
-                    child: CupertinoScrollbar(
-                      thumbVisibility: true,
+            : Padding(
+                padding: const EdgeInsets.only(top: 15, left: 10, right: 10),
+                child: Expanded(
+                  child: CupertinoScrollbar(
+                    thumbVisibility: true,
+                    controller: _scrollController,
+                    child: ListView.builder(
                       controller: _scrollController,
-                      child: ListView.builder(
-                        controller: _scrollController,
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: displayedTransactions.length,
-                        itemBuilder: (context, index) {
-                          final transaction = displayedTransactions[index];
-                          return Container(
-                            padding: const EdgeInsets.only(bottom: 8.0),
-                            margin:
-                                const EdgeInsets.symmetric(horizontal: 15.0),
-                            child: WineTransactionInfoWidget(
-                                transaction: transaction),
-                          );
-                        },
-                      ),
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: displayedTransactions.length,
+                      itemBuilder: (context, index) {
+                        final transaction = displayedTransactions[index];
+                        return Container(
+                          padding: const EdgeInsets.only(bottom: 8.0),
+                          margin: const EdgeInsets.symmetric(horizontal: 15.0),
+                          child: WineTransactionInfoWidget(
+                              transaction: transaction),
+                        );
+                      },
                     ),
                   ),
-                ],
+                ),
               );
       },
     );

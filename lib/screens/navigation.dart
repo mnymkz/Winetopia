@@ -50,7 +50,7 @@ class NavigationScreenState extends State<NavigationScreen> {
     _titles = [
       'Home', // Title for HomeScreen
       'Transactions', // Title for TransactionHistoryScreen
-      'Event Map', // Initial title for EventInfoMenu
+      'Event Schedule', // Initial title for EventInfoMenu
     ];
   }
 

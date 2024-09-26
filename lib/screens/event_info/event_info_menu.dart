@@ -46,10 +46,10 @@ class EventInfoMenuState extends State<EventInfoMenu> {
       // Update Appbar title
       switch (index) {
         case 0:
-          widget.onTitleChange('Event Map');
+          widget.onTitleChange('Event Schedule');
           break;
         case 1:
-          widget.onTitleChange('Event Schedule');
+          widget.onTitleChange('Event Map');
           break;
         case 2:
           widget.onTitleChange('Wineries 2024');

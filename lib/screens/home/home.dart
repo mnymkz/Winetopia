@@ -29,8 +29,9 @@ class _HomeScreenState extends State<HomeScreen> {
         ? Authenticate()
         : Center(
             child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const SizedBox(height: 20),
+              const SizedBox(height: 10),
 
               StreamBuilder<UserData>(
                 stream: DataBaseService(uid: currentUser.uid).userData,
@@ -62,39 +63,34 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             child: Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceEvenly,
                                 children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 50.0),
-                                    child: Text(
-                                      'Gold: ${userData?.goldTokens}',
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18,
-                                      ),
+                                  Text(
+                                    'Gold: ${userData?.goldTokens}',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
                                     ),
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(right: 50.0),
-                                    child: Text(
-                                      'Silver: ${userData?.silverTokens}',
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18,
-                                      ),
+                                  Text(
+                                    'Silver: ${userData?.silverTokens}',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
                                     ),
                                   )
                                 ]),
                           ),
                         ),
-                        const SizedBox(width: 5),
+                        const SizedBox(width: 10),
 
                         //Button to checkout screen
                         Container(
+                          width: 60,
                           height: 50.0,
-                          padding: const EdgeInsets.all(5.0),
+                          padding: const EdgeInsets.all(4.0),
                           decoration: BoxDecoration(
                             border: Border.all(color: Colors.purple, width: 2),
                             borderRadius: BorderRadius.circular(12.0),
@@ -114,8 +110,13 @@ class _HomeScreenState extends State<HomeScreen> {
                               });
                               ;
                             },
-                            child: const Text('TOP\n UP',
-                                style: TextStyle(color: Colors.white)),
+                            child: const Text(
+                              'TOP UP',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold),
+                            ),
                           ),
                         ),
                       ],
@@ -123,11 +124,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 },
               ),
-              const SizedBox(height: 25),
+              const SizedBox(height: 10),
 
               // Nfc Button that starts an Nfc reading session
               const NfcPurchaseButton(),
-              const SizedBox(height: 18),
+              const SizedBox(height: 10),
 
               // Recent Transactions
               Container(
@@ -174,6 +175,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               ),
+              const SizedBox(height: 20),
             ],
           ));
   }
