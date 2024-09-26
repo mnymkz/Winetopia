@@ -12,27 +12,44 @@ class _EventMapState extends State<EventMap> {
   late TapDownDetails _doubleTapDetails;
 
   final double minScale = 1;
-  final double maxScale = 3;
+  final double maxScale = 4;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Center(
-      child: GestureDetector(
-        onDoubleTapDown: (d) => _doubleTapDetails = d,
-        onDoubleTap: _handleDoubleTap,
-        child: SizedBox(
-          height: 500,
-          child: InteractiveViewer(
-            transformationController: _transformationController,
-            constrained: true,
-            minScale: minScale,
-            maxScale: maxScale,
-            child: Image.asset('assets/img/event_map.png'),
+      body: Stack(
+        children: [
+          Center(
+            child: GestureDetector(
+              onDoubleTapDown: (d) => _doubleTapDetails = d,
+              onDoubleTap: _handleDoubleTap,
+              child: SizedBox(
+                height: 500,
+                child: InteractiveViewer(
+                  transformationController: _transformationController,
+                  constrained: true,
+                  minScale: minScale,
+                  maxScale: maxScale,
+                  boundaryMargin: const EdgeInsets.symmetric(vertical: -150.0),
+                  child: Image.asset('assets/img/event_map.png'),
+                ),
+              ),
+            ),
           ),
-        ),
+
+          // "i" icon with Tooltip at the top-left corner
+          const Positioned(
+            top: 16,
+            left: 16,
+            child: Tooltip(
+              message: 'Double tap or pinch to zoom',
+              triggerMode: TooltipTriggerMode.tap,
+              child: Icon(Icons.info_outline),
+            ),
+          ),
+        ],
       ),
-    ));
+    );
   }
 
   void _handleDoubleTap() {
