@@ -5,7 +5,7 @@ class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({super.key});
 
   @override
-  _CheckoutScreenState createState() => _CheckoutScreenState();
+  State<CheckoutScreen> createState() => _CheckoutScreenState();
 }
 
 class _CheckoutScreenState extends State<CheckoutScreen> {
@@ -49,7 +49,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     try {
       final success =
           await StripeService.instance.makePayment(priceId, quantity: quantity);
-      print(success);
+      //print(success);
       if (success) {
         setState(() {
           _confirmationMessage =

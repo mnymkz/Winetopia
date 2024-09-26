@@ -1,3 +1,5 @@
+// ignore_for_file: use_super_parameters
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:winetopia/models/winetopia_user.dart';
@@ -26,7 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final currentUser = Provider.of<WinetopiaUser?>(context);
 
     return currentUser == null
-        ? Authenticate()
+        ? const Authenticate()
         : Center(
             child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -108,7 +110,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                 Provider.of<NfcState>(context, listen: false)
                                     .resetState();
                               });
-                              ;
                             },
                             child: const Text(
                               'TOP UP',

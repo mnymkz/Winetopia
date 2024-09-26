@@ -38,7 +38,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   //placeholder view
   Widget build(BuildContext context) {
-    final Function toggleView;
     Future<void> changeEmailDialog() async {
       return showDialog<void>(
         context: context,
@@ -384,10 +383,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             loading = true;
                                           });
                                           if (password != '') {
-                                            dynamic result_password =
-                                                await _auth
-                                                    .updatePassword(password);
-                                            if (result_password == null) {
+                                            dynamic resultPassword = await _auth
+                                                .updatePassword(password);
+                                            if (resultPassword == null) {
                                               setState(() {
                                                 if (_auth.firebaseErrorCode ==
                                                     'requires-recent-login') {
@@ -436,26 +434,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           }
 
                                           if (fname != '') {
-                                            dynamic result =
-                                                await DataBaseService(
-                                                        uid: user!.uid)
-                                                    .updateFirstName(fname);
+                                            await DataBaseService(uid: user.uid)
+                                                .updateFirstName(fname);
                                             fname = '';
                                           }
 
                                           if (lname != '') {
-                                            dynamic result =
-                                                await DataBaseService(
-                                                        uid: user!.uid)
-                                                    .updateLastName(lname);
+                                            await DataBaseService(uid: user.uid)
+                                                .updateLastName(lname);
                                             lname = '';
                                           }
 
                                           if (phone != '') {
-                                            dynamic result =
-                                                await DataBaseService(
-                                                        uid: user!.uid)
-                                                    .updatePhone(phone);
+                                            await DataBaseService(uid: user.uid)
+                                                .updatePhone(phone);
                                             phone = '';
                                           }
                                           setState(() {

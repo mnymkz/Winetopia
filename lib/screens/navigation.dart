@@ -8,7 +8,7 @@ import 'package:winetopia/services/auth.dart';
 import 'package:winetopia/shared/nfc_state.dart';
 import 'home/home.dart';
 import 'profile.dart';
-import 'package:winetopia/shared/verifyUrEmail.dart';
+import 'package:winetopia/shared/verify_email.dart';
 
 class NavigationScreen extends StatefulWidget {
   final int initialIndex;

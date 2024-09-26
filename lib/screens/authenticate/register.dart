@@ -6,7 +6,7 @@ import 'package:winetopia/shared/loading.dart';
 
 class Register extends StatefulWidget {
   final Function toggleView;
-  const Register({required this.toggleView});
+  const Register({super.key, required this.toggleView});
 
   @override
   State<Register> createState() => _RegisterState();
@@ -38,7 +38,7 @@ class _RegisterState extends State<Register> {
             backgroundColor: Colors.purple.shade50,
             appBar: AppBar(
                 title: Image.asset('assets/img/winetopia_logo.png', height: 55),
-                backgroundColor: Color(0xFF292663),
+                backgroundColor: const Color(0xFF292663),
                 elevation: 0.0,
                 actions: <Widget>[
                   TextButton.icon(

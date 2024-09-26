@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:winetopia/models/wine_transaction.dart';
 import 'package:winetopia/models/winetopia_user.dart';
@@ -66,29 +65,32 @@ class _TransactionListState extends State<TransactionList> {
                   );
                 },
               )
-            : Padding(
-                padding: const EdgeInsets.only(top: 15, left: 10, right: 10),
-                child: Expanded(
-                  child: CupertinoScrollbar(
-                    thumbVisibility: true,
-                    controller: _scrollController,
-                    child: ListView.builder(
+            : Column(
+                children: [
+                  const SizedBox(height: 10),
+                  Expanded(
+                    child: CupertinoScrollbar(
+                      thumbVisibility: true,
                       controller: _scrollController,
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: displayedTransactions.length,
-                      itemBuilder: (context, index) {
-                        final transaction = displayedTransactions[index];
-                        return Container(
-                          padding: const EdgeInsets.only(bottom: 8.0),
-                          margin: const EdgeInsets.symmetric(horizontal: 15.0),
-                          child: WineTransactionInfoWidget(
-                              transaction: transaction),
-                        );
-                      },
+                      child: ListView.builder(
+                        controller: _scrollController,
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: displayedTransactions.length,
+                        itemBuilder: (context, index) {
+                          final transaction = displayedTransactions[index];
+                          return Container(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            margin:
+                                const EdgeInsets.symmetric(horizontal: 15.0),
+                            child: WineTransactionInfoWidget(
+                                transaction: transaction),
+                          );
+                        },
+                      ),
                     ),
                   ),
-                ),
+                ],
               );
       },
     );

@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:winetopia/services/auth.dart';
 import 'package:winetopia/shared/constants.dart';
 import 'package:winetopia/shared/loading.dart';
 
 class SignIn extends StatefulWidget {
   final Function toggleView;
-  const SignIn({required this.toggleView});
+  const SignIn({super.key, required this.toggleView});
 
   @override
   State<SignIn> createState() => _SignInState();
@@ -29,7 +28,7 @@ class _SignInState extends State<SignIn> {
   @override
   Widget build(BuildContext context) {
     return loading
-        ? Loading()
+        ? const Loading()
         : Scaffold(
             resizeToAvoidBottomInset: true,
             backgroundColor: Colors.purple.shade50,

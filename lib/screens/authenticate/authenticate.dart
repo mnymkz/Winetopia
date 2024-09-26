@@ -10,28 +10,22 @@ class Authenticate extends StatefulWidget {
 }
 
 class _AuthenticateState extends State<Authenticate> {
-
   //set showSingIn = true because the app need to show the Sign in page first
   bool showSignIn = true;
 
   void toggleView() {
     setState(() {
       //reverse the value of showSignIn. Eg: if showSignIn = true then change it to false.
-      showSignIn = !showSignIn; 
+      showSignIn = !showSignIn;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    if(showSignIn == true){
-      return Container(
-        child: SignIn(toggleView: toggleView),
-      );
-    }
-    else{
-      return Container(
-        child: Register(toggleView: toggleView),
-      );
+    if (showSignIn == true) {
+      return SignIn(toggleView: toggleView);
+    } else {
+      return Register(toggleView: toggleView);
     }
   }
 }
