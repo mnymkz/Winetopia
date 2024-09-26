@@ -89,7 +89,7 @@ class DataBaseService {
 
   /// Get attendee stream
   Stream<List<Exhibitor>> get exhibitorData {
-    return exhibitorCollection.snapshots().map((snapshot) {
+    return exhibitorCollection.orderBy('name').snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
         return Exhibitor.fromFirestore(doc);
       }).toList();

@@ -20,7 +20,6 @@ class TransactionList extends StatefulWidget {
 }
 
 class _TransactionListState extends State<TransactionList> {
-  // Limit to show only a certain number of transactions
   late ScrollController _scrollController;
 
   @override

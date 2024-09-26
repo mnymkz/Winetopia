@@ -21,7 +21,9 @@ class NavigationScreen extends StatefulWidget {
 class NavigationScreenState extends State<NavigationScreen> {
   late int _selectedIndex;
   late List<Widget> _screens;
+  late List<String> _titles;
   final AuthService _auth = AuthService();
+  ValueNotifier<bool> isEventInfoDialOpen = ValueNotifier(false);
 
   @override
   void initState() {
@@ -34,15 +36,39 @@ class NavigationScreenState extends State<NavigationScreen> {
           key: PageStorageKey('home'),
           navKey: widget.key as GlobalKey<NavigationScreenState>?),
       const TransactionHistoryScreen(key: PageStorageKey('history')),
-      const EventInfoMenu(), // Event Information,
+      EventInfoMenu(
+        onTitleChange: (title) {
+          setState(() {
+            // Update event info title based on event menu selection
+            _titles[2] = title;
+          });
+        },
+        isDialOpen: isEventInfoDialOpen,
+      ), // Event Information,
+    ];
+
+    _titles = [
+      'Home', // Title for HomeScreen
+      'Transactions', // Title for TransactionHistoryScreen
+      'Event Map', // Initial title for EventInfoMenu
     ];
   }
 
   void navigateToPage(int index) {
     setState(() {
       _selectedIndex = index;
+
+      // Handle NFC state reset for HomeScreen (index 0)
       if (index == 0) {
         Provider.of<NfcState>(context, listen: false).resetState();
+      }
+
+      // Open the floating action button when navigating to the EventInfoMenu (index 2)
+      if (index == 2) {
+        isEventInfoDialOpen.value = true; // Open the FAB menu
+      } else {
+        isEventInfoDialOpen.value =
+            false; // Close the FAB menu for other screens
       }
     });
   }
@@ -52,7 +78,21 @@ class NavigationScreenState extends State<NavigationScreen> {
     return _auth.checkVerifyEmail()
         ? Scaffold(
             appBar: AppBar(
-              title: Image.asset('assets/img/winetopia_logo.png', height: 55),
+              leadingWidth: 80,
+              leading: Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: Image.asset('assets/img/winetopia_logo.png'),
+              ),
+              centerTitle: true,
+              title: Text(
+                _titles[_selectedIndex],
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  letterSpacing: 2.0,
+                  color: Colors.white,
+                ),
+              ),
               backgroundColor: Color(0xFF292663),
               elevation: 0.0,
               actions: <Widget>[

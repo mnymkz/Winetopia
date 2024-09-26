@@ -8,7 +8,15 @@ import 'package:winetopia/screens/event_info/schedule.dart';
 
 class EventInfoMenu extends StatefulWidget {
   final int initialIndex;
-  const EventInfoMenu({super.key, this.initialIndex = 0});
+  final Function(String) onTitleChange;
+  final ValueNotifier<bool> isDialOpen; // Accept isDialOpen as a parameter
+
+  const EventInfoMenu({
+    super.key,
+    this.initialIndex = 0,
+    required this.onTitleChange,
+    required this.isDialOpen, // Add this
+  });
 
   @override
   State<EventInfoMenu> createState() => EventInfoMenuState();
@@ -25,8 +33,8 @@ class EventInfoMenuState extends State<EventInfoMenu> {
 
     // Initialize screens
     _screens = [
-      const EventMap(), // Event Map screen
       const Schedule(), // Event Schedule screen
+      const EventMap(), // Event Map screen
       const ExhibitorList(), // Exhibitor List screen
     ];
   }
@@ -34,6 +42,19 @@ class EventInfoMenuState extends State<EventInfoMenu> {
   void navigateToPage(int index) {
     setState(() {
       _selectedIndex = index;
+
+      // Update Appbar title
+      switch (index) {
+        case 0:
+          widget.onTitleChange('Event Map');
+          break;
+        case 1:
+          widget.onTitleChange('Event Schedule');
+          break;
+        case 2:
+          widget.onTitleChange('Wineries 2024');
+          break;
+      }
     });
   }
 
@@ -49,6 +70,7 @@ class EventInfoMenuState extends State<EventInfoMenu> {
         floatingActionButton: Padding(
           padding: const EdgeInsets.all(16.0),
           child: SpeedDial(
+              openCloseDial: widget.isDialOpen,
               spacing: 20.0,
               animatedIcon: AnimatedIcons.menu_close,
               animatedIconTheme: IconThemeData(color: Colors.white),
@@ -57,23 +79,23 @@ class EventInfoMenuState extends State<EventInfoMenu> {
               children: [
                 SpeedDialChild(
                   child: Icon(
-                    Icons.map,
-                    color: Colors.white, // Set icon color to white
-                  ),
-                  backgroundColor: Color(0xE6761973),
-                  label: "Event Map",
-                  labelStyle: TextStyle(fontSize: 18),
-                  onTap: () => navigateToPage(0), // Navigate to Map
-                ),
-                SpeedDialChild(
-                  child: Icon(
                     Icons.schedule,
                     color: Colors.white,
                   ),
                   backgroundColor: Color(0xE6761973),
                   label: "Event Schedule",
                   labelStyle: TextStyle(fontSize: 18),
-                  onTap: () => navigateToPage(1), // Navigate to Schedule
+                  onTap: () => navigateToPage(0), // Navigate to Schedule
+                ),
+                SpeedDialChild(
+                  child: Icon(
+                    Icons.map,
+                    color: Colors.white, // Set icon color to white
+                  ),
+                  backgroundColor: Color(0xE6761973),
+                  label: "Event Map",
+                  labelStyle: TextStyle(fontSize: 18),
+                  onTap: () => navigateToPage(1), // Navigate to Map
                 ),
                 SpeedDialChild(
                   child: Icon(
@@ -81,7 +103,7 @@ class EventInfoMenuState extends State<EventInfoMenu> {
                     color: Colors.white,
                   ),
                   backgroundColor: Color(0xE6761973),
-                  label: "Exhibitors",
+                  label: "Wineries",
                   labelStyle: TextStyle(fontSize: 18),
                   onTap: () => navigateToPage(2), // Navigate to Exhibitors
                 )

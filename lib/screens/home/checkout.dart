@@ -70,7 +70,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         centerTitle: true,
         title: const Text(
           'Top Up',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+            letterSpacing: 2.0,
+            color: Colors.white,
+          ),
         ),
         backgroundColor: const Color(0xFF292663),
         iconTheme: const IconThemeData(color: Colors.white),

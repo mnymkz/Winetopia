@@ -206,7 +206,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           centerTitle: true,
                           title: const Text(
                             'Profile',
-                            style: TextStyle(color: Colors.white),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                              letterSpacing: 2.0,
+                              color: Colors.white,
+                            ),
                           ),
                           backgroundColor: const Color(0xFF292663),
                           elevation: 0.0,
@@ -221,7 +226,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         body: SingleChildScrollView(
                           child: Container(
                             padding: const EdgeInsets.symmetric(
-                                vertical: 20.0, horizontal: 30.0),
+                                vertical: 20.0, horizontal: 40.0),
                             child: Form(
                               key: _formKey,
                               child: Column(
@@ -330,7 +335,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   const SizedBox(
                                     height: 15.0,
                                   ),
-                                  const Text('Update Password',
+                                  const Text('Change Password',
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 18)),

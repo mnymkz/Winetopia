@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:winetopia/models/exhibitor.dart';
@@ -5,6 +6,7 @@ import 'package:winetopia/models/winetopia_user.dart';
 import 'package:winetopia/services/database_service.dart';
 import 'package:winetopia/shared/loading.dart';
 
+/// ExhibitorList screen displays list of exhibitors from the database
 class ExhibitorList extends StatefulWidget {
   const ExhibitorList({super.key});
 
@@ -13,6 +15,14 @@ class ExhibitorList extends StatefulWidget {
 }
 
 class _ExhibitorListState extends State<ExhibitorList> {
+  late ScrollController _scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+  }
+
   @override
   Widget build(BuildContext context) {
     final currentUser = Provider.of<WinetopiaUser?>(context);
@@ -35,21 +45,40 @@ class _ExhibitorListState extends State<ExhibitorList> {
 
           return Center(
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: GridView.builder(
-                itemCount: exhibitors.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3, // 3 items per row
-                  crossAxisSpacing: 10.0,
-                  mainAxisSpacing: 20.0,
-                  childAspectRatio: 1.0, // To maintain square aspect ratio
-                ),
-                itemBuilder: (context, index) {
-                  // Cycle through 15 images
-                  final imageUrl = 'assets/img/wineries/${index % 15}.png';
-                  return ExhibitorTile(
-                      exhibitor: exhibitors[index], imageUrl: imageUrl);
-                },
+              padding: const EdgeInsets.all(10.0),
+              child: Column(
+                children: [
+                  const Text(
+                      'Check out the wineries from Winetopia Wellington & Auckland 2024!',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 14)),
+                  const Divider(),
+                  Expanded(
+                    child: CupertinoScrollbar(
+                      controller: _scrollController,
+                      thumbVisibility: true,
+                      child: GridView.builder(
+                        controller: _scrollController,
+                        itemCount: exhibitors.length,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3, // 3 items per row
+                          crossAxisSpacing: 10.0,
+                          mainAxisSpacing: 20.0,
+                          childAspectRatio:
+                              1.0, // To maintain square aspect ratio
+                        ),
+                        itemBuilder: (context, index) {
+                          // Cycle through 15 images
+                          final imageUrl =
+                              'assets/img/wineries/${index % 15}.png';
+                          return ExhibitorTile(
+                              exhibitor: exhibitors[index], imageUrl: imageUrl);
+                        },
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           );

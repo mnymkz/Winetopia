@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Schedule screen displays the event schedule
 class Schedule extends StatefulWidget {
   const Schedule({super.key});
 

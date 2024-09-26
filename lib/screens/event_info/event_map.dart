@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// EventMap screen displays map with zoom and pan features
 class EventMap extends StatefulWidget {
   const EventMap({super.key});
 
