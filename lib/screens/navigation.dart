@@ -88,7 +88,11 @@ class NavigationScreenState extends State<NavigationScreen> {
                         transitionDuration: const Duration(
                             milliseconds: 300), // Customize duration if needed
                       ),
-                    );
+                    ).then((_) {
+                      // Reset NFC state or perform other actions here
+                      Provider.of<NfcState>(context, listen: false)
+                          .resetState();
+                    });
                   },
                 ),
               ],
