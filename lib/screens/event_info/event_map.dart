@@ -16,39 +16,37 @@ class _EventMapState extends State<EventMap> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          Center(
-            child: GestureDetector(
-              onDoubleTapDown: (d) => _doubleTapDetails = d,
-              onDoubleTap: _handleDoubleTap,
-              child: SizedBox(
-                height: 500,
-                child: InteractiveViewer(
-                  transformationController: _transformationController,
-                  constrained: true,
-                  minScale: minScale,
-                  maxScale: maxScale,
-                  boundaryMargin: const EdgeInsets.symmetric(vertical: -150.0),
-                  child: Image.asset('assets/img/event_map.png'),
-                ),
+    return Stack(
+      children: [
+        Center(
+          child: GestureDetector(
+            onDoubleTapDown: (d) => _doubleTapDetails = d,
+            onDoubleTap: _handleDoubleTap,
+            child: SizedBox(
+              height: 500,
+              child: InteractiveViewer(
+                transformationController: _transformationController,
+                constrained: true,
+                minScale: minScale,
+                maxScale: maxScale,
+                boundaryMargin: const EdgeInsets.symmetric(vertical: -150.0),
+                child: Image.asset('assets/img/event_map.png'),
               ),
             ),
           ),
+        ),
 
-          // "i" icon with Tooltip at the top-left corner
-          const Positioned(
-            top: 16,
-            left: 16,
-            child: Tooltip(
-              message: 'Double tap or pinch to zoom',
-              triggerMode: TooltipTriggerMode.tap,
-              child: Icon(Icons.info_outline),
-            ),
+        // "i" icon with Tooltip at the top-left corner
+        const Positioned(
+          top: 16,
+          left: 16,
+          child: Tooltip(
+            message: 'Double tap or pinch to zoom',
+            triggerMode: TooltipTriggerMode.tap,
+            child: Icon(Icons.info_outline),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
