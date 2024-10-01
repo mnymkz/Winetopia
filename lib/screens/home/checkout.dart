@@ -5,7 +5,7 @@ class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({super.key});
 
   @override
-  _CheckoutScreenState createState() => _CheckoutScreenState();
+  State<CheckoutScreen> createState() => _CheckoutScreenState();
 }
 
 class _CheckoutScreenState extends State<CheckoutScreen> {
@@ -49,16 +49,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     try {
       final success =
           await StripeService.instance.makePayment(priceId, quantity: quantity);
-      print(success);
+      //print(success);
       if (success) {
         setState(() {
           _confirmationMessage =
               'Your purchase was successful!'; // Update confirmation message
-        });
-      } else {
-        setState(() {
-          _confirmationMessage =
-              'Something went wrong, please try again'; // Update confirmation message
         });
       }
     } catch (e) {
@@ -72,7 +67,19 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Checkout'),
+        centerTitle: true,
+        title: const Text(
+          'Top Up',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+            letterSpacing: 2.0,
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: const Color(0xFF292663),
+        iconTheme: const IconThemeData(color: Colors.white),
+        elevation: 0.0,
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -86,17 +93,33 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               keyboardType: TextInputType.number,
               decoration: const InputDecoration(
                 labelText: 'Enter number of Silver Tokens',
-                border: OutlineInputBorder(),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Color(0xFFD3D3D3), width: 2.0),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(10.0),
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Color(0xFF00DEC3), width: 2.0),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(10.0),
+                  ),
+                ),
               ),
             ),
             const SizedBox(height: 10),
             MaterialButton(
               onPressed: () =>
                   _handlePurchase(_silverTokenPriceId, _silverTokenController),
-              color: Colors.green,
-              child: const Text("Purchase Silver Tokens"),
+              color: const Color(0xFF00DEC3),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0)),
+              child: const Text("Purchase Silver Tokens",
+                  style: TextStyle(fontWeight: FontWeight.bold)),
             ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 100),
 
             // Gold token button
             TextField(
@@ -104,7 +127,18 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               keyboardType: TextInputType.number,
               decoration: const InputDecoration(
                 labelText: 'Enter number of Gold Tokens',
-                border: OutlineInputBorder(),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Color(0xFFD3D3D3), width: 2.0),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(10.0),
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.amber, width: 2.0),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(10.0),
+                  ),
+                ),
               ),
             ),
             const SizedBox(height: 10),
@@ -112,22 +146,54 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               onPressed: () =>
                   _handlePurchase(_goldTokenPriceId, _goldTokenController),
               color: Colors.amber,
-              child: const Text("Purchase Gold Tokens"),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0)),
+              child: const Text("Purchase Gold Tokens",
+                  style: TextStyle(fontWeight: FontWeight.bold)),
             ),
             const SizedBox(height: 20),
             // Display error message if any
             if (_errorMessage != null) ...[
-              Text(
-                _errorMessage!,
-                style: const TextStyle(color: Colors.red),
+              Container(
+                margin: const EdgeInsets.symmetric(vertical: 10.0),
+                padding: const EdgeInsets.all(12.0),
+                decoration: BoxDecoration(
+                  color: Colors.red[50], // Light red background for the box
+                  borderRadius: BorderRadius.circular(8.0), // Rounded corners
+                  border: Border.all(
+                      color: Colors.red), // Border color matching the message
+                ),
+                child: Text(
+                  _errorMessage!,
+                  style: const TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold, // Make the error message bold
+                  ),
+                ),
               ),
             ],
-            // Display confirmation message if any
+
+// Display confirmation message if any
             if (_confirmationMessage != null) ...[
-              Text(
-                _confirmationMessage!,
-                style: const TextStyle(
-                    color: Colors.green, fontWeight: FontWeight.bold),
+              Container(
+                margin: const EdgeInsets.symmetric(vertical: 10.0),
+                padding: const EdgeInsets.all(12.0),
+                decoration: BoxDecoration(
+                  color: Colors.green[50], // Light green background for the box
+                  borderRadius: BorderRadius.circular(8.0), // Rounded corners
+                  border: Border.all(
+                      color: Colors.green), // Border color matching the message
+                ),
+                child: Text(
+                  _confirmationMessage!,
+                  style: const TextStyle(
+                    color: Colors.green,
+                    fontWeight:
+                        FontWeight.bold, // Bold text for confirmation message
+                  ),
+                ),
               ),
             ],
           ],

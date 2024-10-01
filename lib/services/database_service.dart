@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:winetopia/models/exhibitor.dart';
 import 'package:winetopia/models/wine_sample.dart';
 import 'package:winetopia/models/winetopia_user.dart';
 import 'package:winetopia/models/wine_transaction.dart';
@@ -84,6 +85,15 @@ class DataBaseService {
   /// Get attendee stream
   Stream<UserData> get userData {
     return attendeeCollection.doc(uid).snapshots().map(_userDataFromSnapshot);
+  }
+
+  /// Get attendee stream
+  Stream<List<Exhibitor>> get exhibitorData {
+    return exhibitorCollection.orderBy('name').snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return Exhibitor.fromFirestore(doc);
+      }).toList();
+    });
   }
 
   // Stream for current user's wine transaction history

@@ -15,7 +15,9 @@ class Wrapper extends StatelessWidget {
     if (user == null) {
       return const Authenticate();
     } else {
-      return const NavigationScreen();
+      final GlobalKey<NavigationScreenState> navKey =
+          GlobalKey<NavigationScreenState>();
+      return NavigationScreen(key: navKey);
     }
   }
 }

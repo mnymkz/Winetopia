@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:winetopia/models/wine_transaction.dart';
 import 'package:winetopia/models/winetopia_user.dart';
@@ -7,22 +7,32 @@ import 'package:winetopia/services/database_service.dart';
 import 'package:winetopia/shared/loading.dart';
 
 /// Widget showing list of wine transactions
-class TransactionList extends StatelessWidget {
-  final int? limit; // Limit to show only a certain number of transactions
-
+class TransactionList extends StatefulWidget {
+  final int? limit;
   const TransactionList({
     super.key,
     this.limit,
   });
 
   @override
+  State<TransactionList> createState() => _TransactionListState();
+}
+
+class _TransactionListState extends State<TransactionList> {
+  late ScrollController _scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final user = Provider.of<WinetopiaUser>(context);
-    final Stream<List<WineTransaction>> wineTransactionsStream =
-        DataBaseService(uid: user.uid).allTransactions;
+    final currentUser = Provider.of<WinetopiaUser?>(context);
 
     return StreamBuilder<List<WineTransaction>>(
-      stream: wineTransactionsStream,
+      stream: DataBaseService(uid: currentUser!.uid).allTransactions,
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return const Center(child: Text('Error loading transactions'));
@@ -37,21 +47,13 @@ class TransactionList extends StatelessWidget {
           return const Center(child: Text('No transactions yet'));
         }
 
-        final displayedTransactions =
-            limit != null ? transactions.take(limit!).toList() : transactions;
+        final displayedTransactions = widget.limit != null
+            ? transactions.take(widget.limit!).toList()
+            : transactions;
 
-        return Column(
-          children: [
-            limit != null
-                ? const SizedBox(height: 0)
-                : Container(
-                    height: 6,
-                    color: Colors.transparent,
-                  ),
-            Expanded(
-              child: ListView.builder(
-                physics:
-                    limit != null ? const NeverScrollableScrollPhysics() : null,
+        return widget.limit != null
+            ? ListView.builder(
+                physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemCount: displayedTransactions.length,
                 itemBuilder: (context, index) {
@@ -62,10 +64,34 @@ class TransactionList extends StatelessWidget {
                     child: WineTransactionInfoWidget(transaction: transaction),
                   );
                 },
-              ),
-            ),
-          ],
-        );
+              )
+            : Column(
+                children: [
+                  const SizedBox(height: 10),
+                  Expanded(
+                    child: CupertinoScrollbar(
+                      thumbVisibility: true,
+                      controller: _scrollController,
+                      child: ListView.builder(
+                        controller: _scrollController,
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: displayedTransactions.length,
+                        itemBuilder: (context, index) {
+                          final transaction = displayedTransactions[index];
+                          return Container(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            margin:
+                                const EdgeInsets.symmetric(horizontal: 15.0),
+                            child: WineTransactionInfoWidget(
+                                transaction: transaction),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              );
       },
     );
   }

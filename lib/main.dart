@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:winetopia/models/winetopia_user.dart';
 import 'package:winetopia/services/auth.dart';
+import 'package:winetopia/shared/nfc_state.dart';
 import 'screens/wrapper.dart';
 import 'utils/stripe_config.dart';
 import 'utils/firebase_config.dart';
@@ -27,7 +28,21 @@ void main() async {
     print("error initialising firebase");
   }
 
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<NfcState>(
+          create: (_) => NfcState(),
+        ),
+        StreamProvider<WinetopiaUser?>.value(
+          // Specifying stream provider will listen to the user stream
+          initialData: null,
+          value: AuthService().user,
+        ),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -35,12 +50,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamProvider<WinetopiaUser?>.value(
-        initialData: null,
-        value: AuthService()
-            .user, // Specifying StreamProvider will listen to the user stream
-        child: const MaterialApp(
-          home: Wrapper(),
-        ));
+    return const MaterialApp(
+      home: Wrapper(),
+    );
   }
 }

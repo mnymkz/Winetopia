@@ -10,11 +10,11 @@ class NdefRecordInfo {
   final String title;
 
   static NdefRecordInfo fromNdef(NdefRecord record) {
-    final _record = Record.fromNdef(record);
-    if (_record is WellknownTextRecord) {
+    final ndefRecord = Record.fromNdef(record);
+    if (ndefRecord is WellknownTextRecord) {
       return NdefRecordInfo(
-        record: _record,
-        title: _record.text,
+        record: ndefRecord,
+        title: ndefRecord.text,
       );
     }
     throw UnimplementedError(); // Throws error if the record type is not supported.

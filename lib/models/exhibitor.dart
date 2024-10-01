@@ -18,8 +18,8 @@ class Exhibitor {
   factory Exhibitor.fromFirestore(DocumentSnapshot doc) {
     return Exhibitor(
       docId: doc.id,
-      goldBalanace: doc.get('goldBalance'),
-      silverBalance: doc.get('silverBalance'),
+      goldBalanace: doc.get('goldBalance') ?? 0,
+      silverBalance: doc.get('silverBalance') ?? 0,
       name: doc.get('name'),
     );
   }

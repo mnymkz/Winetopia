@@ -1,12 +1,11 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/widgets.dart';
+// ignore_for_file: no_leading_underscores_for_local_identifiers
+
 import 'package:flutter/material.dart';
 import 'package:winetopia/services/auth.dart';
 
-
 class VerifyEmail extends StatelessWidget {
   const VerifyEmail({super.key});
- 
+
   @override
   Widget build(BuildContext context) {
     final AuthService auth = AuthService();
@@ -25,7 +24,6 @@ class VerifyEmail extends StatelessWidget {
                   SizedBox(
                     height: 20,
                   ),
-                  
                   Text(
                       'Contact Winetopia-app team at <our info> for further assistance')
                 ],
@@ -34,7 +32,7 @@ class VerifyEmail extends StatelessWidget {
             actions: <Widget>[
               TextButton(
                 child: const Text('OK!'),
-                onPressed: () async{
+                onPressed: () async {
                   Navigator.of(context).pop();
                   await auth.signOut();
                 },
@@ -44,6 +42,7 @@ class VerifyEmail extends StatelessWidget {
         },
       );
     }
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _showMyDialog();
     });
@@ -57,8 +56,6 @@ class VerifyEmail extends StatelessWidget {
         backgroundColor: Colors.deepPurple.shade400,
         elevation: 0.0,
       ),
-      
     );
-    
   }
 }

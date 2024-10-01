@@ -1,23 +1,19 @@
 import 'package:awesome_ripple_animation/awesome_ripple_animation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:nfc_manager/nfc_manager.dart';
+import 'package:provider/provider.dart';
 import 'package:winetopia/services/nfc_service.dart';
 import 'package:winetopia/shared/nfc_state.dart';
 
 /// A button that initiates the NFC reading session.
 /// Changes appearance based on the [NfcState] stream.
-class NfcPurchaseButton extends StatefulWidget {
+class NfcPurchaseButton extends StatelessWidget {
   const NfcPurchaseButton({super.key});
 
   @override
-  State<NfcPurchaseButton> createState() => _NfcPurchaseButtonState();
-}
-
-class _NfcPurchaseButtonState extends State<NfcPurchaseButton> {
-  NfcState nfcState = NfcState();
-
-  @override
   Widget build(BuildContext context) {
+    final nfcState = Provider.of<NfcState>(context);
     final buttonStyle = _getButtonStyle(nfcState.state);
 
     return Column(
@@ -29,9 +25,9 @@ class _NfcPurchaseButtonState extends State<NfcPurchaseButton> {
               // Ripple effect
               Positioned.fill(
                 child: RippleAnimation(
-                  duration: const Duration(milliseconds: 2000),
+                  duration: const Duration(milliseconds: 1400),
                   minRadius: 40,
-                  size: const Size(100.0, 100.0),
+                  size: const Size(90.0, 90.0),
                   repeat: true,
                   ripplesCount: 6,
                   color: buttonStyle['borderColor'].withOpacity(0.5),
@@ -108,30 +104,32 @@ class _NfcPurchaseButtonState extends State<NfcPurchaseButton> {
         ),
 
         // Display the secondary feedback message
-        Center(
-          child: Text(
-            nfcState.state.secondaryMessage,
-            style: const TextStyle(
-              fontSize: 12,
-            ),
-          ),
-        ),
-        const SizedBox(height: 15),
+        nfcState.state.secondaryMessage.isNotEmpty
+            ? Center(
+                child: Text(
+                  nfcState.state.secondaryMessage,
+                  style: const TextStyle(
+                    fontSize: 12,
+                  ),
+                ),
+              )
+            : const SizedBox.shrink(),
       ],
     );
   }
 
-  /// Handles the button press event by initiating an NFC session.
+  /// Handles the button press event by initiating or stopping an NFC session.
   void _nfcButtonPressed(BuildContext context) async {
-    await NfcService.instance.startNfcSession(context, _setNfcState);
-    setState(() {}); // Rebuild UI when state changes
-  }
+    final nfcState = Provider.of<NfcState>(context, listen: false);
 
-  /// Updates the NFC state and triggers a UI rebuild.
-  void _setNfcState(NfcStateEnum newState) {
-    setState(() {
-      nfcState.state = newState;
-    });
+    if (nfcState.state == NfcStateEnum.scanning) {
+      // If the button is in 'scanning' state, stop the session and revert to 'idle'.
+      await NfcManager.instance.stopSession();
+      nfcState.updateState(NfcStateEnum.idle);
+    } else {
+      // If the button is not 'scanning', start a new NFC session.
+      await NfcService.instance.startNfcSession(context, nfcState.updateState);
+    }
   }
 
   /// Returns the button style based on the current NFC state.
