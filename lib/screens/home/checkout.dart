@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:winetopia/services/stripe_service.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({super.key});
@@ -24,8 +25,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   //price ids
-  final String _silverTokenPriceId = 'price_1PpOMDIMm5TYEIRdJyM8qm2k';
-  final String _goldTokenPriceId = 'price_1PwhK7IMm5TYEIRdnVROX7Ya';
+  final String _silverTokenPriceId = dotenv.env['SILVER_TOKEN_PRICE_ID'] ?? '';
+  final String _goldTokenPriceId = dotenv.env['GOLD_TOKEN_PRICE_ID'] ?? '';
 
   //validate the quantity input (must be >= 1)
   int _validateQuantity(String quantityText) {
